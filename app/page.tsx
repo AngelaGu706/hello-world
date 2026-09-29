@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import LoginButton from "./login-button";
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,6 +20,7 @@ export default async function Home() {
 
     return (
         <main>
+            <LoginButton />
             <h1>Items</h1>
 
             <ul>
