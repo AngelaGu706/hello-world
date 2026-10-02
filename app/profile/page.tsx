@@ -118,59 +118,64 @@ export default function ProfilePage() {
     }
 
     return (
-        <main>
-            <h1>Profile</h1>
+        <main className="profile-page">
+            <div className="profile-card">
+                <div className="profile-emoji">💐</div>
 
-            {avatarUrl && (
-                <div>
-                    <img
-                        src={avatarUrl}
-                        alt="Profile"
-                        width={120}
-                        height={120}
+                <p className="profile-label">NYC FOOD SPOTS</p>
+
+                <h1>Edit Profile</h1>
+
+                {avatarUrl && (
+                    <div className="avatar-container">
+                        <img
+                            src={avatarUrl}
+                            alt="Profile"
+                            className="profile-avatar"
+                        />
+                    </div>
+                )}
+
+                <div className="profile-field">
+                    <label>First name</label>
+                    <input
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
                     />
                 </div>
-            )}
 
-            <div>
-                <label>First name</label>
-                <br />
-                <input
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                />
+                <div className="profile-field">
+                    <label>Last name</label>
+                    <input
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </div>
+
+                <div className="profile-field">
+                    <label>Profile picture</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={uploadAvatar}
+                    />
+                </div>
+
+                <button
+                    className="save-profile-button"
+                    onClick={saveProfile}
+                >
+                    Save Profile
+                </button>
+
+                {message && (
+                    <p className="profile-message">{message}</p>
+                )}
+
+                <a href="/dashboard" className="back-link">
+                    ← Back to Dashboard
+                </a>
             </div>
-
-            <br />
-
-            <div>
-                <label>Last name</label>
-                <br />
-                <input
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                />
-            </div>
-
-            <br />
-
-            <div>
-                <label>Profile picture</label>
-                <br />
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={uploadAvatar}
-                />
-            </div>
-
-            <br />
-
-            <button onClick={saveProfile}>
-                Save Profile
-            </button>
-
-            {message && <p>{message}</p>}
         </main>
     );
 }

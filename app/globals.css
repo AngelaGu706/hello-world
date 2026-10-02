@@ -24,3 +24,273 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #fffaf5;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 48px 42px;
+  background: white;
+  border: 1px solid #eee7df;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.login-emoji {
+  font-size: 42px;
+  margin-bottom: 22px;
+}
+
+.login-label {
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #9a7b63;
+}
+
+.login-card h1 {
+  margin: 0 0 28px;
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  color: #222222;
+}
+
+.login-description {
+  margin: 18px auto 28px;
+  max-width: 350px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #666666;
+}
+
+.login-card button {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #222222;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-card button:hover {
+  opacity: 0.88;
+}
+
+.login-note {
+  margin-top: 18px;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #999999;
+}
+.dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #fffaf5;
+}
+
+.dashboard-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 48px 42px;
+  background: white;
+  border: 1px solid #eee7df;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-emoji {
+  font-size: 42px;
+  margin-bottom: 22px;
+}
+
+.dashboard-label {
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #9a7b63;
+}
+
+.dashboard-card h1 {
+  margin: 0 0 14px;
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  color: #222222;
+}
+
+.dashboard-email {
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: #888888;
+}
+
+.profile-link {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: #222222;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  opacity: 0.88;
+}
+
+.signout-button {
+  margin-top: 18px;
+  border: none;
+  background: transparent;
+  color: #888888;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.signout-button:hover {
+  color: #222222;
+}
+
+.profile-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #fffaf5;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 42px;
+  background: white;
+  border: 1px solid #eee7df;
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.profile-emoji {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.profile-label {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #9a7b63;
+}
+
+.profile-card h1 {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 32px;
+  color: #222222;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fffaf5;
+}
+
+.profile-field {
+  margin-bottom: 18px;
+}
+
+.profile-field label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444444;
+}
+
+.profile-field input:not([type="file"]) {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ddd6cf;
+  border-radius: 10px;
+  background: white;
+  color: #222222;
+  font-size: 15px;
+  outline: none;
+}
+
+.profile-field input:not([type="file"]):focus {
+  border-color: #9a7b63;
+}
+
+.profile-field input[type="file"] {
+  width: 100%;
+  font-size: 13px;
+  color: #777777;
+}
+
+.save-profile-button {
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #222222;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-profile-button:hover {
+  opacity: 0.88;
+}
+
+.profile-message {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: #777777;
+}
+
+.back-link {
+  display: block;
+  margin-top: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: #888888;
+  text-decoration: underline;
+}
