@@ -17,6 +17,10 @@ export default async function DashboardPage() {
             <h1>Dashboard</h1>
             <p>You are logged in!</p>
             <p>{user.email}</p>
+
+            <form action="/auth/signout" method="post">
+                <button type="submit">Sign out</button>
+            </form>
         </main>
     );
 }
