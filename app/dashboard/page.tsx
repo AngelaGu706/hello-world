@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import FoodSpotsGenerator from "./food-spots-generator";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -29,6 +30,14 @@ export default async function DashboardPage() {
                 <Link href="/profile" className="profile-link">
                     Edit Profile
                 </Link>
+
+                <p style={{ marginTop: 20 }}>
+                    <Link href="/dashboard/picks">
+                        Browse Weekend Picks
+                    </Link>
+                </p>
+
+                <FoodSpotsGenerator />
 
                 <form action="/auth/signout" method="post">
                     <button className="signout-button" type="submit">
