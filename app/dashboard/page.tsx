@@ -1,49 +1,48 @@
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, LogOut, UserRound, Utensils } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import FoodSpotsGenerator from "./food-spots-generator";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect("/");
-    }
+    if (error || !user) redirect("/");
 
     return (
         <main className="dashboard-page">
-            <div className="dashboard-card">
-                <div className="dashboard-emoji">🍽️</div>
-
-                <p className="dashboard-label">NYC FOOD SPOTS</p>
-
-                <h1>Welcome back.</h1>
-
-                <p className="dashboard-email">
-                    {user.email}
-                </p>
-
-                <Link href="/profile" className="profile-link">
-                    Edit Profile
+            <nav className="dashboard-nav" aria-label="Dashboard navigation">
+                <Link href="/dashboard" className="community-wordmark">
+                    <Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span>
                 </Link>
-
-                <p style={{ marginTop: 20 }}>
-                    <Link href="/dashboard/picks">
-                        Browse Weekend Picks
+                <div className="dashboard-account">
+                    <span className="dashboard-email" title={user.email}>{user.email}</span>
+                    <Link href="/profile" className="dashboard-profile" title="Edit Profile" aria-label="Edit Profile">
+                        <UserRound size={18} aria-hidden="true" /><span>Profile</span>
                     </Link>
-                </p>
+                    <form action="/auth/signout" method="post">
+                        <button type="submit" className="dashboard-signout" aria-label="Sign out" title="Sign out">
+                            <LogOut size={18} aria-hidden="true" />
+                        </button>
+                    </form>
+                </div>
+            </nav>
 
+            <div className="dashboard-banner" aria-hidden="true">
+                <Image src="/dashboard-pizza-hd.webp" alt="" fill sizes="100vw" quality={90} preload className="dashboard-banner-image" />
+            </div>
+
+            <div className="dashboard-content">
+                <header className="dashboard-heading">
+                    <h1>Generate a Pick</h1>
+                </header>
                 <FoodSpotsGenerator />
-
-                <form action="/auth/signout" method="post">
-                    <button className="signout-button" type="submit">
-                        Sign out
-                    </button>
-                </form>
+                <Link href="/dashboard/picks" className="dashboard-community-link">
+                    <h2>Community Picks</h2>
+                    <ArrowRight size={20} aria-hidden="true" />
+                </Link>
             </div>
         </main>
     );

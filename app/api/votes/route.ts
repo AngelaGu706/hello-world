@@ -32,13 +32,7 @@ export async function POST(request: Request) {
             .select("id, vote")
             .single();
 
-        if (error) {
-            if (error.code === "23505") {
-                return NextResponse.json(
-                    { error: "You have already rated these recommendations." },
-                    { status: 409 }
-                );
-            }
+        if (error && error.code !== "23505") {
             if (error.code === "23503") {
                 return NextResponse.json(
                     { error: "Recommendations no longer exist." },
@@ -49,7 +43,38 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Could not save vote." }, { status: 500 });
         }
 
-        return NextResponse.json(data, { status: 201 });
+        const { data: ratings, error: ratingsError } = await supabase.rpc("get_generation_ratings", {
+            generation_ids: [generationId],
+        });
+        const row = ratings?.[0];
+        const rating = !ratingsError && row ? {
+            myVote: row.my_vote,
+            upCount: Number(row.up_count),
+            downCount: Number(row.down_count),
+        } : null;
+
+        if (ratingsError) console.error("Refreshing ratings failed:", ratingsError);
+
+        // A successful insert is still a saved vote when aggregate totals cannot be read.
+        let ownVote = data?.vote ?? null;
+        if (!rating && error?.code === "23505") {
+            const { data: existingVote } = await supabase.from("votes")
+                .select("vote")
+                .eq("user_id", user.id)
+                .eq("generation_id", generationId)
+                .maybeSingle();
+            ownVote = existingVote?.vote ?? null;
+        }
+        const currentRating = rating ?? { myVote: ownVote, upCount: null, downCount: null };
+
+        if (error?.code === "23505") {
+            return NextResponse.json(
+                { error: "You have already rated this pick.", rating: currentRating },
+                { status: 409 }
+            );
+        }
+
+        return NextResponse.json({ ...data, rating: currentRating }, { status: 201 });
     } catch (error) {
         console.error("Vote request failed:", error);
         return NextResponse.json({ error: "Could not save vote." }, { status: 500 });
