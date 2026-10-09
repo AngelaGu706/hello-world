@@ -250,7 +250,7 @@ button:disabled { cursor: not-allowed; }
 .community-search input { width: 180px; min-width: 0; font-size: 16px; color: #253c2c; outline: none; }
 .community-search:focus-within { border-color: #438761; outline: 2px solid #d9e9dd; }
 .community-refresh { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #dce3de; border-radius: 10px; background: #ffffff; color: #385440; flex-shrink: 0; }
-.community-list-label { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px 0 16px; color: #77837b; font-size: 11px; font-weight: 600; }
+.community-list-label { scroll-margin-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px 0 16px; color: #77837b; font-size: 11px; font-weight: 600; }
 .community-page button, .pick-ratings button { cursor: pointer; }
 .community-page button:focus-visible, .community-page a:focus-visible, .rating-button:focus-visible { outline: 2px solid #438761; outline-offset: 4px; }
 .community-page button:disabled { cursor: default; }
@@ -283,6 +283,14 @@ button:disabled { cursor: not-allowed; }
 .community-state { grid-column: 1 / -1; padding: 40px 0; font-size: 14px; color: #526358; }
 .community-error { color: #ad3f50; font-size: 13px; margin: 12px 0; }
 .community-clear { text-decoration: underline; text-underline-offset: 3px; }
+.community-pagination { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 28px; }
+.community-pagination button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; min-height: 44px; padding: 8px 12px; border: 1px solid #dce3de; border-radius: 10px; background: #fff; color: #45644e; font-size: 13px; font-weight: 600; }
+.community-pagination button:hover:not(:disabled), .community-pagination button[aria-current="page"] { background: #e5eee7; border-color: #bfd7c7; color: #245238; }
+.community-pagination button:disabled { opacity: .45; }
+@media (max-width: 420px) {
+  .community-pagination button span { display: none; }
+  .community-pagination button { padding: 8px; }
+}
 .community-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid #dee5df; margin-top: 32px; padding: 24px 0 36px; font-size: 12px; color: #748079; }
 .community-footer a { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: #355a41; }
 .pick-ratings { container-type: inline-size; text-align: left; margin-top: 20px; color: #46534a; }

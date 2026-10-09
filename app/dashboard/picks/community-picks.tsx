@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Bookmark, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import PickContent from "../pick-content";
 import BookmarkButton from "../bookmark-button";
 import type { Cuisine } from "@/utils/food-cuisines";
@@ -21,6 +21,8 @@ type FoodPick = PickRating & {
     created_at: string;
 };
 
+const PICKS_PER_PAGE = 6;
+
 function PickTime({ value }: { value: string }) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return null;
@@ -31,6 +33,8 @@ function PickTime({ value }: { value: string }) {
 
 export default function CommunityPicks() {
     const router = useRouter();
+    const resultsHeading = useRef<HTMLDivElement>(null);
+    const [page, setPage] = useState(1);
     const [picks, setPicks] = useState<FoodPick[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -64,6 +68,7 @@ export default function CommunityPicks() {
     }, [requestVersion, router]);
 
     function reload() {
+        setPage(1);
         setError("");
         setLoading(true);
         setRequestVersion((version) => version + 1);
@@ -84,6 +89,20 @@ export default function CommunityPicks() {
         .sort((a, b) => sort === "popular"
             ? (b.upCount ?? 0) - (a.upCount ?? 0) || new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             : new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    const pageCount = Math.ceil(visiblePicks.length / PICKS_PER_PAGE);
+    const currentPage = Math.min(page, Math.max(1, pageCount));
+    const pageStart = (currentPage - 1) * PICKS_PER_PAGE;
+    const pagePicks = visiblePicks.slice(pageStart, pageStart + PICKS_PER_PAGE);
+    const resultRange = visiblePicks.length
+        ? `${pageStart + 1}–${pageStart + pagePicks.length} of ${visiblePicks.length} picks`
+        : "0 picks";
+
+    function changePage(nextPage: number) {
+        setPage(Math.max(1, Math.min(nextPage, pageCount)));
+        resultsHeading.current?.focus({ preventScroll: true });
+        resultsHeading.current?.scrollIntoView({ block: "start" });
+    }
+
     const totalsAvailable = communityPicks.every((pick) => pick.upCount !== null && pick.downCount !== null);
     const totalRatings = communityPicks.reduce((total, pick) => total + (pick.upCount ?? 0) + (pick.downCount ?? 0), 0);
 
@@ -114,24 +133,24 @@ export default function CommunityPicks() {
                 </div>
                 <div className="community-toolbar">
                     <div className="community-tabs" role="group" aria-label="Sort picks">
-                        <button type="button" aria-pressed={sort === "latest"} className={sort === "latest" ? "is-active" : ""} onClick={() => setSort("latest")}><Clock3 size={15} aria-hidden="true" />Latest</button>
-                        <button type="button" disabled={loading || !totalsAvailable} aria-pressed={sort === "popular"} className={sort === "popular" ? "is-active" : ""} onClick={() => setSort("popular")}><ThumbsUp size={15} aria-hidden="true" />Most liked</button>
+                        <button type="button" aria-pressed={sort === "latest"} className={sort === "latest" ? "is-active" : ""} onClick={() => { setSort("latest"); setPage(1); }}><Clock3 size={15} aria-hidden="true" />Latest</button>
+                        <button type="button" disabled={loading || !totalsAvailable} aria-pressed={sort === "popular"} className={sort === "popular" ? "is-active" : ""} onClick={() => { setSort("popular"); setPage(1); }}><ThumbsUp size={15} aria-hidden="true" />Most liked</button>
                     </div>
                     <div className="community-tools">
-                        <label className="community-search"><Search size={16} aria-hidden="true" /><input type="search" aria-label="Search the latest 20 picks" placeholder="Search picks..." value={search} onChange={(event) => setSearch(event.target.value)} /></label>
+                        <label className="community-search"><Search size={16} aria-hidden="true" /><input type="search" aria-label="Search picks" placeholder="Search picks..." value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></label>
                         <button type="button" className="community-refresh" onClick={reload} disabled={loading} title="Refresh picks" aria-label="Refresh picks"><RefreshCw size={18} aria-hidden="true" className={loading ? "is-spinning" : ""} /></button>
                     </div>
                 </div>
-                <CuisineSelector value={cuisine} onChange={setCuisine} label="Explore by cuisine"
+                <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setPage(1); }} label="Explore by cuisine"
                     groupLabel="Filter picks by cuisine" allLabel="All cuisines" className="community-cuisines" />
-                <div className="community-list-label"><span>THE LATEST 20 PICKS</span><span>{!loading && !error ? `${visiblePicks.length} shown` : ""}</span></div>
+                <div className="community-list-label" ref={resultsHeading} tabIndex={-1}><span>{sort === "latest" ? "LATEST PICKS" : "MOST LIKED"}</span><span role="status">{!loading && !error ? resultRange : ""}</span></div>
 
-                <div className="community-feed" aria-live="polite" aria-busy={loading}>
+                <div id="community-picks-feed" className="community-feed" aria-live="polite" aria-busy={loading}>
                     {loading && <p role="status" className="community-state">Loading community picks...</p>}
                     {error && <div className="community-state"><p role="alert" className="community-error">{error}</p><button type="button" className="community-create" onClick={reload}>Try again</button></div>}
                     {!loading && !error && !picks.length && <div className="community-state"><h2>No picks yet.</h2><Link href="/dashboard" className="community-create">Generate a Pick<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
-                    {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); }}>Clear filters</button></div>}
-                    {!loading && !error && visiblePicks.map((pick) => (
+                    {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); setPage(1); }}>Clear filters</button></div>}
+                    {!loading && !error && pagePicks.map((pick) => (
                         <article key={pick.id} className="community-pick">
                             <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>
                             <h2>{pick.title}</h2>
@@ -140,6 +159,18 @@ export default function CommunityPicks() {
                         </article>
                     ))}
                 </div>
+                {!loading && !error && pageCount > 1 && <nav className="community-pagination" aria-label="Community picks pagination">
+                    <button type="button" aria-label="Previous page" aria-controls="community-picks-feed" disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)}>
+                        <ChevronLeft size={16} aria-hidden="true" /><span>Previous</span>
+                    </button>
+                    {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => <button
+                        key={number} type="button" aria-label={`Page ${number}`} aria-controls="community-picks-feed"
+                        aria-current={number === currentPage ? "page" : undefined}
+                        onClick={() => changePage(number)}>{number}</button>)}
+                    <button type="button" aria-label="Next page" aria-controls="community-picks-feed" disabled={currentPage === pageCount} onClick={() => changePage(currentPage + 1)}>
+                        <span>Next</span><ChevronRight size={16} aria-hidden="true" />
+                    </button>
+                </nav>}
                 <footer className="community-footer"><Utensils size={16} aria-hidden="true" /><span>NYC FOOD SPOTS</span><Link href="/dashboard">Find a spot<ArrowUpRight size={14} aria-hidden="true" /></Link></footer>
             </div>
         </main>
