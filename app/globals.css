@@ -471,3 +471,10 @@ body {
 .cuisine-options button:disabled { opacity: 0.6; cursor: wait; }
 .community-cuisines { margin: 20px 0 0; }
 .pick-metadata .cuisine-badge { padding: 2px 8px; border-radius: 12px; background: #edf5ef; color: #326442; font-size: 11px; }
+
+.cuisine-more { position: relative; display: inline-flex; align-items: center; }
+.cuisine-more select { appearance: none; border: 1px solid #dce5df; border-radius: 18px; padding: 8px 32px 8px 14px; min-height: 36px; max-width: 200px; background: #ffffff; color: #536c5c; font: inherit; font-size: 13px; cursor: pointer; }
+.cuisine-more select:hover, .cuisine-more.is-selected select { border-color: #438761; background: #e8f2eb; color: #244f3b; }
+.cuisine-more select:focus-visible { outline: 2px solid #438761; outline-offset: 3px; }
+.cuisine-more select:disabled { opacity: 0.6; cursor: wait; }
+.cuisine-more svg { position: absolute; right: 12px; pointer-events: none; color: #536c5c; }

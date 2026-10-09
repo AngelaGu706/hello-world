@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Bookmark, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import PickContent from "../pick-content";
 import BookmarkButton from "../bookmark-button";
-import { cuisines, type Cuisine } from "@/utils/food-cuisines";
+import type { Cuisine } from "@/utils/food-cuisines";
+import CuisineSelector from "../cuisine-selector";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 import { uniqueLatestPicks } from "@/utils/community-picks";
 import VoteButtons, { type PickRating } from "../vote-buttons";
@@ -121,17 +122,8 @@ export default function CommunityPicks() {
                         <button type="button" className="community-refresh" onClick={reload} disabled={loading} title="Refresh picks" aria-label="Refresh picks"><RefreshCw size={18} aria-hidden="true" className={loading ? "is-spinning" : ""} /></button>
                     </div>
                 </div>
-                <div className="cuisine-selector community-cuisines">
-                    <p className="cuisine-label">Explore by cuisine</p>
-                    <div className="cuisine-options" role="group" aria-label="Filter picks by cuisine">
-                        {(["", ...cuisines] as const).map((option) => (
-                            <button key={option || "all"} type="button" aria-pressed={cuisine === option}
-                                className={cuisine === option ? "is-selected" : ""} onClick={() => setCuisine(option)}>
-                                {option || "All cuisines"}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                <CuisineSelector value={cuisine} onChange={setCuisine} label="Explore by cuisine"
+                    groupLabel="Filter picks by cuisine" allLabel="All cuisines" className="community-cuisines" />
                 <div className="community-list-label"><span>THE LATEST 20 PICKS</span><span>{!loading && !error ? `${visiblePicks.length} shown` : ""}</span></div>
 
                 <div className="community-feed" aria-live="polite" aria-busy={loading}>

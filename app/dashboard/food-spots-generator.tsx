@@ -7,7 +7,8 @@ import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
 import BookmarkButton from "./bookmark-button";
 
-import { cuisines, type Cuisine } from "@/utils/food-cuisines";
+import type { Cuisine } from "@/utils/food-cuisines";
+import CuisineSelector from "./cuisine-selector";
 
 type FoodPick = {
     id: string;
@@ -63,18 +64,8 @@ export default function FoodSpotsGenerator() {
     return (
         <section className="pick-generator" aria-label="Generate a food pick">
             <form onSubmit={generate}>
-                <div className="cuisine-selector">
-                    <p className="cuisine-label">What cuisine are you craving?</p>
-                    <div className="cuisine-options" role="group" aria-label="Choose a cuisine">
-                        {(["", ...cuisines] as const).map((option) => (
-                            <button key={option || "any"} type="button" disabled={loading}
-                                aria-pressed={cuisine === option} className={cuisine === option ? "is-selected" : ""}
-                                onClick={() => { setCuisine(option); setError(""); }}>
-                                {option || "Any cuisine"}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setError(""); }}
+                    label="What cuisine are you craving?" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
                 <label htmlFor="food-prompt" className="sr-only">What are you craving?</label>
                 <textarea id="food-prompt" value={prompt}
                     onChange={(event) => setPrompt(event.target.value)}
