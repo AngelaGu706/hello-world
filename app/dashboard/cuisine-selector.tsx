@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { isCuisine, type Cuisine } from "@/utils/food-cuisines";
 
 const cuisineOptions = [
-    "American", "Chinese", "Italian", "Japanese", "Korean", "French", "Thai", "Mexican",
+    "American", "Chinese", "French", "Italian", "Japanese", "Korean", "Mexican", "Thai",
 ] as const satisfies readonly Cuisine[];
 
 type Props = {
