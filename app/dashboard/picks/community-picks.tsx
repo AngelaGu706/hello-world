@@ -93,7 +93,7 @@ export default function CommunityPicks() {
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
                     <Link href="/dashboard/bucket-list" className="community-back"><Bookmark size={16} aria-hidden="true" />My Bucket List</Link>
-                    <Link href="/dashboard" className="community-back"><ArrowLeft size={16} aria-hidden="true" />Dashboard</Link>
+                    <Link href="/dashboard" className="community-back community-dashboard-link"><ArrowLeft size={16} aria-hidden="true" />Dashboard</Link>
                     <Link href="/dashboard" className="community-create"><Plus size={16} aria-hidden="true" />Generate a Pick</Link>
                 </div>
             </nav>

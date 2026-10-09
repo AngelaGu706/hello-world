@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, Sparkles, Utensils } from "lucide-react";
 import PickContent from "./pick-content";
@@ -31,10 +31,13 @@ export default function FoodSpotsGenerator() {
     const [pick, setPick] = useState<FoodPick | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const requestInFlight = useRef(false);
+    const resultRef = useRef<HTMLElement>(null);
 
     async function generate(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (loading || effectivePrompt.length < 3) return;
+        if (requestInFlight.current || loading || effectivePrompt.length < 3) return;
+        requestInFlight.current = true;
 
         setLoading(true);
         setError("");
@@ -54,10 +57,12 @@ export default function FoodSpotsGenerator() {
                 typeof data.content !== "string" || !data.content.trim()
             ) throw new Error("No saved pick returned.");
             setPick(data);
+            requestAnimationFrame(() => resultRef.current?.focus({ preventScroll: true }));
         } catch (error) {
             setError(error instanceof Error ? error.message : "Please try again.");
         } finally {
             setLoading(false);
+            requestInFlight.current = false;
         }
     }
 
@@ -66,9 +71,11 @@ export default function FoodSpotsGenerator() {
             <form onSubmit={generate}>
                 <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setError(""); }}
                     label="What cuisine are you craving?" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
-                <label htmlFor="food-prompt" className="sr-only">What are you craving?</label>
+                <label htmlFor="food-prompt" className="generator-prompt-label">Make it your kind of meal</label>
+                <p id="prompt-help" className="generator-hint">Add a neighborhood, dish, or budget — or start with an idea below.</p>
                 <textarea id="food-prompt" value={prompt}
-                    onChange={(event) => setPrompt(event.target.value)}
+                    onChange={(event) => { setPrompt(event.target.value); setError(""); }}
+                    aria-describedby="prompt-help prompt-count" aria-invalid={!!error}
                     placeholder={cuisine ? `Any preferences for ${cuisine} food? Neighborhood, budget, or dish...` : "cheap late-night food near Columbia"}
                     rows={2} maxLength={200} minLength={3} required={!cuisine}
                     disabled={loading} className="generator-input" />
@@ -83,25 +90,26 @@ export default function FoodSpotsGenerator() {
                             </button>
                         ))}
                     </div>
-                    <span className="generator-character-count">{prompt.length}/200</span>
+                    <span id="prompt-count" className="generator-character-count" aria-label={`${prompt.length} of 200 characters`}>{prompt.length}/200</span>
                 </div>
                 <button type="submit" disabled={loading || effectivePrompt.length < 3} className="generator-submit">
                     {loading ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
-                    {loading ? "Generating..." : "Generate"}
+                    {loading ? "Finding your pick…" : "Generate a Pick"}
                 </button>
-                {loading && <p className="sr-only" role="status">Finding your next food pick...</p>}
+                {loading && <p className="generator-loading" role="status">Looking for a good match. This may take a moment.</p>}
                 {error && <p role="alert" className="community-error">{error}</p>}
             </form>
 
             <div aria-live="polite" aria-busy={loading}>
                 {pick && (
-                    <article key={pick.id} className="generator-result">
+                    <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result">
                         <div className="generator-result-top">
-                            <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Saved pick</p>
+                            <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Shared with the community</p>
                             <Link href="/dashboard/picks">Community Picks<ArrowUpRight size={15} aria-hidden="true" /></Link>
                         </div>
-                        <h2>{pick.title}</h2>
+                        <h2 id="generated-pick-title">{pick.title}</h2>
                         <PickContent content={pick.content} prompt={pick.prompt} />
+                        <p className="generator-result-note">Save this to your bucket list to keep it handy. Check current hours and prices before heading out.</p>
                         {!loading && <><VoteButtons generationId={pick.id} /><BookmarkButton generationId={pick.id} /></>}
                     </article>
                 )}

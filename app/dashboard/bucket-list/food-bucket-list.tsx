@@ -64,14 +64,14 @@ export default function FoodBucketList() {
                 <p>Save the spots you want to try. Check them off as you go.</p>
             </header>
             {!loading && !error && <div className="bucket-stats" aria-label="Your bucket list progress">
-                <div><Bookmark size={20} aria-hidden="true" /><strong>{wantToGo}</strong><span>Want to go</span></div>
-                <div><CheckCircle2 size={20} aria-hidden="true" /><strong>{visited}</strong><span>Been there</span></div>
+                <div className="bucket-stat-wanted"><Bookmark size={20} aria-hidden="true" /><strong>{wantToGo}</strong><span>Want to go</span></div>
+                <div className="bucket-stat-visited"><CheckCircle2 size={20} aria-hidden="true" /><strong>{visited}</strong><span>Been there</span></div>
                 <p>{visited > 0 ? `You’ve tried ${visited} ${visited === 1 ? "spot" : "spots"}. What’s next?` : available.length ? "Pick a spot for your next meal." : "Save a spot to get started."}</p>
             </div>}
             <div className="community-toolbar bucket-toolbar">
                 <div className="community-tabs" role="group" aria-label="Filter saved picks">
                     {([["all", "All"], ["want_to_go", "Want to go"], ["been_there", "Been there"]] as const).map(([value, label]) =>
-                        <button type="button" key={value} aria-pressed={filter === value} className={filter === value ? "is-active" : ""} onClick={() => setFilter(value)}>{label}</button>)}
+                        <button type="button" key={value} data-status={value} aria-pressed={filter === value} className={filter === value ? "is-active" : ""} onClick={() => setFilter(value)}>{label}</button>)}
                 </div>
                 <div className="community-tools">
                     <label className="community-search"><Search size={16} aria-hidden="true" /><input type="search" aria-label="Search your bucket list" placeholder="Search your list..." value={search} onChange={event => setSearch(event.target.value)} /></label>
