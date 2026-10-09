@@ -44,7 +44,7 @@ export default async function DashboardPage() {
             <div className="dashboard-content">
                 <header className="dashboard-heading">
                     <p className="section-eyebrow">LET’S EAT</p>
-                    <h1>Where should we eat?</h1>
+                    <h1>Where to eat next?</h1>
                     <p>Choose a cuisine or add a few details.</p>
                 </header>
                 <FoodSpotsGenerator />
