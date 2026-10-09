@@ -9,23 +9,19 @@ export default function Home() {
                 <div className="login-story">
                     <Image src="/dashboard-pizza-hd.webp" alt="A freshly baked pizza, ready to share" fill sizes="(max-width: 700px) 100vw, 55vw" preload className="login-story-image" />
                     <div className="login-story-content">
-                        <p className="login-story-eyebrow">ONE CITY. SO MANY GOOD BITES.</p>
-                        <h2>A new favorite<br />is around the corner.</h2>
-                        <p>From a quick bite after class to a weekend in Queens.</p>
+                        <h2>Good food.<br />New places.</h2>
                     </div>
                 </div>
                 <section className="login-card" aria-labelledby="login-title">
                     <p className="community-wordmark"><Utensils size={22} aria-hidden="true" />NYC FOOD SPOTS</p>
-                    <p className="login-label">EXPLORE NYC FOOD</p>
-                    <h1 id="login-title">Find a new<br />favorite bite.</h1>
-                    <p className="login-description">Tell us what you’re craving. Discover a pick, explore the community, and keep a list of places to try.</p>
+                    <h1 id="login-title">Where to eat next?</h1>
+                    <p className="login-description">Discover NYC spots worth trying.</p>
                     <ul className="login-features">
-                        <li><Sparkles size={18} aria-hidden="true" /><span>Picks for every mood and budget</span></li>
-                        <li><Compass size={18} aria-hidden="true" /><span>New neighborhoods to explore</span></li>
-                        <li><Bookmark size={18} aria-hidden="true" /><span>A food bucket list</span></li>
+                        <li><Sparkles size={18} aria-hidden="true" /><span>Food picks</span></li>
+                        <li><Compass size={18} aria-hidden="true" /><span>Community picks</span></li>
+                        <li><Bookmark size={18} aria-hidden="true" /><span>Saved spots</span></li>
                     </ul>
                     <LoginButton />
-                    <p className="login-note">Sign in to discover, rate, and save picks.</p>
                 </section>
             </div>
         </main>
