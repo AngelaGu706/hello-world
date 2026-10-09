@@ -49,13 +49,13 @@ export default function FoodSpotsGenerator() {
                 cache: "no-store",
             });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || "We couldn’t find a spot right now. Please try again.");
+            if (!response.ok) throw new Error(data.error || "Couldn’t find a spot. Please try again.");
             if (
                 typeof data.id !== "string" || !data.id ||
                 typeof data.prompt !== "string" ||
                 typeof data.title !== "string" || !data.title.trim() ||
                 typeof data.content !== "string" || !data.content.trim()
-            ) throw new Error("Your pick didn’t come through. Please try again.");
+            ) throw new Error("Couldn’t load your pick. Please try again.");
             setPick(data);
             requestAnimationFrame(() => resultRef.current?.focus({ preventScroll: true }));
         } catch (error) {
@@ -70,13 +70,13 @@ export default function FoodSpotsGenerator() {
         <section className="pick-generator" aria-label="Find a food spot">
             <form onSubmit={generate}>
                 <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setError(""); }}
-                    label="Pick a cuisine" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
-                <label htmlFor="food-prompt" className="generator-prompt-label">Tell us what you’re looking for</label>
-                <p id="prompt-help" className="generator-hint">Got a dish, neighborhood, or budget in mind? Add it here, or try an idea below.</p>
+                    label="Cuisine" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
+                <label htmlFor="food-prompt" className="generator-prompt-label">Any preferences?</label>
+                <p id="prompt-help" className="generator-hint">Add a dish, area, or budget.</p>
                 <textarea id="food-prompt" value={prompt}
                     onChange={(event) => { setPrompt(event.target.value); setError(""); }}
                     aria-describedby="prompt-help prompt-count" aria-invalid={!!error}
-                    placeholder={cuisine ? `e.g. ${cuisine} food in the East Village, under $20` : "e.g. Late-night eats near Columbia, under $15"}
+                    placeholder={cuisine ? `e.g. ${cuisine} food under $20` : "e.g. Late-night food near Columbia"}
                     rows={2} maxLength={200} minLength={3} required={!cuisine}
                     disabled={loading} className="generator-input" />
                 <div className="generator-options">
@@ -94,9 +94,9 @@ export default function FoodSpotsGenerator() {
                 </div>
                 <button type="submit" disabled={loading || effectivePrompt.length < 3} className="generator-submit">
                     {loading ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
-                    {loading ? "Finding you a spot…" : "Find me a spot"}
+                    {loading ? "Finding a spot…" : "Find a spot"}
                 </button>
-                {loading && <p className="generator-loading" role="status">Checking out a few spots for you. Hang tight.</p>}
+                {loading && <p className="generator-loading" role="status">This may take a moment.</p>}
                 {error && <p role="alert" className="community-error">{error}</p>}
             </form>
 
@@ -109,7 +109,7 @@ export default function FoodSpotsGenerator() {
                         </div>
                         <h2 id="generated-pick-title">{pick.title}</h2>
                         <PickContent content={pick.content} prompt={pick.prompt} />
-                        <p className="generator-result-note">Want to try it? Save it to your bucket list. Check the latest hours and prices before you go.</p>
+                        <p className="generator-result-note">Save it for later. Check hours and prices before you go.</p>
                         {!loading && <><VoteButtons generationId={pick.id} /><BookmarkButton generationId={pick.id} /></>}
                     </article>
                 )}

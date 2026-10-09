@@ -30,7 +30,7 @@ export default function ProfilePage() {
         async function loadProfile() {
             try {
                 const { data: { user }, error: authError } = await supabase.auth.getUser();
-                if (authError || !user) throw new Error("Please sign in to edit your profile.");
+                if (authError || !user) throw new Error("Sign in to edit your profile.");
                 const { data, error } = await supabase.from("profiles")
                     .select("first_name, last_name, avatar_url").eq("id", user.id).single();
                 if (error) throw error;
@@ -45,7 +45,7 @@ export default function ProfilePage() {
                 if (active) {
                     setLoadFailed(true);
                     setMessageType("error");
-                    setMessage("Could not load your profile. Please try again or sign in.");
+                    setMessage("Couldn’t load your profile. Try again or sign in.");
                 }
             } finally {
                 if (active) setLoading(false);
@@ -68,12 +68,12 @@ export default function ProfilePage() {
             }).eq("id", userId);
             if (error) throw error;
             setMessageType("success");
-            setMessage("Profile saved. Taking you back to your picks…");
+            setMessage("Saved. Returning home…");
             router.push("/dashboard");
         } catch (error) {
             console.error(error);
             setMessageType("error");
-            setMessage("Your profile wasn’t saved. Your edits are still here — please try again.");
+            setMessage("Couldn’t save. Your edits are still here. Try again.");
             setSaving(false);
             busyRef.current = false;
         }
@@ -85,7 +85,7 @@ export default function ProfilePage() {
         if (!file || !userId || busy || busyRef.current || loadFailed) return;
         if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
             setMessageType("error");
-            setMessage("Choose an image smaller than 5 MB.");
+            setMessage("Choose an image up to 5 MB.");
             return;
         }
         busyRef.current = true;
@@ -105,11 +105,11 @@ export default function ProfilePage() {
             setAvatarUrl(publicUrl);
             setAvatarFailed(false);
             setMessageType("success");
-            setMessage("Photo updated and saved.");
+            setMessage("Photo saved.");
         } catch (error) {
             console.error(error);
             setMessageType("error");
-            setMessage("Your photo wasn’t saved. Please try uploading it again.");
+            setMessage("Couldn’t save your photo. Try again.");
         } finally {
             setUploading(false);
             busyRef.current = false;
@@ -122,11 +122,10 @@ export default function ProfilePage() {
                 <Utensils size={22} aria-hidden="true" />NYC FOOD SPOTS
             </Link>
             <section className="profile-card" aria-labelledby="profile-title">
-                <Link href="/dashboard" className="profile-back"><ArrowLeft size={16} aria-hidden="true" />Back to your picks</Link>
+                <Link href="/dashboard" className="profile-back"><ArrowLeft size={16} aria-hidden="true" />Back to home</Link>
                 <header className="profile-heading">
-                    <p className="profile-label">A LITTLE ABOUT YOU</p>
-                    <h1 id="profile-title">Make it yours.</h1>
-                    <p>Your name, your photo, your next food adventure.</p>
+                    <h1 id="profile-title">Your profile</h1>
+                    <p>Update your name and photo.</p>
                 </header>
                 <form onSubmit={saveProfile} aria-busy={busy}>
                     <fieldset disabled={busy || loadFailed || !userId} className="profile-fields">
@@ -146,7 +145,7 @@ export default function ProfilePage() {
                                     {uploading ? "Uploading…" : "Change photo"}
                                 </label>
                                 <input id="profile-photo" className="sr-only" type="file" accept="image/*" onChange={uploadAvatar} aria-describedby="photo-help" />
-                                <p id="photo-help">Image, up to 5 MB. Saves automatically.</p>
+                                <p id="photo-help">Up to 5 MB. Saved automatically.</p>
                             </div>
                         </div>
                         <div className="profile-name-grid">
@@ -163,11 +162,10 @@ export default function ProfilePage() {
                         </div>
                         <button type="submit" className="save-profile-button">
                             {loading || saving ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <CheckCircle2 size={18} aria-hidden="true" />}
-                            {loading ? "Loading profile…" : saving ? "Saving…" : "Save profile"}
+                            {loading ? "Loading…" : saving ? "Saving…" : "Save changes"}
                             {!loading && !saving && <ArrowRight size={17} aria-hidden="true" />}
                         </button>
                     </fieldset>
-                    <p className="profile-save-note">Save your changes and return to your picks.</p>
                     <div aria-live="polite" aria-atomic="true">
                         {message && <p role={messageType === "error" ? "alert" : "status"} className={`profile-message is-${messageType}`}>{message}</p>}
                     </div>
@@ -179,7 +177,6 @@ export default function ProfilePage() {
                     </div>}
                 </form>
             </section>
-            <p className="profile-footer">Good food starts with a little curiosity.</p>
         </main>
     );
 }
