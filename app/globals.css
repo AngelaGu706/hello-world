@@ -285,9 +285,10 @@ button:disabled { cursor: not-allowed; }
 .community-clear { text-decoration: underline; text-underline-offset: 3px; }
 .community-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid #dee5df; margin-top: 32px; padding: 24px 0 36px; font-size: 12px; color: #748079; }
 .community-footer a { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: #355a41; }
-.pick-ratings { text-align: left; margin-top: 20px; color: #46534a; }
+.pick-ratings { container-type: inline-size; text-align: left; margin-top: 20px; color: #46534a; }
 .community-pick .pick-ratings { margin-top: 0; padding-top: 18px; border-top: 1px solid #edf0ed; }
-.rating-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.rating-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.rating-row .bookmark-control { margin: 0 0 0 auto; }
 .rating-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
 .rating-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; border: 1px solid #dce5dd; border-radius: 10px; padding: 8px 11px; font-size: 12px; font-weight: 600; background: #ffffff; color: #455c4b; }
 .rating-button svg { flex-shrink: 0; }
@@ -295,7 +296,7 @@ button:disabled { cursor: not-allowed; }
 .rating-button:disabled { cursor: default; }
 .rating-up:not(:disabled):hover, .rating-up.is-selected { background: #eaf4ed; border-color: #c5ddcd; color: #28633e; }
 .rating-down:not(:disabled):hover, .rating-down.is-selected { background: #fcf0f1; border-color: #edcbd1; color: #9b4455; }
-.rating-summary { display: block; font-size: 11px; color: #758078; }
+.rating-summary { display: block; margin-top: 10px; font-size: 11px; color: #758078; }
 .rating-status { margin-top: 10px; font-size: 11px; color: #67776b; }
 .is-spinning { animation: pick-spin 1s linear infinite; }
 @keyframes pick-spin { to { transform: rotate(360deg); } }
@@ -322,6 +323,21 @@ button:disabled { cursor: not-allowed; }
 .bucket-save:hover:not(:disabled), .bucket-save.is-saved { background: #edf5ef; border-color: #bfd7c7; color: #28633e; }
 .bucket-save:disabled { cursor: default; opacity: .65; }
 .bookmark-control { margin-top: 16px; }
+.bookmark-label-compact { display: none; }
+@container (max-width: 380px) {
+  .rating-row { gap: 8px; }
+  .rating-buttons { gap: 6px; }
+  .rating-button { gap: 4px; padding: 8px 6px; font-size: 11px; }
+  .rating-count { min-width: 14px; padding-left: 4px; }
+  .rating-row .bucket-save { gap: 5px; padding: 8px 7px; font-size: 11px; }
+  .rating-row .bookmark-label { display: none; }
+  .rating-row .bookmark-label-compact { display: inline; }
+}
+@container (max-width: 280px) {
+  .rating-row .bucket-save { width: 44px; padding: 0; justify-content: center; }
+  .rating-row .bookmark-label-compact { display: none; }
+  .rating-check { display: none; }
+}
 .bucket-save:focus-visible { outline: 2px solid #438761; outline-offset: 4px; }
 .dashboard-bucket-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: #465c4c; min-height: 44px; }
 .bucket-heading { padding: 46px 0 28px; }

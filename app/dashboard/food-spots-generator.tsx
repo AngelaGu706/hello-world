@@ -110,7 +110,7 @@ export default function FoodSpotsGenerator() {
                         <h2 id="generated-pick-title">{pick.title}</h2>
                         <PickContent content={pick.content} prompt={pick.prompt} />
                         <p className="generator-result-note">Save it for later. Check hours and prices before you go.</p>
-                        {!loading && <><VoteButtons generationId={pick.id} /><BookmarkButton generationId={pick.id} /></>}
+                        {!loading && <VoteButtons generationId={pick.id} trailingAction={<BookmarkButton generationId={pick.id} />} />}
                     </article>
                 )}
             </div>

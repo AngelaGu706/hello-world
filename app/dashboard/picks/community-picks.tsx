@@ -136,8 +136,7 @@ export default function CommunityPicks() {
                             <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>
                             <h2>{pick.title}</h2>
                             <PickContent content={pick.content} prompt={pick.prompt} />
-                            <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} />
-                            <BookmarkButton generationId={pick.id} />
+                            <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} trailingAction={<BookmarkButton generationId={pick.id} />} />
                         </article>
                     ))}
                 </div>

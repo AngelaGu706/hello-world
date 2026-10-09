@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Check, ThumbsDown, ThumbsUp } from "lucide-react";
 
 export type PickRating = {
@@ -15,10 +15,11 @@ type VoteButtonsProps = {
     upCount?: number | null;
     downCount?: number | null;
     onRated?: (rating: PickRating) => void;
+    trailingAction?: ReactNode;
 };
 
 export default function VoteButtons({
-    generationId, initialVote = null, upCount = null, downCount = null, onRated,
+    generationId, initialVote = null, upCount = null, downCount = null, onRated, trailingAction,
 }: VoteButtonsProps) {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(Boolean(initialVote));
@@ -79,7 +80,7 @@ export default function VoteButtons({
                         onClick={() => submitVote("up")}>
                         <ThumbsUp size={16} aria-hidden="true" />
                         <span>Would try</span><span className="rating-count">{rating.upCount ?? "--"}</span>
-                        {rating.myVote === "up" && <Check size={14} aria-hidden="true" />}
+                        {rating.myVote === "up" && <Check size={14} className="rating-check" aria-hidden="true" />}
                     </button>
                     <button type="button"
                         className={`rating-button rating-down ${rating.myVote === "down" ? "is-selected" : ""}`}
@@ -87,13 +88,14 @@ export default function VoteButtons({
                         onClick={() => submitVote("down")}>
                         <ThumbsDown size={16} aria-hidden="true" />
                         <span>Skip</span><span className="rating-count">{rating.downCount ?? "--"}</span>
-                        {rating.myVote === "down" && <Check size={14} aria-hidden="true" />}
+                        {rating.myVote === "down" && <Check size={14} className="rating-check" aria-hidden="true" />}
                     </button>
                 </div>
-                <span className="rating-summary">
-                    {!totalsAvailable ? "Rating totals unavailable" : total ? `${Math.round((rating.upCount ?? 0) / total * 100)}% would try · ${total} ${total === 1 ? "rating" : "ratings"}` : "Not rated yet"}
-                </span>
+                {trailingAction}
             </div>
+            <span className="rating-summary">
+                {!totalsAvailable ? "Rating totals unavailable" : total ? `${Math.round((rating.upCount ?? 0) / total * 100)}% would try · ${total} ${total === 1 ? "rating" : "ratings"}` : "Not rated yet"}
+            </span>
             {(saving || message || rating.myVote) && <p role="status" className="rating-status">
                 {saving ? "Saving..." : message || `You rated this: ${rating.myVote === "up" ? "Would try" : "Skip"}`}
             </p>}
