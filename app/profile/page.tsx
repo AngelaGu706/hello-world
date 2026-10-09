@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
 export default function ProfilePage() {
+    const router = useRouter();
     const supabase = createClient();
 
     const [userId, setUserId] = useState("");
@@ -65,6 +67,7 @@ export default function ProfilePage() {
             setMessage("Error saving profile.");
         } else {
             setMessage("Profile saved!");
+            router.push("/dashboard");
         }
     }
 
