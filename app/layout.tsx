@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NYC FOOD SPOTS | Find your next favorite bite",
-  description: "Discover NYC food picks for your cravings and budget, explore community recommendations, and save places to your food bucket list.",
+  title: "NYC FOOD SPOTS | Find a new favorite bite",
+  description: "Discover NYC food spots, explore community picks, and save places to a food bucket list.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

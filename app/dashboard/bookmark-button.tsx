@@ -20,7 +20,7 @@ export default function BookmarkButton({ generationId }: { generationId: string 
         <button type="button" className={`bucket-save ${saved ? "is-saved" : ""}`} disabled={loading || busy || Boolean(loadError)}
             aria-pressed={saved} aria-label={saved ? "Remove from Food Bucket List" : "Save to Food Bucket List"} onClick={toggle}>
             {loading || busy ? <LoaderCircle size={16} className="is-spinning" aria-hidden="true" /> : saved ? <BookmarkCheck size={16} aria-hidden="true" /> : <Bookmark size={16} aria-hidden="true" />}
-            {busy ? "Saving..." : saved ? "Saved to my list" : "Save to my list"}
+            {busy ? "Saving..." : saved ? "Saved" : "Save to list"}
         </button>
         {loadError && <p className="community-error" role="alert">{loadError} <button type="button" className="community-clear" onClick={reload}>Retry</button></p>}
         {error && <p className="community-error" role="alert">{error}</p>}

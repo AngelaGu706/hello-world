@@ -55,7 +55,7 @@ export default function FoodSpotsGenerator() {
                 typeof data.prompt !== "string" ||
                 typeof data.title !== "string" || !data.title.trim() ||
                 typeof data.content !== "string" || !data.content.trim()
-            ) throw new Error("Couldn’t load your pick. Please try again.");
+            ) throw new Error("Couldn’t load the pick. Please try again.");
             setPick(data);
             requestAnimationFrame(() => resultRef.current?.focus({ preventScroll: true }));
         } catch (error) {

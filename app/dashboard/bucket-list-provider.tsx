@@ -33,7 +33,7 @@ export default function BucketListProvider({ children }: { children: React.React
             try {
                 const response = await fetch("/api/bucket-list", { cache: "no-store", signal: controller.signal });
                 const data = await response.json();
-                if (!response.ok || !Array.isArray(data.items)) throw new Error(data.error || "Could not load your bucket list.");
+                if (!response.ok || !Array.isArray(data.items)) throw new Error(data.error || "Could not load the bucket list.");
                 if (!controller.signal.aborted) setItems(data.items);
             } catch (error) {
                 if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Please try again.");
@@ -62,8 +62,8 @@ export default function BucketListProvider({ children }: { children: React.React
                 body: JSON.stringify({ generationId: id, status }),
             });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || "Could not update your bucket list.");
-            if (method !== "DELETE" && (!data.item || data.item.generation_id !== id)) throw new Error("Could not confirm your saved pick. Please refresh.");
+            if (!response.ok) throw new Error(data.error || "Could not update the bucket list.");
+            if (method !== "DELETE" && (!data.item || data.item.generation_id !== id)) throw new Error("Could not confirm the saved pick. Please refresh.");
             setItems(current => method === "DELETE"
                 ? current.filter(item => item.generation_id !== id)
                 : [data.item, ...current.filter(item => item.generation_id !== id)]

@@ -46,7 +46,7 @@ export default function VoteButtons({
             if (data.rating) {
                 setRating(data.rating);
                 onRated?.(data.rating);
-                setMessage(response.status === 409 ? "You have already rated this pick." : "Your rating is saved.");
+                setMessage(response.status === 409 ? "You have already rated this pick." : "Rating saved.");
             } else {
                 const nextRating: PickRating = {
                     myVote: response.status === 409 ? rating.myVote : vote,
@@ -56,8 +56,8 @@ export default function VoteButtons({
                 setRating(nextRating);
                 onRated?.(nextRating);
                 setMessage(response.status === 409
-                    ? "Already rated. Refresh to see your rating."
-                    : "Your rating is saved. Community totals are unavailable.");
+                    ? "Already rated. Refresh to see the rating."
+                    : "Rating saved. Community totals are unavailable.");
             }
         } catch (error) {
             setError(error instanceof Error ? error.message : "Please try again.");

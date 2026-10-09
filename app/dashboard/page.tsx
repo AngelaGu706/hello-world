@@ -18,8 +18,8 @@ export default async function DashboardPage() {
                     <Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span>
                 </Link>
                 <div className="dashboard-account">
-                    <Link href="/dashboard/bucket-list" className="dashboard-bucket-link" title="My Bucket List" aria-label="My Bucket List">
-                        <Bookmark size={18} aria-hidden="true" /><span>My Bucket List</span>
+                    <Link href="/dashboard/bucket-list" className="dashboard-bucket-link" title="Bucket List" aria-label="Bucket List">
+                        <Bookmark size={18} aria-hidden="true" /><span>Bucket List</span>
                     </Link>
                     <span className="dashboard-email" title={user.email}>{user.email}</span>
                     <Link href="/profile" className="dashboard-profile" title="Edit Profile" aria-label="Edit Profile">
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
                 <Image src="/dashboard-pizza-hd.webp" alt="" fill sizes="100vw" quality={90} preload className="dashboard-banner-image" />
                 <div className="dashboard-hero-copy">
                     <p>GOOD FOOD. ALL OVER NYC.</p>
-                    <h2>Find your next<br />favorite spot.</h2>
+                    <h2>Find a new<br />favorite spot.</h2>
                 </div>
             </div>
 

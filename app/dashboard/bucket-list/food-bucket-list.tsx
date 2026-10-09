@@ -23,7 +23,7 @@ function BucketCard({ item }: { item: BucketItem }) {
             <span className={`bucket-status ${visited ? "is-visited" : ""}`}>
                 {visited ? <CheckCircle2 size={14} aria-hidden="true" /> : <Bookmark size={14} aria-hidden="true" />}{visited ? "BEEN THERE" : "WANT TO GO"}
             </span>
-            <button type="button" className="bucket-remove" disabled={busy} onClick={() => update("DELETE")} aria-label={`Remove ${item.generation.title} from your list`} title="Remove from your list"><X size={17} aria-hidden="true" /></button>
+            <button type="button" className="bucket-remove" disabled={busy} onClick={() => update("DELETE")} aria-label={`Remove ${item.generation.title} from the list`} title="Remove from the list"><X size={17} aria-hidden="true" /></button>
         </div>
         <h2>{item.generation.title}</h2>
         <PickContent content={item.generation.content} prompt={item.generation.prompt} />
@@ -59,14 +59,14 @@ export default function FoodBucketList() {
         </nav>
         <div className="community-content">
             <header className="bucket-heading">
-                <p className="bucket-eyebrow"><Bookmark size={16} aria-hidden="true" />YOUR NYC FOOD LIST</p>
-                <h1>Your Food Bucket List</h1>
+                <p className="bucket-eyebrow"><Bookmark size={16} aria-hidden="true" />NYC FOOD LIST</p>
+                <h1>Food Bucket List</h1>
                 <p>Save now. Try later.</p>
             </header>
-            {!loading && !error && <div className="bucket-stats" aria-label="Your bucket list progress">
+            {!loading && !error && <div className="bucket-stats" aria-label="Bucket list progress">
                 <div className="bucket-stat-wanted"><Bookmark size={20} aria-hidden="true" /><strong>{wantToGo}</strong><span>Want to go</span></div>
                 <div className="bucket-stat-visited"><CheckCircle2 size={20} aria-hidden="true" /><strong>{visited}</strong><span>Been there</span></div>
-                <p>{visited > 0 ? `You’ve tried ${visited} ${visited === 1 ? "spot" : "spots"}. What’s next?` : available.length ? "Pick a spot for your next meal." : "Save a spot to get started."}</p>
+                <p>{visited > 0 ? `You’ve tried ${visited} ${visited === 1 ? "spot" : "spots"}. What’s next?` : available.length ? "Choose the next spot." : "Save a spot to get started."}</p>
             </div>}
             <div className="community-toolbar bucket-toolbar">
                 <div className="community-tabs" role="group" aria-label="Filter saved picks">
@@ -74,16 +74,16 @@ export default function FoodBucketList() {
                         <button type="button" key={value} data-status={value} aria-pressed={filter === value} className={filter === value ? "is-active" : ""} onClick={() => setFilter(value)}>{label}</button>)}
                 </div>
                 <div className="community-tools">
-                    <label className="community-search"><Search size={16} aria-hidden="true" /><input type="search" aria-label="Search your bucket list" placeholder="Search your list..." value={search} onChange={event => setSearch(event.target.value)} /></label>
-                    <button type="button" className="community-refresh" disabled={loading || busyIds.size > 0} onClick={reload} aria-label="Refresh your bucket list"><RefreshCw size={18} className={loading ? "is-spinning" : ""} aria-hidden="true" /></button>
+                    <label className="community-search"><Search size={16} aria-hidden="true" /><input type="search" aria-label="Search bucket list" placeholder="Search saved picks..." value={search} onChange={event => setSearch(event.target.value)} /></label>
+                    <button type="button" className="community-refresh" disabled={loading || busyIds.size > 0} onClick={reload} aria-label="Refresh bucket list"><RefreshCw size={18} className={loading ? "is-spinning" : ""} aria-hidden="true" /></button>
                 </div>
             </div>
-            <div className="community-list-label"><span>YOUR SAVED PICKS</span><span>{!loading && !error ? `${visible.length} saved ${visible.length === 1 ? "pick" : "picks"}` : ""}</span></div>
+            <div className="community-list-label"><span>SAVED PICKS</span><span>{!loading && !error ? `${visible.length} saved ${visible.length === 1 ? "pick" : "picks"}` : ""}</span></div>
             <div className="community-feed" aria-live="polite" aria-busy={loading}>
-                {loading && <p className="community-state" role="status">Loading your list...</p>}
+                {loading && <p className="community-state" role="status">Loading saved picks...</p>}
                 {error && <div className="community-state"><p className="community-error" role="alert">{error}</p><button type="button" className="community-create" onClick={reload}>Try again</button></div>}
-                {!loading && !error && !available.length && <div className="bucket-empty"><Bookmark size={36} aria-hidden="true" /><h2>Nothing saved yet</h2><p>See a spot you like? Save it from Community Picks or your recommendations, and it&apos;ll show up here.</p><Link href="/dashboard/picks" className="community-create">Browse Community Picks<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
-                {!loading && !error && available.length > 0 && !visible.length && <div className="community-state"><h2>{search ? "No picks match your search." : filter === "been_there" ? "You haven’t checked off any spots yet." : "You’ve tried everything on your list."}</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setFilter("all"); }}>Show all saved picks</button></div>}
+                {!loading && !error && !available.length && <div className="bucket-empty"><Bookmark size={36} aria-hidden="true" /><h2>Nothing saved yet</h2><p>Save a spot from Community Picks or recommendations to get started.</p><Link href="/dashboard/picks" className="community-create">Browse Community Picks<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
+                {!loading && !error && available.length > 0 && !visible.length && <div className="community-state"><h2>{search ? "No matching picks." : filter === "been_there" ? "You haven’t checked off any spots yet." : "All saved spots visited."}</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setFilter("all"); }}>Show all saved picks</button></div>}
                 {!loading && !error && visible.map(item => <BucketCard key={item.generation_id} item={item} />)}
             </div>
             <footer className="community-footer"><Utensils size={16} aria-hidden="true" /><span>NYC FOOD SPOTS</span><Link href="/dashboard">Find a place to try<ArrowUpRight size={14} aria-hidden="true" /></Link></footer>

@@ -92,7 +92,7 @@ export default function CommunityPicks() {
             <nav className="community-nav" aria-label="Community navigation">
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
-                    <Link href="/dashboard/bucket-list" className="community-back"><Bookmark size={16} aria-hidden="true" />My Bucket List</Link>
+                    <Link href="/dashboard/bucket-list" className="community-back"><Bookmark size={16} aria-hidden="true" />Bucket List</Link>
                     <Link href="/dashboard" className="community-back community-dashboard-link"><ArrowLeft size={16} aria-hidden="true" />Dashboard</Link>
                     <Link href="/dashboard" className="community-create"><Plus size={16} aria-hidden="true" />Generate a Pick</Link>
                 </div>
@@ -103,7 +103,7 @@ export default function CommunityPicks() {
                 <div className="community-cover-content">
                     <p className="community-eyebrow">FROM THE COMMUNITY</p>
                     <h1>Community Picks</h1>
-                    <p className="community-cover-subtitle">Good food. New neighborhoods. Your next NYC favorite.</p>
+                    <p className="community-cover-subtitle">Good food. New neighborhoods. More spots to try.</p>
                 </div>
             </header>
 
@@ -141,7 +141,7 @@ export default function CommunityPicks() {
                         </article>
                     ))}
                 </div>
-                <footer className="community-footer"><Utensils size={16} aria-hidden="true" /><span>NYC FOOD SPOTS</span><Link href="/dashboard">Make your next pick<ArrowUpRight size={14} aria-hidden="true" /></Link></footer>
+                <footer className="community-footer"><Utensils size={16} aria-hidden="true" /><span>NYC FOOD SPOTS</span><Link href="/dashboard">Find a spot<ArrowUpRight size={14} aria-hidden="true" /></Link></footer>
             </div>
         </main>
     );

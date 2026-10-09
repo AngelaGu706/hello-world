@@ -44,7 +44,7 @@ async function handle(method: "GET" | "POST" | "PATCH" | "DELETE", request?: Req
             const { data, error } = await supabase.from("food_bucket_list").update({ status: body.status })
                 .eq("user_id", user.id).eq("generation_id", generationId).select("generation_id").maybeSingle();
             if (error) throw error;
-            if (!data) return NextResponse.json({ error: "This pick is no longer in your list. Refresh and try again." }, { status: 404 });
+            if (!data) return NextResponse.json({ error: "This pick is no longer saved. Refresh and try again." }, { status: 404 });
         }
 
         const { data, error } = await supabase.from("food_bucket_list").select(fields)
@@ -53,7 +53,7 @@ async function handle(method: "GET" | "POST" | "PATCH" | "DELETE", request?: Req
         return NextResponse.json({ item: data });
     } catch (error) {
         console.error("Bucket list request failed:", error);
-        return NextResponse.json({ error: method === "GET" ? "Could not load your bucket list. Please try again." : "Could not update your bucket list. Please try again." }, { status: 500 });
+        return NextResponse.json({ error: method === "GET" ? "Could not load the bucket list. Please try again." : "Could not update the bucket list. Please try again." }, { status: 500 });
     }
 }
 

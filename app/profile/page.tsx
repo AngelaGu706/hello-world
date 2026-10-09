@@ -30,7 +30,7 @@ export default function ProfilePage() {
         async function loadProfile() {
             try {
                 const { data: { user }, error: authError } = await supabase.auth.getUser();
-                if (authError || !user) throw new Error("Sign in to edit your profile.");
+                if (authError || !user) throw new Error("Sign in to edit profile details.");
                 const { data, error } = await supabase.from("profiles")
                     .select("first_name, last_name, avatar_url").eq("id", user.id).single();
                 if (error) throw error;
@@ -45,7 +45,7 @@ export default function ProfilePage() {
                 if (active) {
                     setLoadFailed(true);
                     setMessageType("error");
-                    setMessage("Couldn’t load your profile. Try again or sign in.");
+                    setMessage("Couldn’t load the profile. Try again or sign in.");
                 }
             } finally {
                 if (active) setLoading(false);
@@ -73,7 +73,7 @@ export default function ProfilePage() {
         } catch (error) {
             console.error(error);
             setMessageType("error");
-            setMessage("Couldn’t save. Your edits are still here. Try again.");
+            setMessage("Couldn’t save. Edits are still here. Try again.");
             setSaving(false);
             busyRef.current = false;
         }
@@ -109,7 +109,7 @@ export default function ProfilePage() {
         } catch (error) {
             console.error(error);
             setMessageType("error");
-            setMessage("Couldn’t save your photo. Try again.");
+            setMessage("Couldn’t save the photo. Try again.");
         } finally {
             setUploading(false);
             busyRef.current = false;
@@ -124,16 +124,16 @@ export default function ProfilePage() {
             <section className="profile-card" aria-labelledby="profile-title">
                 <Link href="/dashboard" className="profile-back"><ArrowLeft size={16} aria-hidden="true" />Back to home</Link>
                 <header className="profile-heading">
-                    <h1 id="profile-title">Your profile</h1>
-                    <p>Update your name and photo.</p>
+                    <h1 id="profile-title">Profile</h1>
+                    <p>Update profile details.</p>
                 </header>
                 <form onSubmit={saveProfile} aria-busy={busy}>
                     <fieldset disabled={busy || loadFailed || !userId} className="profile-fields">
-                        <legend className="sr-only">Edit your profile</legend>
+                        <legend className="sr-only">Edit profile</legend>
                         <div className="profile-photo-row">
                             <div className="profile-avatar-wrap">
                                 {avatarUrl && !avatarFailed ? (
-                                    <Image src={avatarUrl} alt="Your profile photo" width={80} height={80} unoptimized
+                                    <Image src={avatarUrl} alt="Profile photo" width={80} height={80} unoptimized
                                         className="profile-avatar" onError={() => setAvatarFailed(true)} />
                                 ) : <div className="profile-avatar profile-avatar-placeholder" aria-label="Profile photo placeholder">
                                     {firstName || lastName ? `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() : <UserRound size={30} aria-hidden="true" />}
