@@ -1,7 +1,7 @@
-export const commonCuisines = ["Chinese", "Italian", "Japanese", "Korean", "Mexican", "Indian"] as const;
+export const commonCuisines = ["Chinese", "Italian", "Japanese"] as const;
 export const moreCuisines = [
-    "American", "Caribbean", "Ethiopian", "French", "Greek", "Lebanese",
-    "Middle Eastern", "Peruvian", "Spanish", "Thai", "Turkish", "Vietnamese",
+    "American", "Caribbean", "Ethiopian", "French", "Greek", "Indian", "Korean", "Lebanese",
+    "Mexican", "Middle Eastern", "Peruvian", "Spanish", "Thai", "Turkish", "Vietnamese",
 ] as const;
 export const cuisines = [...commonCuisines, ...moreCuisines] as const;
 export type Cuisine = (typeof cuisines)[number];
