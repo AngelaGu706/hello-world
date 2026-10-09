@@ -7,6 +7,8 @@ import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
 import BookmarkButton from "./bookmark-button";
 
+import { cuisines, type Cuisine } from "@/utils/food-cuisines";
+
 type FoodPick = {
     id: string;
     prompt: string;
@@ -23,13 +25,15 @@ const quickPrompts = [
 
 export default function FoodSpotsGenerator() {
     const [prompt, setPrompt] = useState("");
+    const [cuisine, setCuisine] = useState<Cuisine | "">("");
+    const effectivePrompt = prompt.trim() || (cuisine ? `student-friendly ${cuisine} food in NYC` : "");
     const [pick, setPick] = useState<FoodPick | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     async function generate(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (loading || prompt.trim().length < 3) return;
+        if (loading || effectivePrompt.length < 3) return;
 
         setLoading(true);
         setError("");
@@ -37,7 +41,7 @@ export default function FoodSpotsGenerator() {
             const response = await fetch("/api/food-spots", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt }),
+                body: JSON.stringify({ prompt: effectivePrompt, ...(cuisine ? { cuisine } : {}) }),
                 cache: "no-store",
             });
             const data = await response.json();
@@ -59,11 +63,23 @@ export default function FoodSpotsGenerator() {
     return (
         <section className="pick-generator" aria-label="Generate a food pick">
             <form onSubmit={generate}>
+                <div className="cuisine-selector">
+                    <p className="cuisine-label">What cuisine are you craving?</p>
+                    <div className="cuisine-options" role="group" aria-label="Choose a cuisine">
+                        {(["", ...cuisines] as const).map((option) => (
+                            <button key={option || "any"} type="button" disabled={loading}
+                                aria-pressed={cuisine === option} className={cuisine === option ? "is-selected" : ""}
+                                onClick={() => { setCuisine(option); setError(""); }}>
+                                {option || "Any cuisine"}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 <label htmlFor="food-prompt" className="sr-only">What are you craving?</label>
                 <textarea id="food-prompt" value={prompt}
                     onChange={(event) => setPrompt(event.target.value)}
-                    placeholder="cheap late-night food near Columbia"
-                    rows={2} maxLength={200} minLength={3} required
+                    placeholder={cuisine ? `Any preferences for ${cuisine} food? Neighborhood, budget, or dish...` : "cheap late-night food near Columbia"}
+                    rows={2} maxLength={200} minLength={3} required={!cuisine}
                     disabled={loading} className="generator-input" />
                 <div className="generator-options">
                     <div className="generator-prompts" role="group" aria-label="Quick food prompts">
@@ -78,7 +94,7 @@ export default function FoodSpotsGenerator() {
                     </div>
                     <span className="generator-character-count">{prompt.length}/200</span>
                 </div>
-                <button type="submit" disabled={loading || prompt.trim().length < 3} className="generator-submit">
+                <button type="submit" disabled={loading || effectivePrompt.length < 3} className="generator-submit">
                     {loading ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
                     {loading ? "Generating..." : "Generate"}
                 </button>

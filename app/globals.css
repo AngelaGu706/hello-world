@@ -461,3 +461,13 @@ body {
   .dashboard-bucket-link span { display: none; }
   .dashboard-bucket-link { width: 32px; justify-content: center; }
 }
+
+.cuisine-selector { margin-bottom: 18px; }
+.cuisine-label { font-size: 13px; font-weight: 600; color: #4b6655; margin-bottom: 10px; }
+.cuisine-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.cuisine-options button { border: 1px solid #dce5df; border-radius: 18px; padding: 8px 14px; min-height: 36px; background: #ffffff; color: #536c5c; font-size: 13px; cursor: pointer; }
+.cuisine-options button:hover, .cuisine-options button.is-selected { border-color: #438761; background: #e8f2eb; color: #244f3b; }
+.cuisine-options button:focus-visible { outline: 2px solid #438761; outline-offset: 3px; }
+.cuisine-options button:disabled { opacity: 0.6; cursor: wait; }
+.community-cuisines { margin: 20px 0 0; }
+.pick-metadata .cuisine-badge { padding: 2px 8px; border-radius: 12px; background: #edf5ef; color: #326442; font-size: 11px; }

@@ -1,7 +1,8 @@
 import { ApiError, GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import { encodePickContent } from "@/utils/food-pick";
+import { decodePickContent, encodePickContent } from "@/utils/food-pick";
+import { cuisines, isCuisine } from "@/utils/food-cuisines";
 
 type GeneratedPick = {
     title: string;
@@ -37,6 +38,7 @@ function parseGeneratedPick(text: string): GeneratedPick {
                         area: parsed.area.trim().slice(0, 70),
                         food: parsed.food.trim().slice(0, 50),
                         recommendation: parsed.content.trim().slice(0, 1200),
+                        ...((isCuisine(parsed.cuisine) || parsed.cuisine === "Other") ? { cuisine: parsed.cuisine } : {}),
                     })
                     : parsed.content.trim().slice(0, 1200),
             };
@@ -70,6 +72,10 @@ export async function POST(request: Request) {
     try {
         const body = await request.json().catch(() => null);
         const userPrompt = typeof body?.prompt === "string" ? body.prompt.trim() : "";
+        if (body?.cuisine != null && !isCuisine(body.cuisine)) {
+            return NextResponse.json({ error: "Please choose a supported cuisine." }, { status: 400 });
+        }
+        const cuisine = isCuisine(body?.cuisine) ? body.cuisine : null;
 
         if (userPrompt.length < 3) {
             return NextResponse.json(
@@ -102,10 +108,12 @@ export async function POST(request: Request) {
 You are writing for NYC FOOD SPOTS, a student-friendly food discovery app.
 
 User request: ${userPrompt}
+${cuisine ? `Selected cuisine: ${cuisine}. Recommend a restaurant serving this cuisine. This choice takes priority over any conflicting cuisine in the user request.` : ""}
 
 Generate one NYC food pick. Return only valid JSON with:
 - "title": a clear title naming the restaurant or food pick, at most 5 words. Avoid slogans and promotional wording.
 - "area": one specific NYC neighborhood or area, at most 5 words
+- "cuisine": classify the recommended restaurant as one of ${[...cuisines, "Other"].join(", ")}.${cuisine ? ` Must be "${cuisine}".` : " Use Other for mixed or other cuisines."}
 - "food": the food type, at most 3 words, such as "Dumplings" or "Pizza"
 - "content": 1-2 short sentences, at most 30 words total. Say what to order and give one concrete reason it fits the request. Wrap exactly one dish or drink name (at most 4 words) in Markdown **bold**. No other emphasis, headings, lists, introduction, or extra tips. Do not repeat the title or metadata.
 
@@ -123,9 +131,10 @@ Do not mention that you are an AI. Do not invent prices or claim live wait times
                         title: { type: "string", maxLength: 70 },
                         area: { type: "string", maxLength: 70 },
                         food: { type: "string", maxLength: 50 },
+                        cuisine: { type: "string", enum: cuisine ? [cuisine] : [...cuisines, "Other"] },
                         content: { type: "string", maxLength: 240 },
                     },
-                    required: ["title", "area", "food", "content"],
+                    required: ["title", "area", "food", "cuisine", "content"],
                 },
             },
         });
@@ -136,6 +145,9 @@ Do not mention that you are an AI. Do not invent prices or claim live wait times
         }
 
         const pick = parseGeneratedPick(text);
+        if (cuisine && decodePickContent(pick.content).cuisine !== cuisine) {
+            throw new Error("The recommendation did not match the selected cuisine");
+        }
 
         const { data: generation, error: saveError } = await supabase
             .from("generations")

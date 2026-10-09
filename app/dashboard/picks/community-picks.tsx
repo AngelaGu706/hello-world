@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Bookmark, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import PickContent from "../pick-content";
 import BookmarkButton from "../bookmark-button";
-import { decodePickContent } from "@/utils/food-pick";
+import { cuisines, type Cuisine } from "@/utils/food-cuisines";
+import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 import { uniqueLatestPicks } from "@/utils/community-picks";
 import VoteButtons, { type PickRating } from "../vote-buttons";
 
@@ -34,6 +35,7 @@ export default function CommunityPicks() {
     const [error, setError] = useState("");
     const [requestVersion, setRequestVersion] = useState(0);
     const [search, setSearch] = useState("");
+    const [cuisine, setCuisine] = useState<Cuisine | "">("");
     const [sort, setSort] = useState<"latest" | "popular">("latest");
 
     useEffect(() => {
@@ -73,6 +75,7 @@ export default function CommunityPicks() {
     const query = search.trim().toLowerCase();
     const communityPicks = uniqueLatestPicks(picks);
     const visiblePicks = communityPicks
+        .filter((pick) => !cuisine || getPickCuisine(pick) === cuisine)
         .filter((pick) => {
             const { area, food, recommendation } = decodePickContent(pick.content);
             return `${pick.title} ${pick.prompt} ${area} ${food} ${recommendation}`.toLowerCase().includes(query);
@@ -118,13 +121,24 @@ export default function CommunityPicks() {
                         <button type="button" className="community-refresh" onClick={reload} disabled={loading} title="Refresh picks" aria-label="Refresh picks"><RefreshCw size={18} aria-hidden="true" className={loading ? "is-spinning" : ""} /></button>
                     </div>
                 </div>
+                <div className="cuisine-selector community-cuisines">
+                    <p className="cuisine-label">Explore by cuisine</p>
+                    <div className="cuisine-options" role="group" aria-label="Filter picks by cuisine">
+                        {(["", ...cuisines] as const).map((option) => (
+                            <button key={option || "all"} type="button" aria-pressed={cuisine === option}
+                                className={cuisine === option ? "is-selected" : ""} onClick={() => setCuisine(option)}>
+                                {option || "All cuisines"}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 <div className="community-list-label"><span>THE LATEST 20 PICKS</span><span>{!loading && !error ? `${visiblePicks.length} shown` : ""}</span></div>
 
                 <div className="community-feed" aria-live="polite" aria-busy={loading}>
                     {loading && <p role="status" className="community-state">Loading community picks...</p>}
                     {error && <div className="community-state"><p role="alert" className="community-error">{error}</p><button type="button" className="community-create" onClick={reload}>Try again</button></div>}
                     {!loading && !error && !picks.length && <div className="community-state"><h2>No picks yet.</h2><Link href="/dashboard" className="community-create">Generate a Pick<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
-                    {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => setSearch("")}>Clear search</button></div>}
+                    {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); }}>Clear filters</button></div>}
                     {!loading && !error && visiblePicks.map((pick) => (
                         <article key={pick.id} className="community-pick">
                             <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>

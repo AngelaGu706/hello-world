@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { decodePickContent } from "@/utils/food-pick";
 
 export default function PickContent({ content, prompt }: { content: string; prompt: string }) {
-    const { area, food, recommendation } = decodePickContent(content);
+    const { area, food, recommendation, cuisine } = decodePickContent(content);
     const [expanded, setExpanded] = useState(false);
     const [long, setLong] = useState(false);
     const recommendationRef = useRef<HTMLDivElement>(null);
@@ -29,8 +29,9 @@ export default function PickContent({ content, prompt }: { content: string; prom
 
     return (
         <div className="pick-content">
-            {(area || food) && <div className="pick-metadata">
+            {(area || food || cuisine) && <div className="pick-metadata">
                 {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
+                {cuisine && <span className="cuisine-badge">{cuisine}</span>}
                 {food && <span><Utensils size={14} aria-hidden="true" />{food}</span>}
             </div>}
             <div ref={recommendationRef} id={contentId} className={`community-recommendation${!expanded ? " is-collapsed" : ""}`}>
