@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, Sparkles, Utensils } from "lucide-react";
 import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
+import BookmarkButton from "./bookmark-button";
 
 type FoodPick = {
     id: string;
@@ -94,7 +95,7 @@ export default function FoodSpotsGenerator() {
                         </div>
                         <h2>{pick.title}</h2>
                         <PickContent content={pick.content} prompt={pick.prompt} />
-                        {!loading && <VoteButtons generationId={pick.id} />}
+                        {!loading && <><VoteButtons generationId={pick.id} /><BookmarkButton generationId={pick.id} /></>}
                     </article>
                 )}
             </div>

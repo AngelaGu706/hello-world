@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Bookmark, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import PickContent from "../pick-content";
+import BookmarkButton from "../bookmark-button";
 import { decodePickContent } from "@/utils/food-pick";
 import { uniqueLatestPicks } from "@/utils/community-picks";
 import VoteButtons, { type PickRating } from "../vote-buttons";
@@ -87,6 +88,7 @@ export default function CommunityPicks() {
             <nav className="community-nav" aria-label="Community navigation">
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
+                    <Link href="/dashboard/bucket-list" className="community-back"><Bookmark size={16} aria-hidden="true" />My Bucket List</Link>
                     <Link href="/dashboard" className="community-back"><ArrowLeft size={16} aria-hidden="true" />Dashboard</Link>
                     <Link href="/dashboard" className="community-create"><Plus size={16} aria-hidden="true" />Generate a Pick</Link>
                 </div>
@@ -129,6 +131,7 @@ export default function CommunityPicks() {
                             <h2>{pick.title}</h2>
                             <PickContent content={pick.content} prompt={pick.prompt} />
                             <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} />
+                            <BookmarkButton generationId={pick.id} />
                         </article>
                     ))}
                 </div>

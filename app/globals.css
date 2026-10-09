@@ -419,3 +419,45 @@ body {
   .community-search input { width: 100%; }
   .community-pick { padding: 20px; }
 }
+
+/* Personal food bucket list */
+.bucket-save { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #dce5dd; border-radius: 6px; background: #fff; color: #45644e; font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
+.bucket-save:hover:not(:disabled), .bucket-save.is-saved { background: #edf5ef; border-color: #bfd7c7; color: #28633e; }
+.bucket-save:disabled { cursor: default; opacity: .65; }
+.bookmark-control { margin-top: 16px; }
+.bucket-save:focus-visible { outline: 2px solid #438761; outline-offset: 4px; }
+.dashboard-bucket-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: #465c4c; min-height: 38px; }
+.bucket-heading { padding: 46px 0 28px; }
+.bucket-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: #50725a; margin-bottom: 14px; }
+.bucket-heading h1 { font-size: 38px; line-height: 1.2; font-weight: 700; margin-bottom: 14px; }
+.bucket-heading > p:last-child { color: #67756c; font-size: 16px; line-height: 1.6; }
+.bucket-stats { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 36px; padding: 24px; margin-bottom: 30px; background: #e9f0e9; border: 1px solid #d8e4db; border-radius: 10px; color: #34543f; }
+.bucket-stats > div { display: flex; align-items: center; gap: 10px; }
+.bucket-stats strong { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bucket-stats span { font-size: 13px; }
+.bucket-stats > p { margin-left: auto; font-size: 13px; color: #5b7263; }
+.bucket-status { display: inline-flex; align-items: center; gap: 6px; color: #50725a; font-size: 10px; font-weight: 600; }
+.bucket-status.is-visited { color: #367545; }
+.bucket-remove { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 6px; color: #829084; }
+.bucket-remove:hover:not(:disabled) { background: #f4f6f4; color: #46534a; }
+.bucket-visit { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 10px 14px; border: 1px solid #c6dbcd; border-radius: 6px; font-size: 12px; font-weight: 600; color: #28633e; background: #edf5ef; margin-top: 8px; }
+.bucket-visit.is-visited { background: #fff; color: #607369; border-color: #dce5dd; }
+.bucket-visit:hover:not(:disabled) { border-color: #438761; }
+.bucket-visit:disabled, .bucket-remove:disabled { opacity: .6; }
+.bucket-card.is-visited { border-color: #cdddce; }
+.bucket-empty { grid-column: 1 / -1; text-align: center; padding: 54px 20px; border: 1px dashed #c8d8cb; border-radius: 10px; background: #fff; }
+.bucket-empty > svg { display: block; margin: 0 auto 20px; color: #6c9477; }
+.bucket-empty h2 { font-size: 24px; line-height: 1.4; font-weight: 600; margin-bottom: 12px; }
+.bucket-empty p { max-width: 430px; margin: 0 auto 24px; font-size: 14px; line-height: 1.7; color: #67756c; }
+@media (max-width: 700px) {
+  .bucket-heading { padding-top: 32px; }
+  .bucket-heading h1 { font-size: 30px; }
+  .bucket-stats { gap: 16px 24px; padding: 20px; }
+  .bucket-stats > p { width: 100%; margin-left: 0; }
+  .bucket-toolbar .community-tabs { gap: 4px; }
+  .bucket-toolbar .community-tabs button { padding: 10px 11px; font-size: 13px; }
+}
+@media (max-width: 420px) {
+  .dashboard-bucket-link span { display: none; }
+  .dashboard-bucket-link { width: 32px; justify-content: center; }
+}

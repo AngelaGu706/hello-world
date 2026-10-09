@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, LogOut, UserRound, Utensils } from "lucide-react";
+import { ArrowRight, Bookmark, LogOut, UserRound, Utensils } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import FoodSpotsGenerator from "./food-spots-generator";
@@ -18,6 +18,9 @@ export default async function DashboardPage() {
                     <Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span>
                 </Link>
                 <div className="dashboard-account">
+                    <Link href="/dashboard/bucket-list" className="dashboard-bucket-link" title="My Bucket List" aria-label="My Bucket List">
+                        <Bookmark size={18} aria-hidden="true" /><span>My Bucket List</span>
+                    </Link>
                     <span className="dashboard-email" title={user.email}>{user.email}</span>
                     <Link href="/profile" className="dashboard-profile" title="Edit Profile" aria-label="Edit Profile">
                         <UserRound size={18} aria-hidden="true" /><span>Profile</span>
