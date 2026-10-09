@@ -42,8 +42,7 @@ button:disabled { cursor: not-allowed; }
 .login-card .community-wordmark { font-size: 15px; margin-bottom: 48px; }
 .login-label { font-size: 10px; color: var(--accent); font-weight: 600; letter-spacing: 1.3px; margin-bottom: 14px; }
 .login-card h1 { font-size: clamp(32px, 3.5vw, 42px); font-weight: 650; line-height: 1.13; letter-spacing: -1.7px; color: #243a2d; }
-.login-description { font-size: 14px; line-height: 1.8; color: #68746b; margin: 20px 0 26px; }
-.login-features { display: grid; gap: 16px; margin-bottom: 32px; color: #4c6152; font-size: 13px; }
+.login-features { display: grid; gap: 16px; margin: 28px 0 32px; color: #4c6152; font-size: 13px; }
 .login-features li { display: flex; align-items: center; gap: 12px; }
 .login-features svg { color: #5f8066; flex-shrink: 0; }
 .google-signin { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; width: 100%; border: 1px solid #244f3b; border-radius: 12px; background: #244f3b; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
