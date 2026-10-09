@@ -36,20 +36,20 @@ export default async function DashboardPage() {
             <div className="dashboard-banner">
                 <Image src="/dashboard-pizza-hd.webp" alt="" fill sizes="100vw" quality={90} preload className="dashboard-banner-image" />
                 <div className="dashboard-hero-copy">
-                    <p>GOOD FOOD. A LITTLE ADVENTURE.</p>
-                    <h2>Your next favorite bite<br />starts here.</h2>
+                    <p>GOOD FOOD. ALL OVER NYC.</p>
+                    <h2>Find your next<br />go-to spot.</h2>
                 </div>
             </div>
 
             <div className="dashboard-content">
                 <header className="dashboard-heading">
-                    <p className="section-eyebrow">LET YOUR CRAVINGS LEAD</p>
-                    <h1>What sounds good today?</h1>
-                    <p>Choose a cuisine or tell us your neighborhood, budget, and mood.</p>
+                    <p className="section-eyebrow">LET’S EAT</p>
+                    <h1>What are you craving?</h1>
+                    <p>Pick a cuisine or tell us what sounds good. We’ll find a spot for you.</p>
                 </header>
                 <FoodSpotsGenerator />
                 <Link href="/dashboard/picks" className="dashboard-community-link">
-                    <div><h2>Explore Community Picks</h2><p>See what’s catching everyone’s eye around NYC.</p></div>
+                    <div><h2>See what others are finding</h2><p>Browse food spots shared by the community.</p></div>
                     <ArrowRight size={20} aria-hidden="true" />
                 </Link>
             </div>

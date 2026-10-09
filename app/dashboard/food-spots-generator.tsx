@@ -18,10 +18,10 @@ type FoodPick = {
 };
 
 const quickPrompts = [
-    { label: "Near Columbia", prompt: "cheap late-night food near Columbia", icon: Moon },
-    { label: "Brunch under $30", prompt: "cozy brunch in West Village under $30", icon: Utensils },
-    { label: "After class", prompt: "quick dumplings after class", icon: GraduationCap },
-    { label: "Queens weekend", prompt: "weekend adventure food in Queens", icon: MapPin },
+    { label: "Late-night eats", prompt: "Budget-friendly late-night food near Columbia", icon: Moon },
+    { label: "Brunch under $30", prompt: "A cozy brunch spot in the West Village under $30", icon: Utensils },
+    { label: "After-class bites", prompt: "Somewhere to grab dumplings after class", icon: GraduationCap },
+    { label: "Explore Queens", prompt: "Somewhere new to eat in Queens this weekend", icon: MapPin },
 ];
 
 export default function FoodSpotsGenerator() {
@@ -49,13 +49,13 @@ export default function FoodSpotsGenerator() {
                 cache: "no-store",
             });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || "Generation failed.");
+            if (!response.ok) throw new Error(data.error || "We couldn’t find a spot right now. Please try again.");
             if (
                 typeof data.id !== "string" || !data.id ||
                 typeof data.prompt !== "string" ||
                 typeof data.title !== "string" || !data.title.trim() ||
                 typeof data.content !== "string" || !data.content.trim()
-            ) throw new Error("No saved pick returned.");
+            ) throw new Error("Your pick didn’t come through. Please try again.");
             setPick(data);
             requestAnimationFrame(() => resultRef.current?.focus({ preventScroll: true }));
         } catch (error) {
@@ -67,20 +67,20 @@ export default function FoodSpotsGenerator() {
     }
 
     return (
-        <section className="pick-generator" aria-label="Generate a food pick">
+        <section className="pick-generator" aria-label="Find a food spot">
             <form onSubmit={generate}>
                 <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setError(""); }}
-                    label="What cuisine are you craving?" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
-                <label htmlFor="food-prompt" className="generator-prompt-label">Make it your kind of meal</label>
-                <p id="prompt-help" className="generator-hint">Add a neighborhood, dish, or budget — or start with an idea below.</p>
+                    label="Pick a cuisine" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
+                <label htmlFor="food-prompt" className="generator-prompt-label">Tell us what you’re looking for</label>
+                <p id="prompt-help" className="generator-hint">Got a dish, neighborhood, or budget in mind? Add it here, or try an idea below.</p>
                 <textarea id="food-prompt" value={prompt}
                     onChange={(event) => { setPrompt(event.target.value); setError(""); }}
                     aria-describedby="prompt-help prompt-count" aria-invalid={!!error}
-                    placeholder={cuisine ? `Any preferences for ${cuisine} food? Neighborhood, budget, or dish...` : "cheap late-night food near Columbia"}
+                    placeholder={cuisine ? `e.g. ${cuisine} food in the East Village, under $20` : "e.g. Late-night eats near Columbia, under $15"}
                     rows={2} maxLength={200} minLength={3} required={!cuisine}
                     disabled={loading} className="generator-input" />
                 <div className="generator-options">
-                    <div className="generator-prompts" role="group" aria-label="Quick food prompts">
+                    <div className="generator-prompts" role="group" aria-label="Ideas to get you started">
                         {quickPrompts.map(({ label, prompt: quickPrompt, icon: Icon }) => (
                             <button key={quickPrompt} type="button" disabled={loading}
                                 aria-pressed={prompt === quickPrompt}
@@ -94,9 +94,9 @@ export default function FoodSpotsGenerator() {
                 </div>
                 <button type="submit" disabled={loading || effectivePrompt.length < 3} className="generator-submit">
                     {loading ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
-                    {loading ? "Finding your pick…" : "Generate a Pick"}
+                    {loading ? "Finding you a spot…" : "Find me a spot"}
                 </button>
-                {loading && <p className="generator-loading" role="status">Looking for a good match. This may take a moment.</p>}
+                {loading && <p className="generator-loading" role="status">Checking out a few spots for you. Hang tight.</p>}
                 {error && <p role="alert" className="community-error">{error}</p>}
             </form>
 
@@ -109,7 +109,7 @@ export default function FoodSpotsGenerator() {
                         </div>
                         <h2 id="generated-pick-title">{pick.title}</h2>
                         <PickContent content={pick.content} prompt={pick.prompt} />
-                        <p className="generator-result-note">Save this to your bucket list to keep it handy. Check current hours and prices before heading out.</p>
+                        <p className="generator-result-note">Want to try it? Save it to your bucket list. Check the latest hours and prices before you go.</p>
                         {!loading && <><VoteButtons generationId={pick.id} /><BookmarkButton generationId={pick.id} /></>}
                     </article>
                 )}
