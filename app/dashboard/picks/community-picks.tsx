@@ -122,7 +122,7 @@ export default function CommunityPicks() {
                 <div className="community-cover-content">
                     <p className="community-eyebrow">FROM THE COMMUNITY</p>
                     <h1>Community Picks</h1>
-                    <p className="community-cover-subtitle">Good food. New neighborhoods. More spots to try.</p>
+                    <p className="community-cover-subtitle">More spots to try.</p>
                 </div>
             </header>
 
