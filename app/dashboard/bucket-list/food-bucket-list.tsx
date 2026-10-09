@@ -61,7 +61,7 @@ export default function FoodBucketList() {
             <header className="bucket-heading">
                 <p className="bucket-eyebrow"><Bookmark size={16} aria-hidden="true" />YOUR NYC FOOD LIST</p>
                 <h1>Your Food Bucket List</h1>
-                <p>Save the spots you want to try. Check them off as you go.</p>
+                <p>Save now. Try later.</p>
             </header>
             {!loading && !error && <div className="bucket-stats" aria-label="Your bucket list progress">
                 <div className="bucket-stat-wanted"><Bookmark size={20} aria-hidden="true" /><strong>{wantToGo}</strong><span>Want to go</span></div>
