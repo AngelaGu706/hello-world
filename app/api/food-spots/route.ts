@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { decodePickContent, encodePickContent } from "@/utils/food-pick";
 import { cuisines, isCuisine } from "@/utils/food-cuisines";
+import { loadGenerationRatings } from "@/utils/supabase/generation-ratings";
 
 type GeneratedPick = {
     title: string;
@@ -229,51 +230,13 @@ export async function GET() {
             return NextResponse.json({ generations: [] });
         }
 
-        const { data: ratings, error: voteError } = await supabase
-            .rpc("get_generation_ratings", {
-                generation_ids: generations.map((item) => item.id),
-            });
-
-        if (voteError?.code === "PGRST202" || voteError?.code === "42883") {
-            const { data: ownVotes, error: ownVoteError } = await supabase
-                .from("votes")
-                .select("generation_id, vote")
-                .eq("user_id", user.id)
-                .in("generation_id", generations.map((item) => item.id));
-
-            if (ownVoteError) {
-                return NextResponse.json({ error: "Could not load ratings." }, { status: 500 });
-            }
-
-            return NextResponse.json({
-                generations: generations.map((item) => ({
-                    ...item,
-                    myVote: ownVotes?.find((vote) => vote.generation_id === item.id)?.vote ?? null,
-                    upCount: null,
-                    downCount: null,
-                })),
-            });
-        }
-
-        if (voteError) {
-            console.error("Loading ratings failed:", voteError);
-            return NextResponse.json(
-                { error: "Could not load ratings." },
-                { status: 500 }
-            );
-        }
-
+        const { ratings, ratingsError } = await loadGenerationRatings(
+            supabase, generations.map((item) => item.id), user.id,
+        );
         return NextResponse.json({
-            generations: generations.map((item) => {
-                const rating = ratings?.find((rating: { generation_id: string }) => rating.generation_id === item.id);
-                return {
-                    ...item,
-                    myVote: rating?.my_vote ?? null,
-                    upCount: Number(rating?.up_count ?? 0),
-                    downCount: Number(rating?.down_count ?? 0),
-                };
-            }),
-        });
+            generations: generations.map((item) => ({ ...item, ...ratings.get(item.id)! })),
+            ratingsError,
+        }, { headers: { "Cache-Control": "private, no-store" } });
     } catch (error) {
         console.error("Loading feed failed:", error);
         return NextResponse.json(
