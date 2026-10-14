@@ -96,7 +96,7 @@ export default function FoodSpotsGenerator() {
                     {loading ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
                     {loading ? "Finding a spot…" : "Find a spot"}
                 </button>
-                {loading && <p className="generator-loading" role="status">This may take a moment.</p>}
+                {loading && <p className="generator-loading" role="status">Finding something good for you...</p>}
                 {error && <p role="alert" className="community-error">{error}</p>}
             </form>
 
