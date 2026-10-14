@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { decodePickContent, encodePickContent } from "@/utils/food-pick";
 import { cuisines, isCuisine } from "@/utils/food-cuisines";
 import { loadGenerationRatings } from "@/utils/supabase/generation-ratings";
+import { recentRestaurantNames, shouldTryDifferentRestaurant, varietyInstructions } from "@/utils/recommendation-variety";
 
 type GeneratedPick = {
     title: string;
@@ -92,6 +93,18 @@ export async function POST(request: Request) {
             );
         }
 
+        // Limit history to this user's recent picks. History is optional: a read
+        // failure must not stop an otherwise valid recommendation.
+        let recentNames: string[] = [];
+        try {
+            const { data: recent, error } = await supabase.from("generations")
+                .select("title").eq("user_id", user.id)
+                .order("created_at", { ascending: false }).limit(20);
+            if (!error) recentNames = recentRestaurantNames(recent ?? []);
+        } catch {
+            // Continue without history if it is temporarily unavailable.
+        }
+
         const ai = new GoogleGenAI({
             apiKey,
             httpOptions: {
@@ -110,6 +123,7 @@ You are writing for NYC FOOD SPOTS, a student-friendly food discovery app.
 
 User request: ${userPrompt}
 ${cuisine ? `Selected cuisine: ${cuisine}. Recommend a restaurant serving this cuisine. This choice takes priority over any conflicting cuisine in the user request.` : ""}
+${varietyInstructions(recentNames)}
 
 Generate one NYC food pick. Return only valid JSON with:
 - "title": a clear title naming the restaurant or food pick, at most 5 words. Avoid slogans and promotional wording.
@@ -121,33 +135,46 @@ Generate one NYC food pick. Return only valid JSON with:
 Do not mention that you are an AI. Do not invent prices or claim live wait times, live hours, or guaranteed availability.
 `;
 
-        const response = await ai.models.generateContent({
-            model,
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseJsonSchema: {
-                    type: "object",
-                    properties: {
-                        title: { type: "string", maxLength: 70 },
-                        area: { type: "string", maxLength: 70 },
-                        food: { type: "string", maxLength: 50 },
-                        cuisine: { type: "string", enum: cuisine ? [cuisine] : [...cuisines, "Other"] },
-                        content: { type: "string", maxLength: 240 },
+        async function generatePick(contents: string) {
+            const response = await ai.models.generateContent({
+                model,
+                contents,
+                config: {
+                    responseMimeType: "application/json",
+                    responseJsonSchema: {
+                        type: "object",
+                        properties: {
+                            title: { type: "string", maxLength: 70 },
+                            area: { type: "string", maxLength: 70 },
+                            food: { type: "string", maxLength: 50 },
+                            cuisine: { type: "string", enum: cuisine ? [cuisine] : [...cuisines, "Other"] },
+                            content: { type: "string", maxLength: 240 },
+                        },
+                        required: ["title", "area", "food", "cuisine", "content"],
                     },
-                    required: ["title", "area", "food", "cuisine", "content"],
                 },
-            },
-        });
-        const text = response.text;
+            });
+            const text = response.text;
 
-        if (!text?.trim()) {
-            throw new Error("Gemini returned no text");
+            if (!text?.trim()) {
+                throw new Error("Gemini returned no text");
+            }
+
+            const pick = parseGeneratedPick(text);
+            if (cuisine && decodePickContent(pick.content).cuisine !== cuisine) {
+                throw new Error("The recommendation did not match the selected cuisine");
+            }
+            return pick;
         }
 
-        const pick = parseGeneratedPick(text);
-        if (cuisine && decodePickContent(pick.content).cuisine !== cuisine) {
-            throw new Error("The recommendation did not match the selected cuisine");
+        let pick = await generatePick(prompt);
+        if (shouldTryDifferentRestaurant(pick.title, recentNames, userPrompt)) {
+            try {
+                // At most one extra generation; save only the final pick.
+                pick = await generatePick(`${prompt}\nThe previous candidate was ${JSON.stringify(pick.title)}. Choose a different restaurant that meets the same request.`);
+            } catch {
+                // Keep the valid first pick if finding an alternative fails.
+            }
         }
 
         const { data: generation, error: saveError } = await supabase

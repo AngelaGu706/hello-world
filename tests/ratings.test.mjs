@@ -1,38 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import path from 'node:path';
-import vm from 'node:vm';
-import ts from 'typescript';
-import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
-const requireDependency = createRequire(import.meta.url);
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const root = path.resolve(__dirname, '..');
+import { load } from './load-source.mjs';
 const ids = ['11111111-1111-4111-8111-111111111111', '22222222-2222-4222-8222-222222222222'];
-
-// Compile the actual handlers and helpers, replacing only the database client.
-function load(relative, client) {
-    const cache = new Map();
-    function read(filename) {
-        if (cache.has(filename)) return cache.get(filename).exports;
-        const result = { exports: {} };
-        cache.set(filename, result);
-        const source = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
-            compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-        }).outputText;
-        const localRequire = name => {
-            if (name === '@/utils/supabase/server') return { createClient: async () => client };
-            if (name.startsWith('@/')) return read(path.join(root, name.slice(2)) + '.ts');
-            if (name.startsWith('.')) return read(path.resolve(path.dirname(filename), name) + '.ts');
-            return requireDependency(name);
-        };
-        vm.runInThisContext(`(function(require,module,exports){${source}\n})`, { filename })(localRequire, result, result.exports);
-        return result.exports;
-    }
-    return read(path.join(root, relative));
-}
 
 function database(options = {}) {
     const generations = ids.map((id, index) => ({ id, title: 'Buvette', prompt: 'Brunch', content: 'Same recommendation', created_at: `2026-10-${14 - index}T12:00:00Z` }));
