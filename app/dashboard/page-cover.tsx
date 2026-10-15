@@ -11,7 +11,7 @@ type Props = {
 
 export default function PageCover({ image, eyebrow, title, subtitle, heading: Heading = "h1", quality = 75 }: Props) {
     return <header className="food-cover">
-        <Image src={image} alt="" fill sizes="(max-width: 1160px) 100vw, 1096px" quality={quality} preload className="food-cover-image" />
+        <Image src={image} alt="" fill sizes="100vw" quality={quality} preload className="food-cover-image" />
         <div className="food-cover-content">
             <p className="food-cover-eyebrow">{eyebrow}</p>
             <Heading>{title}</Heading>

@@ -459,10 +459,10 @@ button:disabled { cursor: not-allowed; }
 
 /* Community browsing */
 .food-page .community-nav { max-width: 1160px; }
-.food-cover { position: relative; isolation: isolate; display: flex; align-items: center; flex-shrink: 0; width: calc(100% - 64px); max-width: 1096px; min-height: 248px; margin: 8px auto 0; border-radius: 24px; overflow: hidden; background: #344a3b; color: #fff; }
+.food-cover { position: relative; isolation: isolate; display: flex; align-items: center; flex-shrink: 0; width: 100%; min-height: 248px; margin: 0; overflow: hidden; background: #344a3b; color: #fff; }
 .food-cover::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #14291edb, #14291e55 65%, #14291e22); }
 .food-cover-image { object-fit: cover; object-position: center 65%; z-index: -2; }
-.food-cover-content { padding: 36px; width: 100%; }
+.food-cover-content { max-width: 1160px; margin: 0 auto; padding: 36px 32px; width: 100%; }
 .food-cover-eyebrow { letter-spacing: 1.7px; font-size: 10px; font-weight: 600; margin-bottom: 12px; color: #e1eadf; }
 .food-cover h1, .food-cover h2 { max-width: 520px; font-size: 42px; font-weight: 700; line-height: 1.15; letter-spacing: -1.2px; }
 .food-cover-subtitle { font-size: 14px; line-height: 1.6; margin-top: 10px; color: #edf0ec; }
@@ -528,8 +528,9 @@ button:disabled { cursor: not-allowed; }
   .community-feed-card:hover { border-color: #cbd9c7; box-shadow: 0 8px 24px #243e2c09; }
 }
 @media (max-width: 700px) {
-  .food-cover { width: calc(100% - 40px); margin: 0 auto; min-height: 216px; border-radius: 18px; }
-  .food-cover-content { padding: 28px 24px; }
+  .food-cover { min-height: 216px; }
+  .food-cover-content { padding: 28px 20px; }
+  .bucket-page .food-cover-image { object-position: 70% center; }
   .food-cover h1, .food-cover h2 { font-size: 34px; }
   .community-explore .community-overview { gap: 8px; font-size: 11px; }
   .community-explore .community-tools { flex-wrap: wrap; }
@@ -569,7 +570,7 @@ button:disabled { cursor: not-allowed; }
 @media (max-width: 420px) {
   .food-page .community-nav, .food-page .dashboard-nav { padding: 16px; }
   .dashboard-page .dashboard-nav .community-wordmark { font-size: 12px; }
-  .food-cover { width: calc(100% - 32px); }
+  .food-cover-content { padding-left: 16px; padding-right: 16px; }
 }
 @media (max-width: 540px) {
   .community-explore .community-tools { display: grid; grid-template-columns: minmax(0, 1fr) 44px; width: 100%; }

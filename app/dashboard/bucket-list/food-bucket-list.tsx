@@ -64,7 +64,7 @@ export default function FoodBucketList() {
                 <Link href="/dashboard/picks" className="community-create">Browse picks<ArrowUpRight size={16} aria-hidden="true" /></Link>
             </div>
         </nav>
-        <PageCover image="/community-street-food.webp" eyebrow="YOUR NYC FOOD LIST" title="Your List" subtitle="Save now. Try later." />
+        <PageCover image="/your-list-cafe.webp" eyebrow="YOUR NYC FOOD LIST" title="Your List" subtitle="Save now. Try later." />
         <div className="community-content">
             {!loading && !error && <p className="bucket-stats" aria-label={`${wantToGo} saved, ${visited} tried`}>
                 <span>{wantToGo} saved</span><span aria-hidden="true">·</span><span>{visited} tried</span>
