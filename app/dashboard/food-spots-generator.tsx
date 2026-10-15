@@ -72,11 +72,10 @@ export default function FoodSpotsGenerator() {
                 <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setError(""); }}
                     label="Cuisine" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
                 <label htmlFor="food-prompt" className="generator-prompt-label">Any preferences?</label>
-                <p id="prompt-help" className="generator-hint">Add a dish, area, or budget.</p>
                 <textarea id="food-prompt" value={prompt}
                     onChange={(event) => { setPrompt(event.target.value); setError(""); }}
-                    aria-describedby="prompt-help prompt-count" aria-invalid={!!error}
-                    placeholder={cuisine ? `e.g. ${cuisine} food under $20` : "e.g. Late-night food near Columbia"}
+                    aria-describedby="prompt-count" aria-invalid={!!error}
+                    placeholder="Dish, neighborhood, budget…"
                     rows={2} maxLength={200} minLength={3} required={!cuisine}
                     disabled={loading} className="generator-input" />
                 <div className="generator-options">
