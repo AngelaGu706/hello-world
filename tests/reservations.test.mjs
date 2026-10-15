@@ -8,11 +8,14 @@ const pick = (title, area = 'West Village') => ({ title, content: JSON.stringify
 test('verified restaurant and neighborhood open the correct booking platform', () => {
     const buvette = getReservationLink(pick('Buvette'));
     assert.equal(buvette.label, 'Check reservations');
+    assert.equal(buvette.verified, true);
     assert.equal(new URL(buvette.href).pathname, '/cities/new-york-ny/venues/buvette-nyc');
     const joseph = getReservationLink(pick('Joseph Leonard'));
+    assert.equal(joseph.verified, true);
     assert.equal(new URL(joseph.href).hostname, 'www.opentable.com');
     assert.equal(new URL(joseph.href).searchParams.get('restref'), '226681');
     const freda = getReservationLink(pick('Jack’s Wife Freda'));
+    assert.equal(freda.verified, true);
     assert.match(freda.href, /jacks-wife-freda-west-village$/);
 });
 
@@ -21,12 +24,14 @@ test('case, apostrophes and legacy titles are recognized without fuzzy branch ma
     assert.equal(getReservationLink(pick("Jack's Wife Freda")).label, 'Check reservations');
     for (const candidate of [pick('Buvette London'), pick('Buvette', 'London'), pick("Jack's Wife Freda", 'Soho'), pick('Buvette', '')]) {
         assert.equal(getReservationLink(candidate).label, 'Find reservation options');
+        assert.equal(getReservationLink(candidate).verified, false);
     }
 });
 
 test('unknown restaurant search includes the title, neighborhood and NYC context', () => {
     const link = getReservationLink(pick('Koronet Pizza', 'Morningside Heights'));
     assert.equal(link.label, 'Find reservation options');
+    assert.equal(link.verified, false);
     const url = new URL(link.href);
     assert.equal(url.origin, 'https://www.google.com');
     assert.equal(url.searchParams.get('q'), 'Koronet Pizza Morningside Heights NYC restaurant reservations');

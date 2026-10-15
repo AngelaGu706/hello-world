@@ -36,12 +36,12 @@ export function getReservationLink(pick: { title: string; content: string }) {
     const { area } = decodePickContent(pick.content);
     const name = normalize(pick.title.match(/\bat\s+(.+)$/i)?.[1] ?? pick.title);
     const venue = venues.find(venue => venue.names.includes(name) && venue.area === normalize(area));
-    if (venue) return { href: venue.url, label: "Check reservations", destination: venue.provider };
+    if (venue) return { href: venue.url, label: "Check reservations", destination: venue.provider, verified: true };
 
     // Keep arbitrary/AI-generated titles inside an encoded query, never a URL.
     const query = [pick.title.trim(), area.trim(), "NYC restaurant reservations"].filter(Boolean).join(" ");
     return {
         href: `https://www.google.com/search?${new URLSearchParams({ q: query })}`,
-        label: "Find reservation options", destination: "Web search",
+        label: "Find reservation options", destination: "Web search", verified: false,
     };
 }

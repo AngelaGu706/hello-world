@@ -12,6 +12,7 @@ import CuisineSelector from "../cuisine-selector";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 import { uniqueLatestPicks } from "@/utils/community-picks";
 import VoteButtons, { type PickRating } from "../vote-buttons";
+import { getReservationLink } from "@/utils/reservations";
 
 type FoodPick = PickRating & {
     id: string;
@@ -22,6 +23,16 @@ type FoodPick = PickRating & {
 };
 
 const PICKS_PER_PAGE = 6;
+
+function CommunityReservationLink({ pick }: { pick: FoodPick }) {
+    const reservation = getReservationLink(pick);
+    if (!reservation.verified) return null;
+    return <a href={reservation.href} className="community-reservation-link" target="_blank" rel="noopener noreferrer"
+        aria-label={`Check reservations for ${pick.title} (opens in a new tab)`}
+        title={`${reservation.destination} · opens in a new tab`}>
+        Check reservations<ArrowUpRight size={14} aria-hidden="true" />
+    </a>;
+}
 
 function PickTime({ value }: { value: string }) {
     const date = new Date(value);
@@ -155,6 +166,7 @@ export default function CommunityPicks() {
                             <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>
                             <h2>{pick.title}</h2>
                             <PickContent content={pick.content} prompt={pick.prompt} />
+                            <CommunityReservationLink pick={pick} />
                             <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} trailingAction={<BookmarkButton generationId={pick.id} />} />
                         </article>
                     ))}
