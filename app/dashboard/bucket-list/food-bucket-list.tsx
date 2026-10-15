@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowUpRight, Bookmark, Check, CheckCircle2, Compass, Loader
 import PickContent from "../pick-content";
 import { useBucketList, type BucketItem } from "../bucket-list-provider";
 import { decodePickContent } from "@/utils/food-pick";
+import { getReservationLink } from "@/utils/reservations";
 
 function BucketCard({ item }: { item: BucketItem }) {
     const { busyIds, change } = useBucketList();
@@ -18,6 +19,7 @@ function BucketCard({ item }: { item: BucketItem }) {
         catch (error) { setError(error instanceof Error ? error.message : "Please try again."); }
     }
     if (!item.generation) return null;
+    const reservation = getReservationLink(item.generation);
     return <article className={`community-pick bucket-card ${visited ? "is-visited" : ""}`}>
         <div className="community-pick-top">
             <span className={`bucket-status ${visited ? "is-visited" : ""}`}>
@@ -27,10 +29,17 @@ function BucketCard({ item }: { item: BucketItem }) {
         </div>
         <h2>{item.generation.title}</h2>
         <PickContent content={item.generation.content} prompt={item.generation.prompt} variant="list" />
-        <button type="button" className={`bucket-visit ${visited ? "is-visited" : ""}`} disabled={busy} onClick={() => update("PATCH")}>
-            {busy ? <LoaderCircle size={16} className="is-spinning" aria-hidden="true" /> : visited ? <Compass size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
-            {busy ? "Saving..." : visited ? "Move to Saved" : "Mark as tried"}
-        </button>
+        <div className="bucket-card-actions">
+            {!visited && <a className="bucket-reservation-link" href={reservation.href} target="_blank" rel="noopener noreferrer"
+                aria-label={`${reservation.label} for ${item.generation.title} (opens in a new tab)`}
+                title={`${reservation.destination} · opens in a new tab`}>
+                {reservation.label}<ArrowUpRight size={15} aria-hidden="true" />
+            </a>}
+            <button type="button" className={`bucket-visit ${visited ? "is-visited" : ""}`} disabled={busy} onClick={() => update("PATCH")}>
+                {busy ? <LoaderCircle size={16} className="is-spinning" aria-hidden="true" /> : visited ? <Compass size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
+                {busy ? "Saving..." : visited ? "Move to Saved" : "Mark as tried"}
+            </button>
+        </div>
         {error && <p role="alert" className="community-error">{error}</p>}
     </article>;
 }

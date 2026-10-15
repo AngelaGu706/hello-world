@@ -369,7 +369,11 @@ button:disabled { cursor: not-allowed; }
 .bucket-status.is-visited { background: #eaf4ed; color: #367545; }
 .bucket-remove { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: #829084; }
 .bucket-remove:hover:not(:disabled) { background: #f4f6f4; color: #46534a; }
-.bucket-visit { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 10px 14px; border: 1px solid #c6dbcd; border-radius: 10px; font-size: 12px; font-weight: 600; color: #28633e; background: #edf5ef; margin-top: 8px; }
+.bucket-card-actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; margin-top: 8px; }
+.bucket-reservation-link { display: inline-flex; flex: 1 1 180px; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 10px 12px; border: 1px solid #dce5dd; border-radius: 10px; color: #345c42; font-size: 12px; font-weight: 600; }
+.bucket-reservation-link svg { flex-shrink: 0; }
+.bucket-reservation-link:hover { background: #f3f7f3; border-color: #bfd7c7; }
+.bucket-visit { display: inline-flex; flex: 1 1 130px; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 10px 14px; border: 1px solid #c6dbcd; border-radius: 10px; font-size: 12px; font-weight: 600; color: #28633e; background: #edf5ef; }
 .bucket-visit.is-visited { background: #fff; color: #607369; border-color: #dce5dd; }
 .bucket-visit:hover:not(:disabled) { border-color: #438761; }
 .bucket-visit:disabled, .bucket-remove:disabled { opacity: .6; }
