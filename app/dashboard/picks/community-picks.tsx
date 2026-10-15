@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Bookmark, CalendarDays, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import PickContent from "../pick-content";
 import BookmarkButton from "../bookmark-button";
 import type { Cuisine } from "@/utils/food-cuisines";
@@ -29,7 +29,7 @@ function CommunityReservationLink({ pick }: { pick: FoodPick }) {
     return <a href={reservation.href} className="community-reservation-link" target="_blank" rel="noopener noreferrer"
         aria-label={`${reservation.label} for ${pick.title} (opens in a new tab)`}
         title={`${reservation.destination} · opens in a new tab`}>
-        {reservation.label}<ArrowUpRight size={14} aria-hidden="true" />
+        <span><CalendarDays size={16} aria-hidden="true" />{reservation.label}</span><ArrowUpRight size={16} aria-hidden="true" />
     </a>;
 }
 
@@ -161,12 +161,14 @@ export default function CommunityPicks() {
                     {!loading && !error && !picks.length && <div className="community-state"><h2>No picks yet.</h2><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
                     {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); setPage(1); }}>Clear filters</button></div>}
                     {!loading && !error && pagePicks.map((pick) => (
-                        <article key={pick.id} className="community-pick">
+                        <article key={pick.id} className="community-pick community-feed-card">
                             <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>
-                            <h2>{pick.title}</h2>
-                            <PickContent content={pick.content} prompt={pick.prompt} />
-                            <CommunityReservationLink pick={pick} />
-                            <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} trailingAction={<BookmarkButton generationId={pick.id} />} />
+                            <div className="community-title-row"><h2>{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
+                            <PickContent content={pick.content} prompt={pick.prompt} variant="community" />
+                            <div className="community-card-footer">
+                                <CommunityReservationLink pick={pick} />
+                                <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} />
+                            </div>
                         </article>
                     ))}
                 </div>

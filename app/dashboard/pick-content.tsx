@@ -5,14 +5,16 @@ import { ChevronDown, MapPin, Utensils } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 
-export default function PickContent({ content, prompt, variant = "default" }: { content: string; prompt: string; variant?: "default" | "list" }) {
+export default function PickContent({ content, prompt, variant = "default" }: { content: string; prompt: string; variant?: "default" | "list" | "community" }) {
     const { area, food, recommendation, cuisine } = decodePickContent(content);
     const [expanded, setExpanded] = useState(false);
     const [long, setLong] = useState(false);
     const recommendationRef = useRef<HTMLDivElement>(null);
     const contentId = useId();
     const isList = variant === "list";
+    const isCommunity = variant === "community";
     const listCuisine = cuisine ?? getPickCuisine({ title: "", content });
+    const displayCuisine = isCommunity && listCuisine === "Other" ? null : listCuisine;
     const dish = recommendation.match(/\*\*([^*\n]+)\*\*/)?.[1]?.trim() || food;
 
     useEffect(() => {
@@ -32,12 +34,12 @@ export default function PickContent({ content, prompt, variant = "default" }: { 
 
     return (
         <div className="pick-content">
-            {isList ? <>
-                {(area || listCuisine) && <div className="pick-metadata">
-                    {listCuisine && <span className="cuisine-badge">{listCuisine}</span>}
+            {isList || isCommunity ? <>
+                {(area || displayCuisine) && <div className="pick-metadata">
+                    {displayCuisine && <span className="cuisine-badge">{displayCuisine}</span>}
                     {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
                 </div>}
-                {dish && <p className="bucket-dish"><Utensils size={16} aria-hidden="true" /><span><span className="bucket-dish-label">Try</span><strong>{dish}</strong></span></p>}
+                {dish && <p className={isCommunity ? "community-dish" : "bucket-dish"}><Utensils size={16} aria-hidden="true" /><span><span className={isCommunity ? "community-dish-label" : "bucket-dish-label"}>{isCommunity ? "ORDER THIS" : "Try"}</span><strong>{dish}</strong></span></p>}
             </> : (area || food || cuisine) && <div className="pick-metadata">
                 {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
                 {cuisine && <span className="cuisine-badge">{cuisine}</span>}
