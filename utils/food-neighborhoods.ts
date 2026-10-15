@@ -1,7 +1,7 @@
 export const neighborhoodGroups = [
-    { label: "Manhattan", neighborhoods: ["Morningside Heights", "Harlem", "Upper West Side", "Upper East Side", "Midtown", "Koreatown", "Chelsea", "West Village", "East Village", "Lower East Side", "Chinatown"] },
-    { label: "Brooklyn", neighborhoods: ["Williamsburg", "Greenpoint", "Park Slope"] },
-    { label: "Queens", neighborhoods: ["Astoria", "Long Island City", "Jackson Heights", "Flushing"] },
+    { label: "Manhattan", neighborhoods: ["Morningside Heights", "Upper West Side", "Midtown", "West Village", "Chinatown"] },
+    { label: "Brooklyn", neighborhoods: ["Williamsburg"] },
+    { label: "Queens", neighborhoods: ["Astoria", "Flushing"] },
 ] as const;
 
 export type Neighborhood = (typeof neighborhoodGroups)[number]["neighborhoods"][number];
