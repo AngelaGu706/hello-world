@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { load } from './load-source.mjs';
 
 const sample = (title, cuisine = 'French') => ({ title, cuisine, area: 'West Village', food: 'Brunch', content: 'Try the **eggs** for a relaxed brunch.' });
-const request = (prompt = 'A cozy brunch spot in the West Village under $30', cuisine = 'French') => new Request('http://localhost/api/food-spots', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, cuisine }),
+const request = (prompt = 'A cozy brunch spot in the West Village under $30', cuisine = 'French', neighborhood) => new Request('http://localhost/api/food-spots', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, cuisine, neighborhood }),
 });
 
 function fixture({ history = [{ title: 'Buvette' }], historyFailure, candidates = [sample('Cafe Cluny')] } = {}) {
@@ -118,4 +118,44 @@ test('recent names normalize legacy titles and stay bounded without changing fee
     assert.equal(shouldTryDifferentRestaurant('Buvette', names, 'A cozy brunch'), true);
     assert.equal(shouldTryDifferentRestaurant('Buvette', names, 'Tell me about Buvette'), false);
     assert.equal(shouldTryDifferentRestaurant('Another Cafe', names, 'A cozy brunch'), false);
+});
+
+test('selected neighborhood is preserved with the saved request and matching recommendation', async () => {
+    const f = fixture();
+    const response = await f.route.POST(request('A brunch spot under $30', 'French', 'West Village'));
+    assert.equal(response.status, 200);
+    assert.equal(f.writes[0].prompt, 'A brunch spot under $30\nNeighborhood: West Village');
+    assert.equal(JSON.parse(f.writes[0].content).area, 'West Village');
+});
+
+test('a response outside the selected neighborhood is rejected without saving', async () => {
+    const f = fixture({ candidates: [{ ...sample('Another venue'), area: 'East Village' }] });
+    const response = await f.route.POST(request('Brunch please', 'French', 'West Village'));
+    assert.equal(response.status, 422);
+    assert.match((await response.json()).error, /West Village/);
+    assert.equal(f.writes.length, 0);
+});
+
+test('an invalid neighborhood is rejected before database or model calls', async () => {
+    const f = fixture();
+    assert.equal((await f.route.POST(request('Brunch please', 'French', 'Not an NYC neighborhood'))).status, 400);
+    assert.equal(f.calls.length, 0);
+    assert.equal(f.queries.length, 0);
+    assert.equal(f.writes.length, 0);
+});
+
+test('a failed neighborhood match on a variety retry keeps the first valid local pick', async () => {
+    const f = fixture({ candidates: [sample('Buvette'), { ...sample('Another venue'), area: 'Astoria' }] });
+    assert.equal((await f.route.POST(request('Brunch please', 'French', 'West Village'))).status, 200);
+    assert.equal(f.calls.length, 2);
+    assert.equal(f.writes.length, 1);
+    assert.equal(f.writes[0].title, 'Buvette');
+});
+
+test('unselected location keeps free-text neighborhood requests and existing saved prompt format', async () => {
+    const f = fixture({ candidates: [{ ...sample('Another venue'), area: 'Astoria' }] });
+    assert.equal((await f.route.POST(request('Somewhere in Astoria', 'French'))).status, 200);
+    assert.equal(f.calls[0].config.responseJsonSchema.properties.area.enum, undefined);
+    assert.equal(f.writes[0].prompt, 'Somewhere in Astoria');
+    assert.equal(JSON.parse(f.writes[0].content).area, 'Astoria');
 });

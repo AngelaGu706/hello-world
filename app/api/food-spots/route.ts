@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { decodePickContent, encodePickContent } from "@/utils/food-pick";
 import { cuisines, isCuisine } from "@/utils/food-cuisines";
+import { isNeighborhood } from "@/utils/food-neighborhoods";
 import { loadGenerationRatings } from "@/utils/supabase/generation-ratings";
 import { recentRestaurantNames, shouldTryDifferentRestaurant, varietyInstructions } from "@/utils/recommendation-variety";
 
@@ -10,6 +11,8 @@ type GeneratedPick = {
     title: string;
     content: string;
 };
+
+class NeighborhoodMatchError extends Error {}
 
 function stripCodeFence(text: string) {
     const trimmed = text.trim();
@@ -78,6 +81,10 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Please choose a supported cuisine." }, { status: 400 });
         }
         const cuisine = isCuisine(body?.cuisine) ? body.cuisine : null;
+        if (body?.neighborhood != null && !isNeighborhood(body.neighborhood)) {
+            return NextResponse.json({ error: "Please choose a supported neighborhood." }, { status: 400 });
+        }
+        const neighborhood = isNeighborhood(body?.neighborhood) ? body.neighborhood : null;
 
         if (userPrompt.length < 3) {
             return NextResponse.json(
@@ -123,6 +130,7 @@ You are writing for NYC FOOD SPOTS, a student-friendly food discovery app.
 
 User request: ${userPrompt}
 ${cuisine ? `Selected cuisine: ${cuisine}. Recommend a restaurant serving this cuisine. This choice takes priority over any conflicting cuisine in the user request.` : ""}
+${neighborhood ? `Selected neighborhood: ${neighborhood}. Choose a restaurant whose actual location you confidently know is in this neighborhood. This choice takes priority over any conflicting location in the user request. Never relabel a restaurant from another neighborhood to make it fit. Return the restaurant's real neighborhood in "area"; use an empty "area" if you cannot find a confident match. It is better to return no match than invent a location.` : "Use a location from the user request when provided; otherwise search across NYC. The user's current location is not available."}
 ${varietyInstructions(recentNames)}
 
 Generate one NYC food pick. Return only valid JSON with:
@@ -137,6 +145,7 @@ Voice: warm and understated, like a friend suggesting a plan. Say less and use p
 Match the user's actual occasion instead of assigning everyone a slow weekend brunch. For tone only: "A quick dumpling stop between classes." or "For a slow weekend morning and a catch-up over brunch." Adapt the wording to each request; do not copy a fixed template. Keep only the context the user supplies; do not add companions, study plans, or other activities they did not mention. Describe the occasion as an idea, not as a factual claim about decor, service, comfort, or noise levels.
 
 Treat the requested budget as a selection constraint, not proof of the price. Never promise a meal, total bill, or "tab" will stay below that budget. Do not invent menu items, exact prices, reviews, atmosphere, live wait times, live hours, or guaranteed availability. Do not mention that you are an AI.
+Choose a venue and dish suited to the requested meal and budget. Do not recommend a dinner-only or expensive dish for an affordable brunch request. Accuracy and a good fit take priority over variety.
 `;
 
         async function generatePick(contents: string) {
@@ -168,6 +177,9 @@ Treat the requested budget as a selection constraint, not proof of the price. Ne
             if (cuisine && decodePickContent(pick.content).cuisine !== cuisine) {
                 throw new Error("The recommendation did not match the selected cuisine");
             }
+            if (neighborhood && decodePickContent(pick.content).area !== neighborhood) {
+                throw new NeighborhoodMatchError(`Couldn’t find a match in ${neighborhood}. Try another neighborhood or adjust your preferences.`);
+            }
             return pick;
         }
 
@@ -185,7 +197,7 @@ Treat the requested budget as a selection constraint, not proof of the price. Ne
             .from("generations")
             .insert({
                 user_id: user.id,
-                prompt: userPrompt,
+                prompt: neighborhood ? `${userPrompt}\nNeighborhood: ${neighborhood}` : userPrompt,
                 title: pick.title,
                 content: pick.content,
             })
@@ -202,6 +214,9 @@ Treat the requested budget as a selection constraint, not proof of the price. Ne
 
         return NextResponse.json(generation);
     } catch (error) {
+        if (error instanceof NeighborhoodMatchError) {
+            return NextResponse.json({ error: error.message }, { status: 422 });
+        }
         if (error instanceof ApiError) {
             console.error("Gemini request failed:", { status: error.status });
 
