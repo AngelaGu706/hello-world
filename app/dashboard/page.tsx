@@ -39,6 +39,7 @@ export default async function DashboardPage() {
                 <header className="dashboard-heading">
                     <p className="section-eyebrow">LET’S EAT</p>
                     <h1>Where to eat next?</h1>
+                    <p>Find an NYC spot and what to order, based on your cravings.</p>
                 </header>
                 <FoodSpotsGenerator />
                 <Link href="/dashboard/picks" className="dashboard-community-link">

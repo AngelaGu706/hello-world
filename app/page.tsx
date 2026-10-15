@@ -23,6 +23,7 @@ export default async function Home({ searchParams }: {
                 <section className="login-card" aria-labelledby="login-title">
                     <p className="community-wordmark"><Utensils size={22} aria-hidden="true" />NYC FOOD SPOTS</p>
                     <h1 id="login-title">Where to eat next?</h1>
+                    <p className="login-description">Find an NYC spot and what to order, based on your cravings.</p>
                     <ul className="login-features">
                         <li><Sparkles size={18} aria-hidden="true" /><span>Find a place</span></li>
                         <li><Compass size={18} aria-hidden="true" /><span>Explore local picks</span></li>
