@@ -457,48 +457,90 @@ button:disabled { cursor: not-allowed; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
+/* Community browsing */
+.community-explore .community-nav { max-width: 1160px; }
+.community-explore .community-cover { width: calc(100% - 64px); max-width: 1096px; min-height: 248px; margin: 8px auto 0; border-radius: 24px; overflow: hidden; }
+.community-explore .community-cover::before { background: linear-gradient(90deg, #14291edb, #14291e55 65%, #14291e22); }
+.community-explore .community-cover-content { padding: 36px; }
+.community-explore .community-eyebrow { letter-spacing: 1.7px; font-size: 10px; margin-bottom: 12px; }
+.community-explore .community-cover h1 { font-size: 42px; letter-spacing: -1.2px; margin-bottom: 10px; }
+.community-explore .community-cover-subtitle { font-size: 14px; }
+.community-explore .community-overview { padding: 24px 0 20px; font-size: 12px; }
+.community-explore .community-toolbar { padding-bottom: 20px; gap: 16px; }
+.community-explore .community-tabs { padding: 4px; gap: 2px; border-radius: 13px; background: #eeeee6; }
+.community-explore .community-tabs button { min-height: 44px; padding: 8px 13px; font-size: 12px; border-radius: 10px; }
+.community-explore .community-tabs .is-active { background: #fff; color: #2e513a; box-shadow: 0 1px 4px #243e2c0a; }
+.community-explore .community-tools { gap: 8px; }
+.community-explore .community-cuisines { margin: 0; }
+.community-explore .community-cuisines .cuisine-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.community-explore .cuisine-dropdown select { width: 160px; border-radius: 11px; font-size: 13px; padding-left: 12px; }
+.community-explore .community-search { border-radius: 11px; min-height: 44px; }
+.community-explore .community-search input { width: 160px; font-size: 16px; }
+.community-explore .community-refresh { border: 0; background: transparent; }
+.community-explore .community-refresh:hover:not(:disabled) { background: #edf1e8; }
+.community-explore .community-list-label { padding: 20px 0 14px; letter-spacing: .7px; font-size: 10px; }
+.community-explore .community-list-label > span:last-child { font-weight: 400; letter-spacing: 0; font-size: 11px; }
+.community-explore .community-feed { gap: 24px; }
+
 /* Community cards */
 .community-feed-card { padding: 24px; border-color: #e3e7df; border-radius: 20px; box-shadow: 0 4px 18px #243e2c05; }
 .community-feed-card .community-pick-top { margin-bottom: 10px; }
-.community-feed-card .community-pick-label { letter-spacing: 1px; font-size: 9px; }
-.community-feed-card .community-time { font-size: 10px; color: #6c796f; }
+.community-feed-card .community-pick-label { letter-spacing: 1px; font-size: 10px; }
+.community-feed-card .community-time { font-size: 11px; color: #6c796f; }
 .community-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 6px; }
-.community-title-row h2 { font-size: 26px; line-height: 1.25; letter-spacing: -.6px; font-weight: 650; margin: 5px 0 0; }
+.community-title-row h2 { font-size: 25px; line-height: 1.25; letter-spacing: -.6px; font-weight: 650; margin: 5px 0 0; }
 .community-title-row .bookmark-control { margin: 0; flex-shrink: 0; max-width: 100%; }
-.community-title-row .bucket-save { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; border-color: #e4e9e2; background: #f8faf6; }
+.community-title-row .bucket-save { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; border-color: transparent; background: transparent; }
+.community-title-row .bucket-save:hover:not(:disabled) { background: #eff4eb; border-color: transparent; }
 .community-title-row .bucket-save.is-saved { background: #e7f1e8; border-color: #bdd4c1; }
 .community-title-row .bookmark-label, .community-title-row .bookmark-label-compact { display: none; }
 .community-title-row .community-error { max-width: 140px; }
-.community-feed-card .pick-content { flex: 0 1 auto; margin-bottom: 18px; }
+.community-feed-card .pick-content { flex: 0 1 auto; margin-bottom: 8px; }
 .community-feed-card .pick-metadata { gap: 8px 12px; margin-bottom: 16px; align-items: center; }
 .community-feed-card .pick-metadata .cuisine-badge { background: #f6eee7; color: #9c4b35; font-size: 10px; font-weight: 600; padding: 3px 9px; }
 .community-feed-card .pick-metadata span:last-child { font-weight: 400; color: #657268; }
-.community-dish { display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; background: #f0f4ec; color: #35563b; }
+.community-dish { display: flex; align-items: center; gap: 10px; border-radius: 9px; padding: 11px 13px; margin-bottom: 14px; background: #f3f5ef; color: #35563b; }
 .community-dish > svg { flex-shrink: 0; }
 .community-dish > span { min-width: 0; }
-.community-dish-label { display: block; font-size: 9px; font-weight: 600; letter-spacing: 1.3px; line-height: 1.5; margin-bottom: 2px; color: #5d715c; }
+.community-dish-label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 1.1px; line-height: 1.5; margin-bottom: 2px; color: #5d715c; }
 .community-dish strong { display: block; font-size: 15px; font-weight: 600; line-height: 1.4; }
-.community-feed-card .community-recommendation { font-size: 13px; line-height: 1.65; color: #637066; }
+.community-feed-card .community-recommendation { font-size: 14px; line-height: 1.65; color: #637066; }
 .community-feed-card .community-recommendation strong { color: #425d48; font-weight: 500; }
-.community-feed-card .pick-original-prompt { font-size: 10px; }
+.community-feed-card .pick-original-prompt { font-size: 11px; }
 .community-feed-card .pick-original-prompt summary { min-height: 24px; display: list-item; align-content: center; }
 .community-card-footer { margin-top: auto; }
-.community-card-footer .community-reservation-link { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; min-height: 44px; padding: 10px 13px; border: 1px solid #e1e7dd; border-radius: 11px; margin-bottom: 16px; background: #f9faf6; text-decoration: none; font-size: 12px; }
+.community-card-footer .community-reservation-link { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; gap: 7px; min-height: 44px; padding: 0; border: 0; border-radius: 0; margin-bottom: 8px; background: transparent; text-decoration: none; font-size: 12px; }
 .community-reservation-link > span { display: inline-flex; align-items: center; gap: 8px; }
 .community-reservation-link svg { flex-shrink: 0; }
-.community-card-footer .community-reservation-link:hover { background: #edf3e9; border-color: #c5d5bd; }
+.community-card-footer .community-reservation-link:hover > span { text-decoration: underline; text-underline-offset: 4px; }
 .community-card-footer .pick-ratings { display: flex; flex-wrap: wrap; column-gap: 8px; padding-top: 14px; }
 .community-card-footer .rating-row { flex-basis: 100%; }
-.community-card-footer .rating-buttons { width: 100%; gap: 8px; }
-.community-card-footer .rating-button { flex: 1; border-radius: 999px; border-color: #e1e7df; font-size: 12px; }
+.community-card-footer .rating-buttons { gap: 8px; }
+.community-card-footer .rating-button { flex: 0 1 auto; padding: 8px 13px; border-radius: 10px; border-color: transparent; background: #f3f5f0; font-size: 12px; }
+.community-card-footer .rating-up.is-selected, .community-card-footer .rating-up:hover:not(:disabled) { background: #e8f2e9; border-color: #c9dfcc; }
+.community-card-footer .rating-down.is-selected, .community-card-footer .rating-down:hover:not(:disabled) { background: #fcf0f1; border-color: #edcbd1; }
 .community-card-footer .rating-count { border-left: 0; padding-left: 4px; min-width: 20px; color: inherit; }
-.community-card-footer .rating-summary, .community-card-footer .rating-status { margin-top: 9px; font-size: 10px; line-height: 1.6; }
+.community-card-footer .rating-summary, .community-card-footer .rating-status { margin-top: 9px; font-size: 11px; line-height: 1.6; }
 .community-card-footer .rating-status { color: #3f6448; }
 .community-card-footer .rating-status::before { content: "·"; margin-right: 8px; }
 @media (hover: hover) {
   .community-feed-card:hover { border-color: #cbd9c7; box-shadow: 0 8px 24px #243e2c09; }
 }
 @media (max-width: 700px) {
+  .community-explore .community-cover { width: auto; margin: 0 20px; min-height: 216px; border-radius: 18px; }
+  .community-explore .community-cover-content { padding: 28px 24px; }
+  .community-explore .community-cover h1 { font-size: 34px; }
+  .community-explore .community-overview { gap: 8px; font-size: 11px; }
+  .community-explore .community-tools { flex-wrap: wrap; }
+  .community-explore .community-search { flex: 1; }
+  .community-explore .community-search input { width: 100%; }
+  .community-explore .community-feed { gap: 18px; }
   .community-feed-card { padding: 20px; border-radius: 18px; }
   .community-title-row h2 { font-size: 24px; }
+}
+@media (max-width: 540px) {
+  .community-explore .community-tools { display: grid; grid-template-columns: minmax(0, 1fr) 44px; width: 100%; }
+  .community-explore .community-cuisines .cuisine-dropdown, .community-explore .cuisine-dropdown select { width: 100%; }
+  .community-explore .community-refresh { grid-column: 2; grid-row: 1; }
+  .community-explore .community-search { grid-column: 1 / -1; }
 }

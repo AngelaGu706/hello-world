@@ -117,7 +117,7 @@ export default function CommunityPicks() {
     const totalRatings = communityPicks.reduce((total, pick) => total + (pick.upCount ?? 0) + (pick.downCount ?? 0), 0);
 
     return (
-        <main className="community-page">
+        <main className="community-page community-explore">
             <nav className="community-nav" aria-label="Community navigation">
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
@@ -147,12 +147,12 @@ export default function CommunityPicks() {
                         <button type="button" disabled={loading || !totalsAvailable} aria-pressed={sort === "popular"} className={sort === "popular" ? "is-active" : ""} onClick={() => { setSort("popular"); setPage(1); }}><ThumbsUp size={15} aria-hidden="true" />Most liked</button>
                     </div>
                     <div className="community-tools">
+                        <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setPage(1); }} label="Explore by cuisine"
+                            groupLabel="Filter picks by cuisine" allLabel="All cuisines" className="community-cuisines" />
                         <label className="community-search"><Search size={16} aria-hidden="true" /><input type="search" aria-label="Search picks" placeholder="Search picks..." value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></label>
                         <button type="button" className="community-refresh" onClick={reload} disabled={loading} title="Refresh picks" aria-label="Refresh picks"><RefreshCw size={18} aria-hidden="true" className={loading ? "is-spinning" : ""} /></button>
                     </div>
                 </div>
-                <CuisineSelector value={cuisine} onChange={(value) => { setCuisine(value); setPage(1); }} label="Explore by cuisine"
-                    groupLabel="Filter picks by cuisine" allLabel="All cuisines" className="community-cuisines" />
                 <div className="community-list-label" ref={resultsHeading} tabIndex={-1}><span>{sort === "latest" ? "LATEST PICKS" : "MOST LIKED"}</span><span role="status">{!loading && !error ? resultRange : ""}</span></div>
 
                 <div id="community-picks-feed" className="community-feed" aria-live="polite" aria-busy={loading}>
