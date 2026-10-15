@@ -26,11 +26,10 @@ const PICKS_PER_PAGE = 6;
 
 function CommunityReservationLink({ pick }: { pick: FoodPick }) {
     const reservation = getReservationLink(pick);
-    if (!reservation.verified) return null;
     return <a href={reservation.href} className="community-reservation-link" target="_blank" rel="noopener noreferrer"
-        aria-label={`Check reservations for ${pick.title} (opens in a new tab)`}
+        aria-label={`${reservation.label} for ${pick.title} (opens in a new tab)`}
         title={`${reservation.destination} · opens in a new tab`}>
-        Check reservations<ArrowUpRight size={14} aria-hidden="true" />
+        {reservation.label}<ArrowUpRight size={14} aria-hidden="true" />
     </a>;
 }
 
