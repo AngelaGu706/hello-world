@@ -6,6 +6,7 @@ import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, 
 import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
 import BookmarkButton from "./bookmark-button";
+import ReservationLink from "./reservation-link";
 
 import type { Cuisine } from "@/utils/food-cuisines";
 import CuisineSelector from "./cuisine-selector";
@@ -101,15 +102,18 @@ export default function FoodSpotsGenerator() {
 
             <div aria-live="polite" aria-busy={loading}>
                 {pick && (
-                    <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result">
+                    <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result community-pick community-feed-card">
                         <div className="generator-result-top">
                             <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Shared with the community</p>
                             <Link href="/dashboard/picks">Community Picks<ArrowUpRight size={15} aria-hidden="true" /></Link>
                         </div>
-                        <h2 id="generated-pick-title">{pick.title}</h2>
-                        <PickContent content={pick.content} prompt={pick.prompt} />
+                        <div className="community-title-row"><h2 id="generated-pick-title">{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
+                        <PickContent content={pick.content} prompt={pick.prompt} variant="community" />
                         <p className="generator-result-note">Save it for later. Check hours and prices before you go.</p>
-                        {!loading && <VoteButtons generationId={pick.id} trailingAction={<BookmarkButton generationId={pick.id} />} />}
+                        <div className="community-card-footer">
+                            <ReservationLink pick={pick} />
+                            {!loading && <VoteButtons generationId={pick.id} />}
+                        </div>
                     </article>
                 )}
             </div>

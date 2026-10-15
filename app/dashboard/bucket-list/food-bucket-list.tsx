@@ -6,7 +6,8 @@ import { ArrowLeft, ArrowUpRight, Bookmark, Check, CheckCircle2, Compass, Loader
 import PickContent from "../pick-content";
 import { useBucketList, type BucketItem } from "../bucket-list-provider";
 import { decodePickContent } from "@/utils/food-pick";
-import { getReservationLink } from "@/utils/reservations";
+import PageCover from "../page-cover";
+import ReservationLink from "../reservation-link";
 
 function BucketCard({ item }: { item: BucketItem }) {
     const { busyIds, change } = useBucketList();
@@ -19,8 +20,7 @@ function BucketCard({ item }: { item: BucketItem }) {
         catch (error) { setError(error instanceof Error ? error.message : "Please try again."); }
     }
     if (!item.generation) return null;
-    const reservation = getReservationLink(item.generation);
-    return <article className={`community-pick bucket-card ${visited ? "is-visited" : ""}`}>
+    return <article className={`community-pick community-feed-card bucket-card ${visited ? "is-visited" : ""}`}>
         <div className="community-pick-top">
             <span className={`bucket-status ${visited ? "is-visited" : ""}`}>
                 {visited ? <CheckCircle2 size={14} aria-hidden="true" /> : <Bookmark size={14} aria-hidden="true" />}{visited ? "TRIED" : "SAVED"}
@@ -28,13 +28,9 @@ function BucketCard({ item }: { item: BucketItem }) {
             <button type="button" className="bucket-remove" disabled={busy} onClick={() => update("DELETE")} aria-label={`Remove ${item.generation.title} from the list`} title="Remove from the list"><X size={17} aria-hidden="true" /></button>
         </div>
         <h2>{item.generation.title}</h2>
-        <PickContent content={item.generation.content} prompt={item.generation.prompt} variant="list" />
-        <div className="bucket-card-actions">
-            {!visited && <a className="bucket-reservation-link" href={reservation.href} target="_blank" rel="noopener noreferrer"
-                aria-label={`${reservation.label} for ${item.generation.title} (opens in a new tab)`}
-                title={`${reservation.destination} · opens in a new tab`}>
-                {reservation.label}<ArrowUpRight size={15} aria-hidden="true" />
-            </a>}
+        <PickContent content={item.generation.content} prompt={item.generation.prompt} variant="community" />
+        <div className="bucket-card-actions community-card-footer">
+            {!visited && <ReservationLink pick={item.generation} />}
             <button type="button" className={`bucket-visit ${visited ? "is-visited" : ""}`} disabled={busy} onClick={() => update("PATCH")}>
                 {busy ? <LoaderCircle size={16} className="is-spinning" aria-hidden="true" /> : visited ? <Compass size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
                 {busy ? "Saving..." : visited ? "Move to Saved" : "Mark as tried"}
@@ -60,7 +56,7 @@ export default function FoodBucketList() {
         return `${pick.title} ${pick.prompt} ${area} ${food} ${recommendation}`.toLowerCase().includes(search.trim().toLowerCase());
     });
 
-    return <main className="community-page bucket-page">
+    return <main className="community-page bucket-page food-page">
         <nav className="community-nav" aria-label="Your List navigation">
             <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
             <div className="community-nav-actions">
@@ -68,12 +64,8 @@ export default function FoodBucketList() {
                 <Link href="/dashboard/picks" className="community-create">Browse picks<ArrowUpRight size={16} aria-hidden="true" /></Link>
             </div>
         </nav>
+        <PageCover image="/community-street-food.webp" eyebrow="YOUR NYC FOOD LIST" title="Your List" subtitle="Save now. Try later." />
         <div className="community-content">
-            <header className="bucket-heading">
-                <p className="bucket-eyebrow"><Bookmark size={16} aria-hidden="true" />NYC FOOD LIST</p>
-                <h1>Your List</h1>
-                <p>Save now. Try later.</p>
-            </header>
             {!loading && !error && <p className="bucket-stats" aria-label={`${wantToGo} saved, ${visited} tried`}>
                 <span>{wantToGo} saved</span><span aria-hidden="true">·</span><span>{visited} tried</span>
             </p>}
@@ -91,12 +83,12 @@ export default function FoodBucketList() {
             <div className="community-feed" aria-live="polite" aria-busy={loading}>
                 {loading && <p className="community-state" role="status">Loading your list...</p>}
                 {error && <div className="community-state"><p className="community-error" role="alert">{error}</p><button type="button" className="community-create" onClick={reload}>Try again</button></div>}
-                {!loading && !error && !available.length && <div className="bucket-empty"><Bookmark size={36} aria-hidden="true" /><h2>Nothing saved yet</h2><p>Save a spot from Community Picks or recommendations to get started.</p><Link href="/dashboard/picks" className="community-create">Browse Community Picks<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
+                {!loading && !error && !available.length && <div className="bucket-empty"><Bookmark size={30} aria-hidden="true" /><h2>Your list starts here</h2><p>Find a spot. Save it for later.</p><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
                 {!loading && !error && available.length > 0 && !visible.length && <div className="community-state">
                     <h2>{search ? "No matching spots." : filter === "been_there" ? "No spots tried yet." : "You’ve tried every saved spot."}</h2>
                     {search ? <button type="button" className="community-clear" onClick={() => setSearch("")}>Clear search</button>
                         : filter === "been_there" ? <button type="button" className="community-clear" onClick={() => setFilter("want_to_go")}>View saved spots</button>
-                        : <Link href="/dashboard/picks" className="community-create">Find another spot<ArrowUpRight size={16} aria-hidden="true" /></Link>}
+                        : <Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link>}
                 </div>}
                 {!loading && !error && visible.map(item => <BucketCard key={item.generation_id} item={item} />)}
             </div>

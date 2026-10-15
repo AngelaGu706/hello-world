@@ -458,29 +458,30 @@ button:disabled { cursor: not-allowed; }
 }
 
 /* Community browsing */
-.community-explore .community-nav { max-width: 1160px; }
-.community-explore .community-cover { width: calc(100% - 64px); max-width: 1096px; min-height: 248px; margin: 8px auto 0; border-radius: 24px; overflow: hidden; }
-.community-explore .community-cover::before { background: linear-gradient(90deg, #14291edb, #14291e55 65%, #14291e22); }
-.community-explore .community-cover-content { padding: 36px; }
-.community-explore .community-eyebrow { letter-spacing: 1.7px; font-size: 10px; margin-bottom: 12px; }
-.community-explore .community-cover h1 { font-size: 42px; letter-spacing: -1.2px; margin-bottom: 10px; }
-.community-explore .community-cover-subtitle { font-size: 14px; }
+.food-page .community-nav { max-width: 1160px; }
+.food-cover { position: relative; isolation: isolate; display: flex; align-items: center; flex-shrink: 0; width: calc(100% - 64px); max-width: 1096px; min-height: 248px; margin: 8px auto 0; border-radius: 24px; overflow: hidden; background: #344a3b; color: #fff; }
+.food-cover::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #14291edb, #14291e55 65%, #14291e22); }
+.food-cover-image { object-fit: cover; object-position: center 65%; z-index: -2; }
+.food-cover-content { padding: 36px; width: 100%; }
+.food-cover-eyebrow { letter-spacing: 1.7px; font-size: 10px; font-weight: 600; margin-bottom: 12px; color: #e1eadf; }
+.food-cover h1, .food-cover h2 { max-width: 520px; font-size: 42px; font-weight: 700; line-height: 1.15; letter-spacing: -1.2px; }
+.food-cover-subtitle { font-size: 14px; line-height: 1.6; margin-top: 10px; color: #edf0ec; }
 .community-explore .community-overview { padding: 24px 0 20px; font-size: 12px; }
-.community-explore .community-toolbar { padding-bottom: 20px; gap: 16px; }
-.community-explore .community-tabs { padding: 4px; gap: 2px; border-radius: 13px; background: #eeeee6; }
-.community-explore .community-tabs button { min-height: 44px; padding: 8px 13px; font-size: 12px; border-radius: 10px; }
-.community-explore .community-tabs .is-active { background: #fff; color: #2e513a; box-shadow: 0 1px 4px #243e2c0a; }
+.food-page .community-toolbar { padding-bottom: 20px; gap: 16px; }
+.food-page .community-tabs { padding: 4px; gap: 2px; border-radius: 13px; background: #eeeee6; }
+.food-page .community-tabs button { min-height: 44px; padding: 8px 13px; font-size: 12px; border-radius: 10px; }
+.food-page .community-tabs .is-active { background: #fff; color: #2e513a; box-shadow: 0 1px 4px #243e2c0a; }
 .community-explore .community-tools { gap: 8px; }
 .community-explore .community-cuisines { margin: 0; }
 .community-explore .community-cuisines .cuisine-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .community-explore .cuisine-dropdown select { width: 160px; border-radius: 11px; font-size: 13px; padding-left: 12px; }
-.community-explore .community-search { border-radius: 11px; min-height: 44px; }
-.community-explore .community-search input { width: 160px; font-size: 16px; }
-.community-explore .community-refresh { border: 0; background: transparent; }
-.community-explore .community-refresh:hover:not(:disabled) { background: #edf1e8; }
-.community-explore .community-list-label { padding: 20px 0 14px; letter-spacing: .7px; font-size: 10px; }
-.community-explore .community-list-label > span:last-child { font-weight: 400; letter-spacing: 0; font-size: 11px; }
-.community-explore .community-feed { gap: 24px; }
+.food-page .community-search { border-radius: 11px; min-height: 44px; }
+.food-page .community-search input { width: 160px; font-size: 16px; }
+.food-page .community-refresh { border: 0; background: transparent; }
+.food-page .community-refresh:hover:not(:disabled) { background: #edf1e8; }
+.food-page .community-list-label { padding: 20px 0 14px; letter-spacing: .7px; font-size: 10px; }
+.food-page .community-list-label > span:last-child { font-weight: 400; letter-spacing: 0; font-size: 11px; }
+.food-page .community-feed { gap: 24px; }
 
 /* Community cards */
 .community-feed-card { padding: 24px; border-color: #e3e7df; border-radius: 20px; box-shadow: 0 4px 18px #243e2c05; }
@@ -527,20 +528,52 @@ button:disabled { cursor: not-allowed; }
   .community-feed-card:hover { border-color: #cbd9c7; box-shadow: 0 8px 24px #243e2c09; }
 }
 @media (max-width: 700px) {
-  .community-explore .community-cover { width: auto; margin: 0 20px; min-height: 216px; border-radius: 18px; }
-  .community-explore .community-cover-content { padding: 28px 24px; }
-  .community-explore .community-cover h1 { font-size: 34px; }
+  .food-cover { width: calc(100% - 40px); margin: 0 auto; min-height: 216px; border-radius: 18px; }
+  .food-cover-content { padding: 28px 24px; }
+  .food-cover h1, .food-cover h2 { font-size: 34px; }
   .community-explore .community-overview { gap: 8px; font-size: 11px; }
   .community-explore .community-tools { flex-wrap: wrap; }
-  .community-explore .community-search { flex: 1; }
-  .community-explore .community-search input { width: 100%; }
-  .community-explore .community-feed { gap: 18px; }
+  .food-page .community-search { flex: 1; }
+  .food-page .community-search input { width: 100%; }
+  .food-page .community-feed { gap: 18px; }
   .community-feed-card { padding: 20px; border-radius: 18px; }
   .community-title-row h2 { font-size: 24px; }
+}
+
+/* Shared page rhythm and list actions */
+.food-page .community-nav, .food-page .dashboard-nav { max-width: 1160px; min-height: 80px; }
+.food-page .community-create, .food-page .generator-submit { min-height: 44px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+.food-page .cuisine-dropdown select { border-radius: 11px; }
+.food-page .bucket-toolbar .community-tabs button { color: #67756c; }
+.food-page .bucket-toolbar .community-tabs button.is-active { background: #fff; color: #2e513a; }
+.bucket-page .bucket-stats { padding: 24px 0 20px; margin: 0; font-size: 12px; }
+.food-page .bucket-card { border-color: #e3e7df; }
+.food-page .bucket-card h2 { font-size: 25px; font-weight: 650; line-height: 1.25; letter-spacing: -.6px; }
+.bucket-card-actions.community-card-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.bucket-card-actions .bucket-visit { flex: 0 1 auto; border-radius: 10px; border-color: transparent; background: #eaf2e7; padding: 8px 13px; margin-top: 8px; }
+.bucket-card-actions .bucket-visit.is-visited { background: #f3f5f0; color: #45644e; }
+.bucket-empty { border: 1px solid #e3e7df; border-radius: 20px; padding: 44px 24px; }
+.bucket-empty > svg { box-sizing: content-box; padding: 16px; border-radius: 50%; background: #f0f4ec; margin-bottom: 18px; }
+.bucket-empty h2 { font-size: 25px; font-weight: 650; letter-spacing: -.6px; margin-bottom: 8px; }
+.bucket-empty p { font-size: 14px; margin-bottom: 20px; }
+.dashboard-page .dashboard-content { padding-top: 28px; }
+.dashboard-page .generator-result { padding: 24px; }
+.generator-result .generator-result-top { font-size: 11px; }
+.generator-result .generator-result-note { font-size: 12px; margin-bottom: 8px; }
+@media (max-width: 700px) {
+  .food-page .community-nav, .food-page .dashboard-nav { padding: 18px 20px; }
+  .food-page .community-wordmark { font-size: 16px; }
+  .food-page .bucket-card h2 { font-size: 24px; }
+  .dashboard-page .generator-result { padding: 20px; }
+}
+@media (max-width: 420px) {
+  .food-page .community-nav, .food-page .dashboard-nav { padding: 16px; }
+  .dashboard-page .dashboard-nav .community-wordmark { font-size: 12px; }
+  .food-cover { width: calc(100% - 32px); }
 }
 @media (max-width: 540px) {
   .community-explore .community-tools { display: grid; grid-template-columns: minmax(0, 1fr) 44px; width: 100%; }
   .community-explore .community-cuisines .cuisine-dropdown, .community-explore .cuisine-dropdown select { width: 100%; }
-  .community-explore .community-refresh { grid-column: 2; grid-row: 1; }
-  .community-explore .community-search { grid-column: 1 / -1; }
+  .food-page .community-refresh { grid-column: 2; grid-row: 1; }
+  .food-page .community-search { grid-column: 1 / -1; }
 }

@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Bookmark, CalendarDays, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import PickContent from "../pick-content";
 import BookmarkButton from "../bookmark-button";
 import type { Cuisine } from "@/utils/food-cuisines";
@@ -12,7 +11,8 @@ import CuisineSelector from "../cuisine-selector";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 import { uniqueLatestPicks } from "@/utils/community-picks";
 import VoteButtons, { type PickRating } from "../vote-buttons";
-import { getReservationLink } from "@/utils/reservations";
+import PageCover from "../page-cover";
+import ReservationLink from "../reservation-link";
 
 type FoodPick = PickRating & {
     id: string;
@@ -23,15 +23,6 @@ type FoodPick = PickRating & {
 };
 
 const PICKS_PER_PAGE = 6;
-
-function CommunityReservationLink({ pick }: { pick: FoodPick }) {
-    const reservation = getReservationLink(pick);
-    return <a href={reservation.href} className="community-reservation-link" target="_blank" rel="noopener noreferrer"
-        aria-label={`${reservation.label} for ${pick.title} (opens in a new tab)`}
-        title={`${reservation.destination} · opens in a new tab`}>
-        <span><CalendarDays size={16} aria-hidden="true" />{reservation.label}</span><ArrowUpRight size={16} aria-hidden="true" />
-    </a>;
-}
 
 function PickTime({ value }: { value: string }) {
     const date = new Date(value);
@@ -117,7 +108,7 @@ export default function CommunityPicks() {
     const totalRatings = communityPicks.reduce((total, pick) => total + (pick.upCount ?? 0) + (pick.downCount ?? 0), 0);
 
     return (
-        <main className="community-page community-explore">
+        <main className="community-page community-explore food-page">
             <nav className="community-nav" aria-label="Community navigation">
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
@@ -127,14 +118,7 @@ export default function CommunityPicks() {
                 </div>
             </nav>
 
-            <header className="community-cover">
-                <Image src="/community-street-food.webp" alt="" fill sizes="100vw" preload className="community-cover-image" />
-                <div className="community-cover-content">
-                    <p className="community-eyebrow">FROM THE COMMUNITY</p>
-                    <h1>Community Picks</h1>
-                    <p className="community-cover-subtitle">More spots to try.</p>
-                </div>
-            </header>
+            <PageCover image="/community-street-food.webp" eyebrow="FROM THE COMMUNITY" title="Community Picks" subtitle="More spots to try." />
 
             <div className="community-content">
                 <div className="community-overview">
@@ -166,7 +150,7 @@ export default function CommunityPicks() {
                             <div className="community-title-row"><h2>{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
                             <PickContent content={pick.content} prompt={pick.prompt} variant="community" />
                             <div className="community-card-footer">
-                                <CommunityReservationLink pick={pick} />
+                                <ReservationLink pick={pick} />
                                 <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} />
                             </div>
                         </article>

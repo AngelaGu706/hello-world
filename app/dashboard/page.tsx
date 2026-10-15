@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Bookmark, LogOut, UserRound, Utensils } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import FoodSpotsGenerator from "./food-spots-generator";
+import PageCover from "./page-cover";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -12,7 +12,7 @@ export default async function DashboardPage() {
     if (error || !user) redirect("/");
 
     return (
-        <main className="dashboard-page">
+        <main className="dashboard-page food-page">
             <nav className="dashboard-nav" aria-label="Dashboard navigation">
                 <Link href="/dashboard" className="community-wordmark">
                     <Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span>
@@ -33,13 +33,7 @@ export default async function DashboardPage() {
                 </div>
             </nav>
 
-            <div className="dashboard-banner">
-                <Image src="/dashboard-pizza-hd.webp" alt="" fill sizes="100vw" quality={90} preload className="dashboard-banner-image" />
-                <div className="dashboard-hero-copy">
-                    <p>GOOD FOOD. ALL OVER NYC.</p>
-                    <h2>Find a new<br />favorite spot.</h2>
-                </div>
-            </div>
+            <PageCover image="/dashboard-pizza-hd.webp" eyebrow="GOOD FOOD. ALL OVER NYC." title="Find a new favorite spot." heading="h2" quality={90} />
 
             <div className="dashboard-content">
                 <header className="dashboard-heading">
