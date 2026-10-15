@@ -1,8 +1,16 @@
 import Image from "next/image";
 import { Bookmark, Compass, Sparkles, Utensils } from "lucide-react";
 import LoginButton from "./login-button";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Home() {
+export default async function Home({ searchParams }: {
+    searchParams: Promise<{ auth_error?: string }>;
+}) {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (!error && user) redirect("/dashboard");
+    const { auth_error: authError } = await searchParams;
     return (
         <main className="login-page">
             <div className="login-shell">
@@ -20,7 +28,7 @@ export default function Home() {
                         <li><Compass size={18} aria-hidden="true" /><span>Explore local picks</span></li>
                         <li><Bookmark size={18} aria-hidden="true" /><span>Save for later</span></li>
                     </ul>
-                    <LoginButton />
+                    <LoginButton signInFailed={!!authError} />
                 </section>
             </div>
         </main>

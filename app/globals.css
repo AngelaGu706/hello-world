@@ -50,6 +50,8 @@ button:disabled { cursor: not-allowed; }
 .google-signin:disabled { opacity: .7; }
 .google-mark { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #4285f4; font-size: 16px; font-weight: 700; }
 .login-note { font-size: 11px; line-height: 1.6; color: #6b756d; margin-top: 16px; text-align: center; }
+.auth-loading { display: grid; justify-items: center; gap: 24px; }
+.auth-loading > p:last-child { display: flex; align-items: center; gap: 10px; color: #67756c; font-size: 14px; }
 @media (max-width: 700px) {
   .login-page { padding: 20px 16px; }
   .login-shell { max-width: 480px; grid-template-columns: 1fr; border-radius: 22px; }

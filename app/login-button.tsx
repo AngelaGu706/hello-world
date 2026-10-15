@@ -4,9 +4,9 @@ import { useRef, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-export default function LoginButton() {
+export default function LoginButton({ signInFailed = false }: { signInFailed?: boolean }) {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(signInFailed ? "Sign-in wasn’t completed. Please try again." : "");
     const busy = useRef(false);
     async function signInWithGoogle() {
         if (busy.current) return;

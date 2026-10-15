@@ -4,6 +4,11 @@ import { createClient } from "@/utils/supabase/server";
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
+    const goTo = (path: string) => {
+        const response = NextResponse.redirect(`${origin}${path}`);
+        response.headers.set("Cache-Control", "private, no-store");
+        return response;
+    };
 
     if (code) {
         const supabase = await createClient();
@@ -14,7 +19,10 @@ export async function GET(request: Request) {
         if (!error) {
             const {
                 data: { user },
+                error: userError,
             } = await supabase.auth.getUser();
+
+            if (userError || !user) return goTo("/?auth_error=signin_failed");
 
             if (user) {
                 const { data: profile } = await supabase
@@ -27,15 +35,13 @@ export async function GET(request: Request) {
                     !profile?.first_name ||
                     !profile?.last_name
                 ) {
-                    return NextResponse.redirect(
-                        `${origin}/profile`
-                    );
+                    return goTo("/profile");
                 }
             }
 
-            return NextResponse.redirect(`${origin}/dashboard`);
+            return goTo("/dashboard");
         }
     }
 
-    return NextResponse.redirect(`${origin}/`);
+    return goTo("/?auth_error=signin_failed");
 }
