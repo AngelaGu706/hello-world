@@ -18,8 +18,8 @@ export default async function DashboardPage() {
                     <Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span>
                 </Link>
                 <div className="dashboard-account">
-                    <Link href="/dashboard/bucket-list" className="dashboard-bucket-link" title="Bucket List" aria-label="Bucket List">
-                        <Bookmark size={18} aria-hidden="true" /><span>Bucket List</span>
+                    <Link href="/dashboard/bucket-list" className="dashboard-bucket-link" title="Your List" aria-label="Your List">
+                        <Bookmark size={18} aria-hidden="true" /><span>Your List</span>
                     </Link>
                     <span className="dashboard-email" title={user.email}>{user.email}</span>
                     <Link href="/profile" className="dashboard-profile" title="Edit Profile" aria-label="Edit Profile">

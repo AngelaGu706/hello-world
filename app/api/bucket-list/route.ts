@@ -23,7 +23,7 @@ async function handle(method: "GET" | "POST" | "PATCH" | "DELETE", request?: Req
             return NextResponse.json({ error: "Invalid food pick." }, { status: 400 });
         }
         if (method === "PATCH" && body.status !== "want_to_go" && body.status !== "been_there") {
-            return NextResponse.json({ error: "Invalid bucket list status." }, { status: 400 });
+            return NextResponse.json({ error: "Invalid list status." }, { status: 400 });
         }
 
         if (method === "DELETE") {
@@ -53,7 +53,7 @@ async function handle(method: "GET" | "POST" | "PATCH" | "DELETE", request?: Req
         return NextResponse.json({ item: data });
     } catch (error) {
         console.error("Bucket list request failed:", error);
-        return NextResponse.json({ error: method === "GET" ? "Could not load the bucket list. Please try again." : "Could not update the bucket list. Please try again." }, { status: 500 });
+        return NextResponse.json({ error: method === "GET" ? "Could not load your list. Please try again." : "Could not update your list. Please try again." }, { status: 500 });
     }
 }
 

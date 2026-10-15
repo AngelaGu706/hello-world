@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NYC FOOD SPOTS | Find a new favorite bite",
-  description: "Discover NYC food spots, explore community picks, and save places to a food bucket list.",
+  description: "Discover NYC food spots, explore community picks, and save places to your list.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

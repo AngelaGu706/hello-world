@@ -324,7 +324,7 @@ button:disabled { cursor: not-allowed; }
   .community-pick { padding: 20px; }
 }
 
-/* Personal food bucket list */
+/* Your List */
 .bucket-page { background: var(--background); }
 .bucket-save { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #dce5dd; border-radius: 10px; background: #fff; color: #45644e; font-size: 12px; font-weight: 600; cursor: pointer; min-height: 44px; }
 .bucket-save:hover:not(:disabled), .bucket-save.is-saved { background: #edf5ef; border-color: #bfd7c7; color: #28633e; }
@@ -347,20 +347,24 @@ button:disabled { cursor: not-allowed; }
 }
 .bucket-save:focus-visible { outline: 2px solid #438761; outline-offset: 4px; }
 .dashboard-bucket-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: #465c4c; min-height: 44px; }
-.bucket-heading { padding: 46px 0 28px; }
+.bucket-heading { padding: 46px 0 16px; }
 .bucket-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 14px; }
 .bucket-heading h1 { font-size: 38px; line-height: 1.2; font-weight: 700; margin-bottom: 14px; }
 .bucket-heading > p:last-child { color: #67756c; font-size: 16px; line-height: 1.6; }
-.bucket-stats { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 36px; padding: 24px; margin-bottom: 30px; background: #f4f1ea; border: 1px solid #e5e1d7; border-radius: 10px; color: #34543f; }
-.bucket-stats > div { display: flex; align-items: center; gap: 10px; }
-.bucket-stat-wanted { color: var(--accent); }
-.bucket-stat-visited { color: #367545; }
-.bucket-toolbar .community-tabs button[data-status="all"].is-active { background: #efeae1; color: #3d5144; }
+.bucket-stats { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; line-height: 1.6; color: #67756c; font-variant-numeric: tabular-nums; }
 .bucket-toolbar .community-tabs button[data-status="want_to_go"] { color: var(--accent); }
 .bucket-toolbar .community-tabs button[data-status="want_to_go"].is-active { background: var(--accent-soft); }
-.bucket-stats strong { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.bucket-stats span { font-size: 13px; }
-.bucket-stats > p { margin-left: auto; font-size: 13px; color: #5b7263; }
+.bucket-card .community-pick-top { margin-bottom: 8px; }
+.bucket-card h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; letter-spacing: -.4px; }
+.bucket-card .pick-metadata { gap: 8px 12px; margin-bottom: 16px; }
+.bucket-card .pick-metadata span { color: #67756c; font-weight: 400; }
+.bucket-card .pick-metadata .cuisine-badge { color: var(--accent); font-weight: 600; }
+.bucket-dish { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #28523c; }
+.bucket-dish > svg { flex-shrink: 0; }
+.bucket-dish > span { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
+.bucket-dish-label { font-size: 13px; color: #67756c; }
+.bucket-dish strong { font-size: 16px; line-height: 1.5; font-weight: 600; }
+.bucket-card .community-recommendation { font-size: 13px; line-height: 1.65; }
 .bucket-status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 10px; font-weight: 600; }
 .bucket-status.is-visited { background: #eaf4ed; color: #367545; }
 .bucket-remove { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: #829084; }
@@ -378,8 +382,7 @@ button:disabled { cursor: not-allowed; }
 @media (max-width: 700px) {
   .bucket-heading { padding-top: 32px; }
   .bucket-heading h1 { font-size: 30px; }
-  .bucket-stats { gap: 16px 24px; padding: 20px; }
-  .bucket-stats > p { width: 100%; margin-left: 0; }
+  .bucket-card h2 { font-size: 24px; }
   .bucket-toolbar .community-tabs { gap: 4px; }
   .bucket-toolbar .community-tabs button { padding: 10px 11px; font-size: 13px; }
 }

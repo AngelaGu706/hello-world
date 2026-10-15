@@ -3,14 +3,17 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown, MapPin, Utensils } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { decodePickContent } from "@/utils/food-pick";
+import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 
-export default function PickContent({ content, prompt }: { content: string; prompt: string }) {
+export default function PickContent({ content, prompt, variant = "default" }: { content: string; prompt: string; variant?: "default" | "list" }) {
     const { area, food, recommendation, cuisine } = decodePickContent(content);
     const [expanded, setExpanded] = useState(false);
     const [long, setLong] = useState(false);
     const recommendationRef = useRef<HTMLDivElement>(null);
     const contentId = useId();
+    const isList = variant === "list";
+    const listCuisine = cuisine ?? getPickCuisine({ title: "", content });
+    const dish = recommendation.match(/\*\*([^*\n]+)\*\*/)?.[1]?.trim() || food;
 
     useEffect(() => {
         const element = recommendationRef.current;
@@ -29,7 +32,13 @@ export default function PickContent({ content, prompt }: { content: string; prom
 
     return (
         <div className="pick-content">
-            {(area || food || cuisine) && <div className="pick-metadata">
+            {isList ? <>
+                {(area || listCuisine) && <div className="pick-metadata">
+                    {listCuisine && <span className="cuisine-badge">{listCuisine}</span>}
+                    {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
+                </div>}
+                {dish && <p className="bucket-dish"><Utensils size={16} aria-hidden="true" /><span><span className="bucket-dish-label">Try</span><strong>{dish}</strong></span></p>}
+            </> : (area || food || cuisine) && <div className="pick-metadata">
                 {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
                 {cuisine && <span className="cuisine-badge">{cuisine}</span>}
                 {food && <span><Utensils size={14} aria-hidden="true" />{food}</span>}

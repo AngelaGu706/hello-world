@@ -18,7 +18,7 @@ export default function BookmarkButton({ generationId }: { generationId: string 
 
     return <div className="bookmark-control">
         <button type="button" className={`bucket-save ${saved ? "is-saved" : ""}`} disabled={loading || busy || Boolean(loadError)}
-            aria-pressed={saved} aria-label={saved ? "Remove from Food Bucket List" : "Save to Food Bucket List"} onClick={toggle}>
+            aria-pressed={saved} aria-label={saved ? "Remove from Your List" : "Save to Your List"} onClick={toggle}>
             {loading || busy ? <LoaderCircle size={16} className="is-spinning" aria-hidden="true" /> : saved ? <BookmarkCheck size={16} aria-hidden="true" /> : <Bookmark size={16} aria-hidden="true" />}
             <span className="bookmark-label">{busy ? "Saving..." : saved ? "Saved" : "Save to list"}</span>
             <span className="bookmark-label-compact">{busy ? "Saving..." : saved ? "Saved" : "Save"}</span>
