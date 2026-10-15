@@ -85,3 +85,29 @@ test('cancelled sign-in does not attempt to exchange a missing code', async () =
     assert.deepEqual(f.calls, []);
     assert.equal(response.headers.get('location'), 'https://food.example/?auth_error=signin_failed');
 });
+
+for (const [file, methods] of [
+    ['app/api/food-spots/route.ts', ['GET', 'POST']],
+    ['app/api/bucket-list/route.ts', ['GET', 'POST', 'PATCH', 'DELETE']],
+]) {
+    for (const method of methods) {
+        test(`signed-out ${method} ${file} cannot read or change data`, async () => {
+            let databaseCalls = 0;
+            const client = {
+                auth: { getUser: async () => ({ data: { user: null }, error: null }) },
+                from() { databaseCalls++; throw new Error('Must not reach the database'); },
+            };
+            const handlers = load(file, client);
+            const response = await handlers[method](new Request('https://food.example/api/test', {
+                method,
+                ...(method === 'GET' ? {} : {
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ generationId: '00000000-0000-4000-8000-000000000001', prompt: 'brunch please', status: 'been_there' }),
+                }),
+            }));
+            assert.equal(response.status, 401);
+            assert.match((await response.json()).error, /sign in/i);
+            assert.equal(databaseCalls, 0);
+        });
+    }
+}
