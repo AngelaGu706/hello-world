@@ -125,7 +125,7 @@ button:disabled { cursor: not-allowed; }
 .profile-back:hover { color: #244f3b; }
 .profile-heading { margin-bottom: 28px; }
 .profile-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; }
-.profile-heading h1 { font-size: 34px; font-weight: 650; line-height: 1.2; letter-spacing: -1.2px; margin-bottom: 12px; }
+.profile-heading h1 { font-size: 34px; font-weight: 650; line-height: 1.2; letter-spacing: -1.2px; }
 .profile-heading > p:last-child { font-size: 13px; line-height: 1.7; color: #69756d; }
 .profile-fields { border: 0; margin: 0; padding: 0; min-width: 0; }
 .profile-photo-row { display: flex; align-items: center; gap: 20px; padding-bottom: 28px; margin-bottom: 26px; border-bottom: 1px solid #eceee8; }
@@ -148,7 +148,7 @@ button:disabled { cursor: not-allowed; }
 .profile-field input:disabled { opacity: .65; }
 .save-profile-button { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; width: 100%; padding: 12px 18px; border-radius: 12px; color: #fff; background: #244f3b; font-weight: 600; font-size: 14px; cursor: pointer; }
 .save-profile-button:hover:not(:disabled) { background: #193b2b; }
-.save-profile-button:disabled { opacity: .6; cursor: not-allowed; }
+.save-profile-button:disabled { background: #e8ece6; color: #71806f; opacity: 1; cursor: not-allowed; }
 .profile-save-note { font-size: 11px; line-height: 1.7; text-align: center; color: #6b776e; margin-top: 14px; }
 .profile-message { font-size: 12px; line-height: 1.7; padding: 12px 14px; border-radius: 10px; margin-top: 18px; }
 .profile-message.is-error { background: #fff1ef; color: #963f3a; border: 1px solid #f0d4cf; }

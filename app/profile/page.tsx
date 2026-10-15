@@ -3,16 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2, LoaderCircle, Upload, UserRound, Utensils } from "lucide-react";
+import { ArrowLeft, CheckCircle2, LoaderCircle, Upload, UserRound, Utensils } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 export default function ProfilePage() {
-    const router = useRouter();
     const [supabase] = useState(() => createClient());
     const [userId, setUserId] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [savedNames, setSavedNames] = useState({ firstName: "", lastName: "" });
     const [avatarUrl, setAvatarUrl] = useState("");
     const [avatarFailed, setAvatarFailed] = useState(false);
     const [message, setMessage] = useState("");
@@ -24,6 +23,7 @@ export default function ProfilePage() {
     const [uploading, setUploading] = useState(false);
     const busyRef = useRef(false);
     const busy = loading || saving || uploading;
+    const hasNameChanges = firstName !== savedNames.firstName || lastName !== savedNames.lastName;
 
     useEffect(() => {
         let active = true;
@@ -38,6 +38,7 @@ export default function ProfilePage() {
                 setUserId(user.id);
                 setFirstName(data.first_name ?? "");
                 setLastName(data.last_name ?? "");
+                setSavedNames({ firstName: data.first_name ?? "", lastName: data.last_name ?? "" });
                 setAvatarUrl(data.avatar_url ?? "");
                 setAvatarFailed(false);
             } catch (error) {
@@ -57,23 +58,27 @@ export default function ProfilePage() {
 
     async function saveProfile(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (busyRef.current || busy || !userId || loadFailed) return;
+        if (busyRef.current || busy || !userId || loadFailed || !hasNameChanges) return;
         busyRef.current = true;
         setSaving(true);
         setMessage("");
         try {
-            const { error } = await supabase.from("profiles").update({
+            const { data, error } = await supabase.from("profiles").update({
                 first_name: firstName,
                 last_name: lastName,
-            }).eq("id", userId);
+            }).eq("id", userId).select("first_name, last_name").single();
             if (error) throw error;
+            const nextNames = { firstName: data.first_name ?? "", lastName: data.last_name ?? "" };
+            setFirstName(nextNames.firstName);
+            setLastName(nextNames.lastName);
+            setSavedNames(nextNames);
             setMessageType("success");
-            setMessage("Saved. Returning home…");
-            router.push("/dashboard");
+            setMessage("Changes saved ✓");
         } catch (error) {
             console.error(error);
             setMessageType("error");
             setMessage("Couldn’t save. Edits are still here. Try again.");
+        } finally {
             setSaving(false);
             busyRef.current = false;
         }
@@ -125,7 +130,6 @@ export default function ProfilePage() {
                 <Link href="/dashboard" className="profile-back"><ArrowLeft size={16} aria-hidden="true" />Back to Discover</Link>
                 <header className="profile-heading">
                     <h1 id="profile-title">Profile</h1>
-                    <p>Update profile details.</p>
                 </header>
                 <form onSubmit={saveProfile} aria-busy={busy}>
                     <fieldset disabled={busy || loadFailed || !userId} className="profile-fields">
@@ -152,18 +156,17 @@ export default function ProfilePage() {
                             <div className="profile-field">
                                 <label htmlFor="first-name">First name</label>
                                 <input id="first-name" name="firstName" autoComplete="given-name" value={firstName}
-                                    placeholder="First name" onChange={event => setFirstName(event.target.value)} />
+                                    placeholder="First name" onChange={event => { setFirstName(event.target.value); setMessage(""); }} />
                             </div>
                             <div className="profile-field">
                                 <label htmlFor="last-name">Last name</label>
                                 <input id="last-name" name="lastName" autoComplete="family-name" value={lastName}
-                                    placeholder="Last name" onChange={event => setLastName(event.target.value)} />
+                                    placeholder="Last name" onChange={event => { setLastName(event.target.value); setMessage(""); }} />
                             </div>
                         </div>
-                        <button type="submit" className="save-profile-button">
+                        <button type="submit" className="save-profile-button" disabled={busy || loadFailed || !userId || !hasNameChanges}>
                             {loading || saving ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <CheckCircle2 size={18} aria-hidden="true" />}
                             {loading ? "Loading…" : saving ? "Saving…" : "Save changes"}
-                            {!loading && !saving && <ArrowRight size={17} aria-hidden="true" />}
                         </button>
                     </fieldset>
                     <div aria-live="polite" aria-atomic="true">
