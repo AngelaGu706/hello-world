@@ -126,13 +126,17 @@ ${cuisine ? `Selected cuisine: ${cuisine}. Recommend a restaurant serving this c
 ${varietyInstructions(recentNames)}
 
 Generate one NYC food pick. Return only valid JSON with:
-- "title": a clear title naming the restaurant or food pick, at most 5 words. Avoid slogans and promotional wording.
+- "title": the actual restaurant name only, at most 70 characters. No dish names, slogans, or promotional wording.
 - "area": one specific NYC neighborhood or area, at most 5 words
 - "cuisine": classify the recommended restaurant as one of ${[...cuisines, "Other"].join(", ")}.${cuisine ? ` Must be "${cuisine}".` : " Use Other for mixed or other cuisines."}
-- "food": the food type, at most 3 words, such as "Dumplings" or "Pizza"
-- "content": 1-2 short sentences, at most 30 words total. Say what to order and give one concrete reason it fits the request. Wrap exactly one dish or drink name (at most 4 words) in Markdown **bold**. No other emphasis, headings, lists, introduction, or extra tips. Do not repeat the title or metadata.
+- "food": one specific dish or drink to recommend, at most 6 words and 50 characters. Plain text, without Markdown. Match any explicitly requested food and dietary needs: a request for dumplings must recommend a dumpling dish, not an egg roll or another substitute. This appears in a separate recommendation block, so choose an actual menu item rather than a broad category like "Brunch" or "French food".
+- "content": one short, natural English sentence or phrase, 6-12 words. Suggest a dining occasion that matches the user's plan, rather than reviewing the venue. The dish is shown separately: do not repeat its name, the restaurant name, neighborhood, or cuisine. No Markdown, emojis, headings, lists, introduction, or extra tips.
 
-Do not mention that you are an AI. Do not invent prices or claim live wait times, live hours, or guaranteed availability.
+Voice: warm and understated, like a friend suggesting a plan. Say less and use plain words. Avoid ad copy, poetic slogans, repeated sentence templates, and strings of generic adjectives. Do not start with "Order the", "Try the", or "This spot". Avoid "provides", "offers", "experience", "perfect", "quintessential", "hidden gem", "budget-friendly", and "inviting atmosphere". Do not tell the user to save, book, or visit; the app already provides those actions.
+
+Match the user's actual occasion instead of assigning everyone a slow weekend brunch. For tone only: "A quick dumpling stop between classes." or "For a slow weekend morning and a catch-up over brunch." Adapt the wording to each request; do not copy a fixed template. Keep only the context the user supplies; do not add companions, study plans, or other activities they did not mention. Describe the occasion as an idea, not as a factual claim about decor, service, comfort, or noise levels.
+
+Treat the requested budget as a selection constraint, not proof of the price. Never promise a meal, total bill, or "tab" will stay below that budget. Do not invent menu items, exact prices, reviews, atmosphere, live wait times, live hours, or guaranteed availability. Do not mention that you are an AI.
 `;
 
         async function generatePick(contents: string) {
