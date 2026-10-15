@@ -519,7 +519,6 @@ button:disabled { cursor: not-allowed; }
 .community-card-footer .rating-summary, .community-card-footer .rating-status { margin-top: 9px; font-size: 11px; line-height: 1.6; }
 .community-card-footer .rating-status { color: #3f6448; }
 .community-card-footer .rating-status::before { content: "·"; margin-right: 8px; }
-.community-action-hint { margin: -2px 0 18px; font-size: 12px; line-height: 1.6; color: #637066; }
 @media (hover: hover) {
   .community-feed-card:hover { border-color: #cbd9c7; box-shadow: 0 8px 24px #243e2c09; }
 }

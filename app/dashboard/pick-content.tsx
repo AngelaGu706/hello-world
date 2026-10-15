@@ -53,7 +53,7 @@ export default function PickContent({ content, prompt, variant = "default" }: { 
                 {expanded ? "Show less" : "Read more"}<ChevronDown size={14} aria-hidden="true" className={expanded ? "is-expanded" : ""} />
             </button>}
             <details className="pick-original-prompt">
-                <summary>Original prompt</summary>
+                <summary>Behind this pick</summary>
                 <p>{prompt}</p>
             </details>
         </div>

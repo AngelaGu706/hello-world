@@ -138,7 +138,6 @@ export default function CommunityPicks() {
                     </div>
                 </div>
                 <div className="community-list-label" ref={resultsHeading} tabIndex={-1}><span>{sort === "latest" ? "LATEST PICKS" : "MOST LIKED"}</span><span role="status">{!loading && !error ? resultRange : ""}</span></div>
-                <p className="community-action-hint">Use Would try or Skip to rate. Save adds to Your List.</p>
 
                 <div id="community-picks-feed" className="community-feed" aria-live="polite" aria-busy={loading}>
                     {loading && <p role="status" className="community-state">Loading community picks...</p>}
