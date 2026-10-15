@@ -414,7 +414,6 @@ button:disabled { cursor: not-allowed; }
 .generator-hint { color: #6d786f; font-size: 12px; line-height: 1.7; margin-bottom: 12px; }
 .generator-loading { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: #4d7157; line-height: 1.7; margin-top: 14px; }
 .generator-result { padding: 26px; border: 1px solid #d6e3d4; background: #fff; border-radius: 20px; }
-.generator-result-note { font-size: 12px; line-height: 1.7; color: #62736a; margin-bottom: 18px; }
 .generator-result:focus { outline: 3px solid #438761; outline-offset: 4px; }
 .dashboard-community-link { background: #edf1e7; border: 1px solid #dfe6d6; border-radius: 16px; padding: 22px 24px; }
 .dashboard-community-link p { font-size: 12px; color: #66745f; line-height: 1.7; margin-top: 4px; }
@@ -555,7 +554,6 @@ button:disabled { cursor: not-allowed; }
 .dashboard-page .dashboard-content { padding-top: 28px; }
 .dashboard-page .generator-result { padding: 24px; }
 .generator-result .generator-result-top { font-size: 11px; }
-.generator-result .generator-result-note { font-size: 12px; margin-bottom: 8px; }
 @media (max-width: 700px) {
   .food-page .community-nav, .food-page .dashboard-nav { padding: 18px 20px; }
   .food-page .community-wordmark { font-size: 16px; }
