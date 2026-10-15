@@ -97,7 +97,7 @@ function RatingControls({
             };
             setRating(nextRating);
             onRated?.(nextRating);
-            setMessage(response.status === 409 ? "You have already rated this pick." : "Rating saved.");
+            setMessage(response.status === 409 ? "You have already rated this pick." : "Community rating saved.");
             const totalsMissing = nextRating.upCount === null || nextRating.downCount === null;
             setLoadState(totalsMissing ? "error" : "ready");
             if (totalsMissing) setError("Couldn't load ratings. Please try again.");

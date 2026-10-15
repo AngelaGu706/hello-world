@@ -113,7 +113,7 @@ export default function CommunityPicks() {
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
                     <Link href="/dashboard/bucket-list" className="community-back"><Bookmark size={16} aria-hidden="true" />Your List</Link>
-                    <Link href="/dashboard" className="community-back community-dashboard-link"><ArrowLeft size={16} aria-hidden="true" />Dashboard</Link>
+                    <Link href="/dashboard" className="community-back community-dashboard-link"><ArrowLeft size={16} aria-hidden="true" />Discover</Link>
                     <Link href="/dashboard" className="community-create"><Plus size={16} aria-hidden="true" />Find a spot</Link>
                 </div>
             </nav>
@@ -138,6 +138,7 @@ export default function CommunityPicks() {
                     </div>
                 </div>
                 <div className="community-list-label" ref={resultsHeading} tabIndex={-1}><span>{sort === "latest" ? "LATEST PICKS" : "MOST LIKED"}</span><span role="status">{!loading && !error ? resultRange : ""}</span></div>
+                <p className="community-action-hint">Use Would try or Skip to rate. Save adds to Your List.</p>
 
                 <div id="community-picks-feed" className="community-feed" aria-live="polite" aria-busy={loading}>
                     {loading && <p role="status" className="community-state">Loading community picks...</p>}

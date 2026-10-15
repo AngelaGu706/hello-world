@@ -122,7 +122,7 @@ export default function ProfilePage() {
                 <Utensils size={22} aria-hidden="true" />NYC FOOD SPOTS
             </Link>
             <section className="profile-card" aria-labelledby="profile-title">
-                <Link href="/dashboard" className="profile-back"><ArrowLeft size={16} aria-hidden="true" />Back to home</Link>
+                <Link href="/dashboard" className="profile-back"><ArrowLeft size={16} aria-hidden="true" />Back to Discover</Link>
                 <header className="profile-heading">
                     <h1 id="profile-title">Profile</h1>
                     <p>Update profile details.</p>

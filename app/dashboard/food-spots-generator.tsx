@@ -109,7 +109,7 @@ export default function FoodSpotsGenerator() {
                         </div>
                         <div className="community-title-row"><h2 id="generated-pick-title">{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
                         <PickContent content={pick.content} prompt={pick.prompt} variant="community" />
-                        <p className="generator-result-note">Save it for later. Check hours and prices before you go.</p>
+                        <p className="generator-result-note">Use Would try or Skip to rate. Save adds to Your List.</p>
                         <div className="community-card-footer">
                             <ReservationLink pick={pick} />
                             {!loading && <VoteButtons generationId={pick.id} />}

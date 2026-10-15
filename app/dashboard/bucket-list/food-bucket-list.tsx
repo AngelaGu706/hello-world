@@ -60,7 +60,7 @@ export default function FoodBucketList() {
         <nav className="community-nav" aria-label="Your List navigation">
             <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
             <div className="community-nav-actions">
-                <Link href="/dashboard" className="community-back"><ArrowLeft size={16} aria-hidden="true" />Dashboard</Link>
+                <Link href="/dashboard" className="community-back"><ArrowLeft size={16} aria-hidden="true" />Discover</Link>
                 <Link href="/dashboard/picks" className="community-create">Browse picks<ArrowUpRight size={16} aria-hidden="true" /></Link>
             </div>
         </nav>

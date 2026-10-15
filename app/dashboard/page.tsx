@@ -13,7 +13,7 @@ export default async function DashboardPage() {
 
     return (
         <main className="dashboard-page food-page">
-            <nav className="dashboard-nav" aria-label="Dashboard navigation">
+            <nav className="dashboard-nav" aria-label="Discover navigation">
                 <Link href="/dashboard" className="community-wordmark">
                     <Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span>
                 </Link>

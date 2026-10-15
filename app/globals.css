@@ -332,19 +332,14 @@ button:disabled { cursor: not-allowed; }
 .bucket-save:hover:not(:disabled), .bucket-save.is-saved { background: #edf5ef; border-color: #bfd7c7; color: #28633e; }
 .bucket-save:disabled { cursor: default; opacity: .65; }
 .bookmark-control { margin-top: 16px; }
-.bookmark-label-compact { display: none; }
 @container (max-width: 380px) {
   .rating-row { gap: 8px; }
   .rating-buttons { gap: 6px; }
   .rating-button { gap: 4px; padding: 8px 6px; font-size: 11px; }
   .rating-count { min-width: 14px; padding-left: 4px; }
   .rating-row .bucket-save { gap: 5px; padding: 8px 7px; font-size: 11px; }
-  .rating-row .bookmark-label { display: none; }
-  .rating-row .bookmark-label-compact { display: inline; }
 }
 @container (max-width: 280px) {
-  .rating-row .bucket-save { width: 44px; padding: 0; justify-content: center; }
-  .rating-row .bookmark-label-compact { display: none; }
   .rating-check { display: none; }
 }
 .bucket-save:focus-visible { outline: 2px solid #438761; outline-offset: 4px; }
@@ -489,12 +484,12 @@ button:disabled { cursor: not-allowed; }
 .community-feed-card .community-pick-label { letter-spacing: 1px; font-size: 10px; }
 .community-feed-card .community-time { font-size: 11px; color: #6c796f; }
 .community-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 6px; }
-.community-title-row h2 { font-size: 25px; line-height: 1.25; letter-spacing: -.6px; font-weight: 650; margin: 5px 0 0; }
+.community-title-row h2 { flex: 1; min-width: 0; font-size: 25px; line-height: 1.25; letter-spacing: -.6px; font-weight: 650; margin: 5px 0 0; }
 .community-title-row .bookmark-control { margin: 0; flex-shrink: 0; max-width: 100%; }
-.community-title-row .bucket-save { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; border-color: transparent; background: transparent; }
+.community-title-row .bucket-save { min-width: 84px; min-height: 44px; padding: 8px 11px; justify-content: center; border-radius: 10px; border-color: #e1e7df; background: #f7f9f4; white-space: nowrap; }
 .community-title-row .bucket-save:hover:not(:disabled) { background: #eff4eb; border-color: transparent; }
 .community-title-row .bucket-save.is-saved { background: #e7f1e8; border-color: #bdd4c1; }
-.community-title-row .bookmark-label, .community-title-row .bookmark-label-compact { display: none; }
+.community-title-row .bookmark-label { display: inline; }
 .community-title-row .community-error { max-width: 140px; }
 .community-feed-card .pick-content { flex: 0 1 auto; margin-bottom: 8px; }
 .community-feed-card .pick-metadata { gap: 8px 12px; margin-bottom: 16px; align-items: center; }
@@ -524,6 +519,7 @@ button:disabled { cursor: not-allowed; }
 .community-card-footer .rating-summary, .community-card-footer .rating-status { margin-top: 9px; font-size: 11px; line-height: 1.6; }
 .community-card-footer .rating-status { color: #3f6448; }
 .community-card-footer .rating-status::before { content: "·"; margin-right: 8px; }
+.community-action-hint { margin: -2px 0 18px; font-size: 12px; line-height: 1.6; color: #637066; }
 @media (hover: hover) {
   .community-feed-card:hover { border-color: #cbd9c7; box-shadow: 0 8px 24px #243e2c09; }
 }
