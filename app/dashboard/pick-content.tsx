@@ -2,10 +2,11 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown, MapPin, Utensils } from "lucide-react";
+import RestaurantDistance from "./restaurant-distance";
 import ReactMarkdown from "react-markdown";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
 
-export default function PickContent({ content, prompt, variant = "default" }: { content: string; prompt: string; variant?: "default" | "list" | "community" }) {
+export default function PickContent({ content, prompt, generationId, variant = "default" }: { content: string; prompt: string; generationId: string; variant?: "default" | "list" | "community" }) {
     const { area, food, recommendation, cuisine } = decodePickContent(content);
     const [expanded, setExpanded] = useState(false);
     const [long, setLong] = useState(false);
@@ -45,6 +46,7 @@ export default function PickContent({ content, prompt, variant = "default" }: { 
                 {cuisine && <span className="cuisine-badge">{cuisine}</span>}
                 {food && <span><Utensils size={14} aria-hidden="true" />{food}</span>}
             </div>}
+            <RestaurantDistance generationId={generationId} />
             <div ref={recommendationRef} id={contentId} className={`community-recommendation${!expanded ? " is-collapsed" : ""}`}>
                 <ReactMarkdown>{recommendation}</ReactMarkdown>
             </div>

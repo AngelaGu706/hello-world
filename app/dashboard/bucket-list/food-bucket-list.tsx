@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Bookmark, Check, CheckCircle2, Compass, LoaderCircle, RefreshCw, Search, Utensils, X } from "lucide-react";
+import LocationControl from "../location-control";
 import PickContent from "../pick-content";
 import { useBucketList, type BucketItem } from "../bucket-list-provider";
 import { decodePickContent } from "@/utils/food-pick";
@@ -28,7 +29,7 @@ function BucketCard({ item }: { item: BucketItem }) {
             <button type="button" className="bucket-remove" disabled={busy} onClick={() => update("DELETE")} aria-label={`Remove ${item.generation.title} from the list`} title="Remove from the list"><X size={17} aria-hidden="true" /></button>
         </div>
         <h2>{item.generation.title}</h2>
-        <PickContent content={item.generation.content} prompt={item.generation.prompt} variant="community" />
+        <PickContent generationId={item.generation_id} content={item.generation.content} prompt={item.generation.prompt} variant="community" />
         <div className="bucket-card-actions community-card-footer">
             {!visited && <ReservationLink pick={item.generation} />}
             <button type="button" className={`bucket-visit ${visited ? "is-visited" : ""}`} disabled={busy} onClick={() => update("PATCH")}>
@@ -69,6 +70,7 @@ export default function FoodBucketList() {
             {!loading && !error && <p className="bucket-stats" aria-label={`${wantToGo} saved, ${visited} tried`}>
                 <span>{wantToGo} saved</span><span aria-hidden="true">·</span><span>{visited} tried</span>
             </p>}
+            <LocationControl />
             <div className="community-toolbar bucket-toolbar">
                 <div className="community-tabs" role="group" aria-label="Filter saved picks">
                     {([["want_to_go", "Saved"], ["been_there", "Tried"]] as const).map(([value, label]) =>

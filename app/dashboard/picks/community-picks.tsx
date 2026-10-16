@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
+import LocationControl from "../location-control";
 import PickContent from "../pick-content";
 import BookmarkButton from "../bookmark-button";
 import type { Cuisine } from "@/utils/food-cuisines";
@@ -125,6 +126,7 @@ export default function CommunityPicks() {
                     <div><span className="community-live-dot" aria-hidden="true" /><span>Fresh from NYC</span></div>
                     {!loading && !error && <p>{communityPicks.length} picks {totalsAvailable && <><span aria-hidden="true">/</span> {totalRatings} community ratings</>}</p>}
                 </div>
+                <LocationControl />
                 <div className="community-toolbar">
                     <div className="community-tabs" role="group" aria-label="Sort picks">
                         <button type="button" aria-pressed={sort === "latest"} className={sort === "latest" ? "is-active" : ""} onClick={() => { setSort("latest"); setPage(1); }}><Clock3 size={15} aria-hidden="true" />Latest</button>
@@ -148,7 +150,7 @@ export default function CommunityPicks() {
                         <article key={pick.id} className="community-pick community-feed-card">
                             <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>
                             <div className="community-title-row"><h2>{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
-                            <PickContent content={pick.content} prompt={pick.prompt} variant="community" />
+                            <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" />
                             <div className="community-card-footer">
                                 <ReservationLink pick={pick} />
                                 <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} />

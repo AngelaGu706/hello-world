@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, Sparkles, Utensils } from "lucide-react";
+import LocationControl from "./location-control";
 import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
 import BookmarkButton from "./bookmark-button";
@@ -106,6 +107,7 @@ export default function FoodSpotsGenerator() {
                 {error && <p role="alert" className="community-error">{error}</p>}
             </form>
 
+            <LocationControl />
             <div aria-live="polite" aria-busy={loading}>
                 {pick && (
                     <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result community-pick community-feed-card">
@@ -114,7 +116,7 @@ export default function FoodSpotsGenerator() {
                             <Link href="/dashboard/picks">Community Picks<ArrowUpRight size={15} aria-hidden="true" /></Link>
                         </div>
                         <div className="community-title-row"><h2 id="generated-pick-title">{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
-                        <PickContent content={pick.content} prompt={pick.prompt} variant="community" />
+                        <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" />
                         <div className="community-card-footer">
                             <ReservationLink pick={pick} />
                             {!loading && <VoteButtons generationId={pick.id} />}
