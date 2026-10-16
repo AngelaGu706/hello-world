@@ -79,7 +79,7 @@ export default function FoodSpotsGenerator() {
                         label="Cuisine" groupLabel="Choose a cuisine" allLabel="Any cuisine" disabled={loading} />
                     <NeighborhoodSelector value={neighborhood} onChange={value => { setNeighborhood(value); setError(""); }} disabled={loading} />
                 </div>
-                <label htmlFor="food-prompt" className="generator-prompt-label">Any preferences?</label>
+                <label htmlFor="food-prompt" className="generator-prompt-label">What are you craving?</label>
                 <textarea id="food-prompt" value={prompt}
                     onChange={(event) => { setPrompt(event.target.value); setError(""); }}
                     aria-describedby="prompt-count" aria-invalid={!!error}
