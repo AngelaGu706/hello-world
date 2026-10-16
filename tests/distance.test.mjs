@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { load } from './load-source.mjs';
 
-const { haversineMiles, formatDistance, isCoordinates, requestCurrentLocation } = load('utils/distance.ts');
+const { haversineMiles, formatDistance, isCoordinates } = load('utils/distance.ts');
 const { selectVerifiedRestaurant, lookupRestaurant } = load('utils/restaurant-location.ts');
 
 test('haversine returns known quarter-equator distance, zero, symmetry and finite antipodes', () => {
@@ -17,38 +17,6 @@ test('haversine returns known quarter-equator distance, zero, symmetry and finit
     assert.equal(formatDistance(0.44), 'About 0.4 miles away');
     assert.equal(isCoordinates({ latitude: NaN, longitude: 0 }), false);
     assert.throws(() => haversineMiles(zero, { latitude: 91, longitude: 0 }));
-});
-
-test('geolocation is rejected on insecure/unsupported browsers before touching permission API', async () => {
-    let calls = 0;
-    await assert.rejects(requestCurrentLocation(false, { getCurrentPosition() { calls++; } }), /HTTPS or localhost/);
-    await assert.rejects(requestCurrentLocation(true), /doesn’t support/);
-    assert.equal(calls, 0);
-});
-
-test('location helper returns only coordinates with bounded options', async () => {
-    let options;
-    const point = await requestCurrentLocation(true, { getCurrentPosition(success, error, received) {
-        options = received;
-        success({ coords: { latitude: 0, longitude: 0, accuracy: 123, altitude: 10 } });
-    } });
-    assert.deepEqual(point, { latitude: 0, longitude: 0 });
-    assert.deepEqual(options, { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 });
-});
-
-for (const [code, message] of [[1, /site settings/], [2, /unavailable/], [3, /too long/]]) {
-    test(`geolocation error ${code} is retryable without exposing browser errors`, async () => {
-        await assert.rejects(requestCurrentLocation(true, { getCurrentPosition(success, fail) {
-            fail({ code, message: 'private browser diagnostics' });
-        } }), message);
-    });
-}
-
-test('unanswered permission prompt has an overall deadline', async t => {
-    t.mock.timers.enable({ apis: ['setTimeout'] });
-    const pending = assert.rejects(requestCurrentLocation(true, { getCurrentPosition() {} }), /too long/);
-    t.mock.timers.tick(15000);
-    await pending;
 });
 
 // Genuine NYC DOHMH row, retrieved 2026-10-16; mutations below are test-only.
@@ -237,10 +205,10 @@ test('per-user burst limit stops extra provider calls', async () => {
     assert.equal(calls, 30);
 });
 
-test('location UI stores position only in memory and lookup body contains only a pick ID', () => {
+test('distance origin stays in memory, has no device location API, and lookup body contains only a pick ID', () => {
     const provider = fs.readFileSync(new URL('../app/dashboard/location-provider.tsx', import.meta.url), 'utf8');
     const card = fs.readFileSync(new URL('../app/dashboard/restaurant-distance.tsx', import.meta.url), 'utf8');
-    assert.doesNotMatch(provider, /localStorage|sessionStorage|supabase|fetch\(|console\./);
+    assert.doesNotMatch(provider, /localStorage|sessionStorage|supabase|fetch\(|console\.|navigator|geolocation|getCurrentPosition/);
     assert.match(card, /body: JSON\.stringify\(\{ generationId \}\)/);
     assert.doesNotMatch(card, /JSON\.stringify\([^)]*coordinates/);
 });

@@ -27,7 +27,6 @@ function EnabledDistance({ generationId }: { generationId: string }) {
                 if (data.restaurant !== null && !isCoordinates(data.restaurant)) throw new Error("Couldn’t verify this restaurant’s location.");
                 if (!controller.signal.aborted) {
                     setRestaurant(data.restaurant);
-                    if (!data.restaurant) setError("Distance unavailable — we couldn’t confirm this restaurant’s location.");
                 }
             } catch (error) {
                 if (!controller.signal.aborted) setError(error instanceof Error && error.name !== "TimeoutError" ? error.message : "Distance lookup took too long. Please try again.");
@@ -41,15 +40,19 @@ function EnabledDistance({ generationId }: { generationId: string }) {
     }, [generationId, attempt]);
 
     if (!origin) return null;
-    return <div className="restaurant-distance" role="status">
-        {loading ? <p>Checking restaurant distance…</p> : restaurant ? <>
-            <p className="distance-value"><MapPin size={14} aria-hidden="true" />{formatDistance(haversineMiles(origin.coordinates, restaurant))}</p>
-            <p>{origin.kind === "neighborhood" ? `From the approximate ${origin.name} area center` : "From your current location"}</p>
-            <p>Approx. straight-line distance · not walking distance</p>
-            <p className="distance-source">Restaurant data: <a href={restaurant.sourceUrl} target="_blank" rel="noopener noreferrer">NYC Open Data</a></p>
-            <p className="distance-address">{restaurant.address}</p>
-            {restaurant.sourceDate && <p>Source updated {restaurant.sourceDate}</p>}
-        </> : <p>{error} <button type="button" className="location-off" onClick={() => { setError(""); setLoading(true); setAttempt(value => value + 1); }}>Retry</button></p>}
+    return <div className="restaurant-distance">
+        {loading ? <p role="status">Checking distance…</p> : restaurant ? <details className="distance-details">
+            <summary>
+                <span className="distance-value"><MapPin size={14} aria-hidden="true" />{formatDistance(haversineMiles(origin.coordinates, restaurant))}</span>
+                <span className="distance-detail-toggle">Details</span>
+            </summary>
+            <div className="distance-detail-body">
+                <p>From the approximate {origin.name} area center.</p>
+                <p className="distance-address">{restaurant.address}</p>
+                <p className="distance-source"><a href={restaurant.sourceUrl} target="_blank" rel="noopener noreferrer">NYC Open Data</a>{restaurant.sourceDate && ` · Updated ${restaurant.sourceDate}`}</p>
+                <p><a href="/terms">About distances</a></p>
+            </div>
+        </details> : <p className="distance-unavailable" role="status">Distance unavailable{error && <> · <button type="button" className="location-off" title={error} onClick={() => { setError(""); setLoading(true); setAttempt(value => value + 1); }}>Retry</button></>}</p>}
     </div>;
 }
 

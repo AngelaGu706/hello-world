@@ -583,12 +583,9 @@ button:disabled { cursor: not-allowed; }
 /* Optional distances use the existing warm palette and compact card typography. */
 .location-control { margin: 16px 0 20px; color: #657268; font-size: 12px; line-height: 1.6; }
 .location-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
-.location-button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid #dfdcd3; border-radius: 8px; background: #fff; color: #385440; font-size: 12px; font-weight: 500; cursor: pointer; }
-.location-button:hover:not(:disabled) { background: #edf1e8; }
-.location-button:disabled { opacity: 0.65; }
-.location-off, .location-control > a { color: #385440; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.restaurant-distance { border-left: 2px solid #dfdcd3; padding-left: 10px; margin: 0 0 16px; color: #657268; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
-.restaurant-distance .distance-value { display: flex; align-items: center; gap: 6px; color: #385440; font-weight: 500; }
+.location-off { color: #385440; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.restaurant-distance { margin: 0 0 12px; color: #657268; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.restaurant-distance .distance-value { display: inline-flex; align-items: center; gap: 6px; color: #385440; font-weight: 500; }
 .distance-source a { color: #385440; text-decoration: underline; text-underline-offset: 3px; }
 .distance-source { margin-top: 3px; }
 .distance-address { margin-top: 2px; }
@@ -599,3 +596,11 @@ button:disabled { cursor: not-allowed; }
 
 .distance-origin-label { display: block; margin-bottom: 6px; color: #385440; font-weight: 500; }
 .distance-origin-select { min-width: 0; max-width: 100%; padding: 8px 30px 8px 10px; border: 1px solid #dfdcd3; border-radius: 8px; background: #fff; color: #385440; font: inherit; }
+
+.distance-details > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; cursor: pointer; list-style: none; }
+.distance-details > summary::-webkit-details-marker { display: none; }
+.distance-detail-toggle { color: #657268; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
+.distance-detail-body { margin-top: 6px; padding-left: 20px; }
+.distance-detail-body a { text-decoration: underline; text-underline-offset: 3px; }
+.distance-unavailable { color: #657268; }
+.distance-details > summary:focus-visible { outline: 3px solid #438761; outline-offset: 4px; border-radius: 3px; }
