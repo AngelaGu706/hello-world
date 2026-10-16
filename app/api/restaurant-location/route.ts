@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { decodePickContent } from "@/utils/food-pick";
 import { lookupRestaurant } from "@/utils/restaurant-location";
 
-// Best-effort per-instance burst protection; set a provider quota for a global spend cap.
+// Best-effort per-instance burst protection for the shared public dataset.
 const requests = new Map<string, { count: number; until: number }>();
 function allowLookup(id: string) {
     const now = Date.now();
@@ -29,18 +29,16 @@ export async function POST(request: Request) {
             !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.generationId)) {
             return reply({ error: "Choose a saved food pick." }, 400);
         }
-        const key = process.env.GOOGLE_PLACES_API_KEY;
-        if (!key) return reply({ error: "Restaurant distances aren’t set up yet." }, 503);
         if (!allowLookup(user.id)) return reply({ error: "Please wait a minute before checking more distances." }, 429);
         const { data: pick, error: loadError } = await supabase.from("generations")
             .select("title, content").eq("id", body.generationId).single();
         if (loadError || !pick) return reply({ error: "This food pick is unavailable." }, 404);
         const { area } = decodePickContent(pick.content);
         if (!area.trim() || !pick.title.trim()) return reply({ restaurant: null });
-        const restaurant = await lookupRestaurant(pick.title, area, key, request.signal);
+        const restaurant = await lookupRestaurant(pick.title, area, request.signal);
         return reply({ restaurant });
     } catch {
-        // Never return/log provider payloads, credentials, or precise positions.
+        // Never return/log provider payloads, private positions.
         return reply({ error: "Couldn’t check restaurant distance. Please try again." }, 502);
     }
 }

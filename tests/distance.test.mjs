@@ -51,84 +51,112 @@ test('unanswered permission prompt has an overall deadline', async t => {
     await pending;
 });
 
-// Synthetic provider-shaped fixture for validation only, never used as venue data.
-const component = (longText, types, shortText = longText) => ({ longText, shortText, types: [types] });
-const fixture = () => ({
-    id: 'synthetic-test-place', displayName: { text: 'Test Café' },
-    location: { latitude: 40.73, longitude: -74 }, businessStatus: 'OPERATIONAL',
-    types: ['restaurant'], formattedAddress: 'Synthetic street address',
-    addressComponents: [component('United States', 'country', 'US'), component('New York', 'administrative_area_level_1', 'NY'),
-        component('New York', 'locality'), component('West Village', 'neighborhood'), component('1', 'street_number'), component('Test Street', 'route')],
+// Genuine NYC DOHMH row, retrieved 2026-10-16; mutations below are test-only.
+const sourceRow = JSON.parse(fs.readFileSync(new URL('./fixtures/restaurant-location.json', import.meta.url), 'utf8'));
+const fixture = () => structuredClone(sourceRow);
+const { pointInRing, pointInArea, areasForName } = load('utils/neighborhood-geography.ts');
+const { neighborhoodCenters } = load('utils/neighborhood-centers.ts');
+
+test('all eight origin centers derive from supported official areas and lie inside their unions', () => {
+    assert.equal(Object.keys(neighborhoodCenters).length, 8);
+    for (const [name, center] of Object.entries(neighborhoodCenters)) {
+        assert.ok(isCoordinates(center), name);
+        assert.ok(areasForName(name).some(area => pointInArea(center, area.polygons)), name);
+    }
 });
 
-test('unique exact restaurant and neighborhood normalize accents and return provider coordinates', () => {
-    const place = fixture();
-    const result = selectVerifiedRestaurant({ places: [place] }, 'TEST CAFE', 'West Village');
-    assert.deepEqual({ latitude: result.latitude, longitude: result.longitude }, place.location);
-    assert.equal(result.placeId, place.id);
-    assert.equal(new URL(result.mapsUrl).searchParams.get('query_place_id'), place.id);
-    assert.equal(selectVerifiedRestaurant({ places: [place, place] }, 'Test Café', 'West Village').placeId, place.id);
+test('polygon containment handles concavity, holes, islands and boundary points', () => {
+    const outer = [[0,0],[4,0],[4,4],[0,4],[0,0]];
+    const hole = [[1,1],[2,1],[2,2],[1,2],[1,1]];
+    assert.equal(pointInRing({latitude:3,longitude:3}, outer), true);
+    assert.equal(pointInRing({latitude:2,longitude:0}, outer), true);
+    assert.equal(pointInRing({latitude:5,longitude:2}, outer), false);
+    assert.equal(pointInArea({latitude:1.5,longitude:1.5}, [[outer,hole]]), false);
+    assert.equal(pointInArea({latitude:3,longitude:3}, [[outer,hole]]), true);
+    assert.equal(pointInArea({latitude:3,longitude:3}, [[hole],[outer]]), true);
+});
+
+test('genuine Buvette data matches the name and West Village polygon, deduplicating citations', () => {
+    const row = fixture();
+    const result = selectVerifiedRestaurant([row, row], 'BUVETTE', 'West Village');
+    assert.equal(result.recordId, row.camis);
+    assert.equal(result.latitude, Number(row.latitude));
+    assert.equal(result.longitude, Number(row.longitude));
+    assert.equal(result.address, '42 GROVE STREET, Manhattan, NY 10014');
+    assert.equal(result.sourceUrl, 'https://data.cityofnewyork.us/d/43nn-pn8j');
 });
 
 for (const [label, mutate] of [
-    ['wrong name', p => { p.displayName.text = 'Test Cafe London'; }],
-    ['wrong neighborhood', p => { p.addressComponents[3].longText = p.addressComponents[3].shortText = 'SoHo'; }],
-    ['missing neighborhood', p => { p.addressComponents.splice(3, 1); }],
-    ['outside NYC', p => { p.location.latitude = 41.5; }],
-    ['missing coordinates', p => { delete p.location; }],
-    ['non-finite coordinates', p => { p.location.longitude = Infinity; }],
-    ['closed venue', p => { p.businessStatus = 'CLOSED_PERMANENTLY'; }],
-    ['non-food place', p => { p.types = ['locality']; }],
-    ['wrong country', p => { p.addressComponents[0] = component('Canada', 'country', 'CA'); }],
-    ['wrong state', p => { p.addressComponents[1] = component('New Jersey', 'administrative_area_level_1', 'NJ'); }],
-    ['neighboring city inside viewport', p => { p.addressComponents[2] = component('Jersey City', 'locality'); }],
-    ['no street address', p => { p.addressComponents = p.addressComponents.filter(c => !c.types.includes('street_number')); }],
+    ['wrong name', row => { row.dba = 'Buvette London'; }],
+    ['outside selected neighborhood', row => { row.latitude = '40.81'; row.longitude = '-73.96'; }],
+    ['outside NYC', row => { row.latitude = '51.5'; }],
+    ['missing coordinates', row => { delete row.latitude; }],
+    ['empty coordinates', row => { row.latitude = ''; }],
+    ['non-finite coordinates', row => { row.longitude = 'Infinity'; }],
+    ['non-numeric coordinates', row => { row.latitude = 'unknown'; }],
+    ['wrong borough', row => { row.boro = 'Brooklyn'; }],
+    ['no street number', row => { row.building = ''; }],
+    ['no street', row => { delete row.street; }],
+    ['no ZIP', row => { delete row.zipcode; }],
+    ['invalid establishment ID', row => { row.camis = 'unknown'; }],
 ]) {
     test(`unverified ${label} never produces a distance coordinate`, () => {
-        const place = fixture(); mutate(place);
-        assert.equal(selectVerifiedRestaurant({ places: [place] }, 'Test Cafe', 'West Village'), null);
+        const row = fixture(); mutate(row);
+        assert.equal(selectVerifiedRestaurant([row], 'Buvette', 'West Village'), null);
     });
 }
 
-test('ambiguous branches, incomplete pages, missing area and empty results fail closed', () => {
-    const place = fixture();
-    assert.equal(selectVerifiedRestaurant({ places: [place, { ...place, id: 'second-branch' }] }, 'Test Cafe', 'West Village'), null);
-    assert.equal(selectVerifiedRestaurant({ places: [place], nextPageToken: 'more' }, 'Test Cafe', 'West Village'), null);
-    assert.equal(selectVerifiedRestaurant({ places: [place] }, 'Test Cafe', ''), null);
-    assert.equal(selectVerifiedRestaurant({}, 'Test Cafe', 'West Village'), null);
+test('ambiguous branches, conflicting citations and incomplete result sets fail closed', () => {
+    const row = fixture();
+    assert.equal(selectVerifiedRestaurant([row, {...row, camis:'12345678'}], 'Buvette', 'West Village'), null);
+    assert.equal(selectVerifiedRestaurant([row, {...row, camis:'12345678', latitude:''}], 'Buvette', 'West Village'), null);
+    assert.equal(selectVerifiedRestaurant([row, {...row, building:'43'}], 'Buvette', 'West Village'), null);
+    assert.equal(selectVerifiedRestaurant([row, {...row, latitude:String(Number(row.latitude)+0.0001)}], 'Buvette', 'West Village'), null);
+    assert.equal(selectVerifiedRestaurant(Array(101).fill(row), 'Buvette', 'West Village'), null);
+    assert.equal(selectVerifiedRestaurant([row], 'Buvette', ''), null);
+    assert.equal(selectVerifiedRestaurant([row], 'Buvette', 'Invented Neighborhood'), null);
+    assert.equal(selectVerifiedRestaurant({}, 'Buvette', 'West Village'), null);
 });
 
-test('provider attribution links reject unsafe protocols', () => {
-    const place = fixture();
-    place.attributions = [{ provider: 'Test provider', providerUri: 'javascript:alert(1)' }];
-    assert.deepEqual(selectVerifiedRestaurant({ places: [place] }, 'Test Cafe', 'West Village').attributions, [{ name: 'Test provider' }]);
+test('unknown origins or venues have no invented fallback coordinates', async t => {
+    let calls=0;
+    t.mock.method(globalThis, 'fetch', async () => {calls++; return Response.json([]);});
+    assert.equal(await lookupRestaurant('Buvette', 'Invented Neighborhood'), null);
+    assert.equal(await lookupRestaurant('!!!', 'West Village'), null);
+    assert.equal(calls, 0);
 });
 
-test('lookup queries trusted endpoint with name + neighborhood, bounded NYC search, no user location', async t => {
+test('public lookup uses grouped bounded queries, caches public data, and sends no key or user position', async t => {
     let seen;
-    t.mock.method(globalThis, 'fetch', async (url, options) => { seen = { url, options }; return Response.json({ places: [fixture()] }); });
-    const result = await lookupRestaurant('Test Cafe', 'West Village', 'test-server-key');
+    t.mock.method(globalThis, 'fetch', async (url, options) => { seen = { url, options }; return Response.json([fixture()]); });
+    const result = await lookupRestaurant('Buvette', 'West Village');
     assert.ok(result);
-    assert.equal(seen.url, 'https://places.googleapis.com/v1/places:searchText');
-    assert.equal(seen.options.cache, 'no-store');
-    assert.equal(seen.options.headers['X-Goog-Api-Key'], 'test-server-key');
-    assert.match(JSON.parse(seen.options.body).textQuery, /Test Cafe, West Village, New York City/);
-    assert.equal(JSON.parse(seen.options.body).pageSize, 20);
+    const url = new URL(seen.url);
+    assert.equal(url.origin, 'https://data.cityofnewyork.us');
+    assert.equal(url.pathname, '/resource/43nn-pn8j.json');
+    assert.match(url.searchParams.get('$where'), /BUVETTE.*Manhattan/);
+    assert.equal(url.searchParams.get('$limit'), '101');
+    assert.ok(url.searchParams.get('$group').includes('camis'));
+    assert.equal(seen.options.headers, undefined);
+    assert.equal(seen.options.body, undefined);
+    assert.equal(seen.options.cache, 'force-cache');
+    assert.equal(seen.options.next.revalidate, 86400);
     assert.ok(seen.options.signal);
 });
 
-test('provider errors and network timeouts do not produce invented locations', async t => {
-    t.mock.method(globalThis, 'fetch', async () => new Response('', { status: 403 }));
-    await assert.rejects(lookupRestaurant('Test Cafe', 'West Village', 'key'), /unavailable/);
-    globalThis.fetch.mock.mockImplementation(async () => { throw new DOMException('timed out', 'TimeoutError'); });
-    await assert.rejects(lookupRestaurant('Test Cafe', 'West Village', 'key'), /timed out/);
+test('lookup search tokens cannot inject SoQL expressions', async t => {
+    let url;
+    t.mock.method(globalThis, 'fetch', async value => {url = new URL(value); return Response.json([]);});
+    await lookupRestaurant("Cafe'); DROP TABLE", 'West Village');
+    assert.equal(url.searchParams.get('$where'), "upper(dba) like '%TABLE%' AND boro = 'Manhattan'");
 });
 
-function setKey(t, value) {
-    const old = process.env.GOOGLE_PLACES_API_KEY;
-    process.env.GOOGLE_PLACES_API_KEY = value;
-    t.after(() => { if (old === undefined) delete process.env.GOOGLE_PLACES_API_KEY; else process.env.GOOGLE_PLACES_API_KEY = old; });
-}
+test('public dataset errors and timeouts do not produce invented locations', async t => {
+    t.mock.method(globalThis, 'fetch', async () => new Response('', {status:429}));
+    await assert.rejects(lookupRestaurant('Buvette','West Village'), /temporarily unavailable/);
+    globalThis.fetch.mock.mockImplementation(async () => {throw new DOMException('timed out','TimeoutError');});
+    await assert.rejects(lookupRestaurant('Buvette','West Village'), /timed out/);
+});
 
 const generationId = '00000000-0000-4000-8000-000000000001';
 function setup({ signedIn = true, found = true, area = 'West Village', provider = async () => null } = {}) {
@@ -159,8 +187,7 @@ for (const [label, options, body, status] of [
     ['arbitrary restaurant rejected', {}, { name: 'Test Cafe', area: 'West Village' }, 400],
     ['missing saved pick', { found: false }, { generationId }, 404],
 ]) {
-    test(`location endpoint: ${label}`, async t => {
-        setKey(t, 'test-server-key');
+    test(`location endpoint: ${label}`, async () => {
         let lookups = 0;
         const { route, reads } = setup({ ...options, provider: async () => { lookups++; } });
         const response = await route.POST(request(body));
@@ -171,29 +198,29 @@ for (const [label, options, body, status] of [
     });
 }
 
-test('missing provider key degrades without touching saved recommendations', async t => {
-    setKey(t, '');
+test('lookup succeeds without any Google API key', async t => {
+    const old = process.env.GOOGLE_PLACES_API_KEY;
+    delete process.env.GOOGLE_PLACES_API_KEY;
+    t.after(() => { if (old !== undefined) process.env.GOOGLE_PLACES_API_KEY = old; });
     const { route, reads } = setup();
     const response = await route.POST(request({ generationId }));
-    assert.equal(response.status, 503);
-    assert.equal(reads(), 0);
-    assert.match((await response.json()).error, /aren’t set up/);
+    assert.equal(response.status, 200);
+    assert.equal(reads(), 1);
+    assert.deepEqual(await response.json(), { restaurant: null });
 });
 
-test('saved pick name and neighborhood drive lookup, with no user position', async t => {
-    setKey(t, 'test-server-key');
+test('saved pick name and neighborhood drive lookup, with no user position', async () => {
     const { route } = setup({ provider: async (...args) => {
-        assert.deepEqual(args.slice(0, 3), ['Test Cafe', 'West Village', 'test-server-key']);
-        assert.ok(args[3] instanceof AbortSignal);
-        return { latitude: 40.73, longitude: -74, placeId: 'synthetic' };
+        assert.deepEqual(args.slice(0, 2), ['Test Cafe', 'West Village']);
+        assert.ok(args[2] instanceof AbortSignal);
+        return { latitude: 40.73, longitude: -74, recordId: 'synthetic' };
     } });
     const response = await route.POST(request({ generationId }));
     assert.equal(response.status, 200);
-    assert.equal((await response.json()).restaurant.placeId, 'synthetic');
+    assert.equal((await response.json()).restaurant.recordId, 'synthetic');
 });
 
-test('legacy missing area skips lookup and provider exceptions are sanitized', async t => {
-    setKey(t, 'test-server-key');
+test('legacy missing area skips lookup and provider exceptions are sanitized', async () => {
     const provider = async () => { throw new Error('secret provider error'); };
     const noArea = await setup({ area: '', provider }).route.POST(request({ generationId }));
     assert.deepEqual(await noArea.json(), { restaurant: null });
@@ -202,8 +229,7 @@ test('legacy missing area skips lookup and provider exceptions are sanitized', a
     assert.doesNotMatch(JSON.stringify(await failed.json()), /secret/);
 });
 
-test('per-user burst limit stops extra provider calls', async t => {
-    setKey(t, 'test-server-key');
+test('per-user burst limit stops extra provider calls', async () => {
     let calls = 0;
     const { route } = setup({ provider: async () => { calls++; return null; } });
     for (let i = 0; i < 30; i++) assert.equal((await route.POST(request({ generationId }))).status, 200);

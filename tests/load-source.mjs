@@ -15,9 +15,13 @@ export function load(relative, client, overrides = {}) {
         const result = { exports: {} };
         cache.set(filename, result);
         const source = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
-            compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+            compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true },
         }).outputText;
         const localRequire = name => {
+            if (name.endsWith(".json") && (name.startsWith("@/") || name.startsWith("."))) {
+                const target = name.startsWith("@/") ? path.join(root, name.slice(2)) : path.resolve(path.dirname(filename), name);
+                return JSON.parse(fs.readFileSync(target, "utf8"));
+            }
             if (Object.hasOwn(overrides, name)) return overrides[name];
             if (name === '@/utils/supabase/server') return { createClient: async () => client };
             if (name.startsWith('@/')) return read(path.join(root, name.slice(2)) + '.ts');

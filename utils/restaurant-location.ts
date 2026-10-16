@@ -1,23 +1,17 @@
 import { isCoordinates, type Coordinates } from "./distance";
+import { areasForName, pointInArea } from "./neighborhood-geography";
 
+export const RESTAURANT_SOURCE_URL = "https://data.cityofnewyork.us/d/43nn-pn8j";
 export type VerifiedRestaurant = Coordinates & {
-    placeId: string;
+    recordId: string;
     address: string;
-    mapsUrl: string;
-    attributions: { name: string; uri?: string }[];
+    sourceUrl: string;
+    sourceDate: string | null;
 };
 
-type AddressComponent = { longText?: string; shortText?: string; types?: string[] };
-type Place = {
-    id?: string;
-    displayName?: { text?: string };
-    formattedAddress?: string;
-    addressComponents?: AddressComponent[];
-    location?: Coordinates;
-    types?: string[];
-    businessStatus?: string;
-    googleMapsUri?: string;
-    attributions?: { provider?: string; providerUri?: string }[];
+type RestaurantRow = {
+    camis?: string; dba?: string; boro?: string; building?: string; street?: string;
+    zipcode?: string; latitude?: string; longitude?: string; recorded_at?: string;
 };
 
 export function normalizePlaceName(value: string): string {
@@ -25,69 +19,64 @@ export function normalizePlaceName(value: string): string {
         .replace(/[’']/g, "").replace(/&/g, " and ").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 }
 
-// Google's documented NYC viewport is only a search constraint, never a venue coordinate.
-export const NYC_VIEWPORT = {
-    low: { latitude: 40.477398, longitude: -74.259087 },
-    high: { latitude: 40.91618, longitude: -73.70018 },
-};
-
-function isNYC(point: Coordinates) {
-    return point.latitude >= NYC_VIEWPORT.low.latitude && point.latitude <= NYC_VIEWPORT.high.latitude &&
-        point.longitude >= NYC_VIEWPORT.low.longitude && point.longitude <= NYC_VIEWPORT.high.longitude;
-}
-
-function safeHttps(value: string | undefined) {
-    try { const url = new URL(value ?? ""); return url.protocol === "https:" ? url.href : undefined; }
-    catch { return undefined; }
-}
-
-export function selectVerifiedRestaurant(payload: { places?: Place[]; nextPageToken?: string }, name: string, area: string): VerifiedRestaurant | null {
-    // Do not choose the first result or infer a branch from a neighborhood center.
-    if (!name.trim() || !area.trim() || payload.nextPageToken || !Array.isArray(payload.places)) return null;
-    const matches = payload.places.filter(place => {
-        const components = place.addressComponents ?? [];
-        const has = (type: string, text?: string) => components.some(component =>
-            component.types?.includes(type) && (!text || [component.longText, component.shortText]
-                .some(value => value && normalizePlaceName(value) === normalizePlaceName(text))));
-        const matchingArea = components.some(component => component.types?.some(type =>
-            ["neighborhood", "sublocality", "sublocality_level_1", "sublocality_level_2"].includes(type)) &&
-            [component.longText, component.shortText].some(value => value && normalizePlaceName(value) === normalizePlaceName(area)));
-        const borough = ["New York", "Manhattan", "Brooklyn", "Queens", "Bronx", "The Bronx", "Staten Island"];
-        const inCity = components.some(component => component.types?.some(type =>
-            ["locality", "sublocality", "sublocality_level_1"].includes(type)) &&
-            borough.some(value => normalizePlaceName(component.longText ?? "") === normalizePlaceName(value)));
-        return place.id && place.displayName?.text && normalizePlaceName(place.displayName.text) === normalizePlaceName(name) &&
-            place.businessStatus === "OPERATIONAL" && place.types?.some(type =>
-                ["restaurant", "cafe", "bakery", "bar", "meal_takeaway"].includes(type) || type.endsWith("_restaurant")) &&
-            isCoordinates(place.location) && isNYC(place.location) && inCity &&
-            has("country", "US") && has("administrative_area_level_1", "NY") &&
-            has("street_number") && has("route") && matchingArea && place.formattedAddress;
+export function selectVerifiedRestaurant(payload: unknown, name: string, area: string): VerifiedRestaurant | null {
+    const regions = areasForName(area);
+    // Query caps at 101 distinct records; incomplete candidate sets cannot establish uniqueness.
+    if (!name.trim() || !regions.length || !Array.isArray(payload) || payload.length > 100) return null;
+    const named = (payload as RestaurantRow[]).filter(row => row && typeof row.dba === "string" &&
+        normalizePlaceName(row.dba) === normalizePlaceName(name));
+    // An exact-name branch with unknown coordinates could also be inside the selected area.
+    if (named.some(row => regions.some(region => region.borough === row.boro) &&
+        (typeof row.latitude !== "string" || !row.latitude.trim() || typeof row.longitude !== "string" || !row.longitude.trim() ||
+            !isCoordinates({ latitude: Number(row.latitude), longitude: Number(row.longitude) })))) return null;
+    const matches = named.filter(row => {
+        if (!row || typeof row !== "object" || typeof row.dba !== "string" ||
+            normalizePlaceName(row.dba) !== normalizePlaceName(name)) return false;
+        if (typeof row.latitude !== "string" || !row.latitude.trim() || typeof row.longitude !== "string" || !row.longitude.trim()) return false;
+        const point = { latitude: Number(row.latitude), longitude: Number(row.longitude) };
+        return typeof row.camis === "string" && /^\d{8}$/.test(row.camis) &&
+            typeof row.building === "string" && /\d/.test(row.building) &&
+            typeof row.street === "string" && !!row.street.trim() && typeof row.zipcode === "string" && /^\d{5}$/.test(row.zipcode) &&
+            isCoordinates(point) && regions.some(region => region.borough === row.boro && pointInArea(point, region.polygons));
     });
-    const distinct = [...new Map(matches.map(place => [place.id, place])).values()];
-    if (distinct.length !== 1) return null;
-    const place = distinct[0];
+    const candidates = new Map<string, RestaurantRow>();
+    for (const row of matches) {
+        const previous = candidates.get(row.camis!);
+        // Inspection citations repeat venues. Conflicting addresses/coordinates fail closed.
+        if (previous && (normalizePlaceName(`${previous.building} ${previous.street} ${previous.zipcode}`) !==
+            normalizePlaceName(`${row.building} ${row.street} ${row.zipcode}`) ||
+            Number(previous.latitude) !== Number(row.latitude) || Number(previous.longitude) !== Number(row.longitude))) return null;
+        candidates.set(row.camis!, row);
+    }
+    if (candidates.size !== 1) return null;
+    const row = [...candidates.values()][0];
     return {
-        ...place.location!, placeId: place.id!, address: place.formattedAddress!,
-        mapsUrl: `https://www.google.com/maps/search/?${new URLSearchParams({ api: "1", query: place.displayName!.text!, query_place_id: place.id! })}`,
-        attributions: (place.attributions ?? []).filter(item => item.provider).map(item => ({
-            name: item.provider!, ...(safeHttps(item.providerUri) ? { uri: safeHttps(item.providerUri) } : {}),
-        })),
+        latitude: Number(row.latitude), longitude: Number(row.longitude), recordId: row.camis!,
+        address: `${row.building} ${row.street}, ${row.boro}, NY ${row.zipcode}`,
+        sourceUrl: RESTAURANT_SOURCE_URL,
+        sourceDate: typeof row.recorded_at === "string" && /^\d{4}-\d{2}-\d{2}T/.test(row.recorded_at) ? row.recorded_at.slice(0, 10) : null,
     };
 }
 
-export async function lookupRestaurant(name: string, area: string, apiKey: string, signal?: AbortSignal): Promise<VerifiedRestaurant | null> {
-    const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
-        method: "POST", cache: "no-store",
-        signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(8000)]) : AbortSignal.timeout(8000),
-        headers: {
-            "Content-Type": "application/json", "X-Goog-Api-Key": apiKey,
-            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location,places.types,places.businessStatus,places.attributions,nextPageToken",
-        },
-        body: JSON.stringify({
-            textQuery: `${name}, ${area}, New York City, NY, USA`, languageCode: "en", regionCode: "US",
-            locationRestriction: { rectangle: NYC_VIEWPORT }, pageSize: 20, includePureServiceAreaBusinesses: false,
-        }),
+export async function lookupRestaurant(name: string, area: string, signal?: AbortSignal): Promise<VerifiedRestaurant | null> {
+    const regions = areasForName(area);
+    if (!name.trim() || !regions.length) return null;
+    // A broad, ASCII-only token retrieves candidates; full normalized name and geometry verify them.
+    // Discard short possessive fragments so Jack's can be found through the token FREDA.
+    const tokens = name.normalize("NFKD").replace(/\p{M}/gu, "").toUpperCase().match(/[A-Z0-9]+/g) ?? [];
+    const token = tokens.sort((a, b) => b.length - a.length)[0];
+    if (!token || token.length < 3) return null;
+    const fields = "camis,dba,boro,building,street,zipcode,latitude,longitude";
+    const params = new URLSearchParams({
+        "$select": `${fields},max(record_date) as recorded_at`,
+        "$where": `upper(dba) like '%${token}%' AND boro = '${regions[0].borough}'`,
+        "$group": fields, "$limit": "101",
     });
-    if (!response.ok) throw new Error("Place lookup unavailable");
+    const response = await fetch(`https://data.cityofnewyork.us/resource/43nn-pn8j.json?${params}`, {
+        // Only public restaurant data is cached. User coordinates never leave the browser.
+        cache: "force-cache", next: { revalidate: 86400 },
+        signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(8000)]) : AbortSignal.timeout(8000),
+    });
+    if (!response.ok) throw new Error("NYC restaurant data is temporarily unavailable. Please try again later.");
     return selectVerifiedRestaurant(await response.json(), name, area);
 }

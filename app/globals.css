@@ -589,10 +589,13 @@ button:disabled { cursor: not-allowed; }
 .location-off, .location-control > a { color: #385440; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .restaurant-distance { border-left: 2px solid #dfdcd3; padding-left: 10px; margin: 0 0 16px; color: #657268; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .restaurant-distance .distance-value { display: flex; align-items: center; gap: 6px; color: #385440; font-weight: 500; }
-.restaurant-distance .maps-attribution { font-family: Arial, sans-serif; font-style: normal; font-weight: 400; font-size: 12px; letter-spacing: normal; color: #5e5e5e; white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; }
+.distance-source a { color: #385440; text-decoration: underline; text-underline-offset: 3px; }
 .distance-source { margin-top: 3px; }
 .distance-address { margin-top: 2px; }
 .location-policy { max-width: 700px; margin: 64px auto; padding: 0 24px; line-height: 1.7; }
 .location-policy h1 { font-size: 30px; margin: 20px 0; font-weight: 600; }
 .location-policy p { margin-bottom: 16px; }
 .location-policy a { text-decoration: underline; text-underline-offset: 3px; }
+
+.distance-origin-label { display: block; margin-bottom: 6px; color: #385440; font-weight: 500; }
+.distance-origin-select { min-width: 0; max-width: 100%; padding: 8px 30px 8px 10px; border: 1px solid #dfdcd3; border-radius: 8px; background: #fff; color: #385440; font: inherit; }
