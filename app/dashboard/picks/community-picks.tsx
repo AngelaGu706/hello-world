@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import LocationControl from "../location-control";
 import PickContent from "../pick-content";
-import PickCardCover from "../pick-card-cover";
+import PickCardHeader from "../pick-card-header";
 import type { Cuisine } from "@/utils/food-cuisines";
 import CuisineSelector from "../cuisine-selector";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
@@ -148,7 +148,7 @@ export default function CommunityPicks() {
                     {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); setPage(1); }}>Clear filters</button></div>}
                     {!loading && !error && pagePicks.map((pick) => (
                         <article key={pick.id} className="community-pick community-feed-card editorial-pick-card">
-                            <PickCardCover pick={pick} />
+                            <PickCardHeader pick={pick} />
                             <div className="pick-card-body">
                                 <div className="community-title-row"><h2>{pick.title}</h2></div>
                                 <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" showPrompt={false} />

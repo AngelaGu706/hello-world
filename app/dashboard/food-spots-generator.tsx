@@ -6,7 +6,7 @@ import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, 
 import LocationControl from "./location-control";
 import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
-import PickCardCover from "./pick-card-cover";
+import PickCardHeader from "./pick-card-header";
 import ReservationLink from "./reservation-link";
 
 import type { Cuisine } from "@/utils/food-cuisines";
@@ -111,7 +111,7 @@ export default function FoodSpotsGenerator() {
             <div aria-live="polite" aria-busy={loading}>
                 {pick && (
                     <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result community-pick community-feed-card editorial-pick-card">
-                        <PickCardCover pick={pick} />
+                        <PickCardHeader pick={pick} />
                         <div className="pick-card-body">
                             <div className="generator-result-top">
                                 <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Shared with the community</p>
