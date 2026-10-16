@@ -704,7 +704,7 @@ button:disabled { cursor: not-allowed; }
 .food-page .dashboard-account { gap: 20px; }
 .food-page .dashboard-bucket-link, .food-page .dashboard-profile, .food-page .community-back { font-size: 13px; font-weight: 500; color: #596653; }
 .food-page .community-create { background: #506348; font-weight: 500; }
-.discover-banner { position: relative; height: 148px; overflow: hidden; background: #344a3b; flex-shrink: 0; }
+.discover-banner { position: relative; height: 200px; overflow: hidden; background: #344a3b; flex-shrink: 0; }
 .discover-banner img { object-fit: cover; object-position: center 58%; }
 .discover-banner::after { content: ""; position: absolute; inset: 0; background: #233a2424; pointer-events: none; }
 .dashboard-page .dashboard-content { max-width: 840px; padding-top: 40px; padding-bottom: 48px; }
@@ -779,7 +779,7 @@ button:disabled { cursor: not-allowed; }
 @media (max-width: 700px) {
   .food-page .community-nav, .food-page .dashboard-nav { padding: 12px 20px; gap: 10px; }
   .food-page .food-cover { min-height: 144px; }
-  .discover-banner { height: 104px; }
+  .discover-banner { height: 140px; }
   .dashboard-page .dashboard-content { padding-top: 28px; }
   .dashboard-page .dashboard-heading { margin-bottom: 24px; }
   .food-page .community-feed { gap: 16px; }
