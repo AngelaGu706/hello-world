@@ -37,8 +37,7 @@ export default async function DashboardPage() {
 
             <div className="dashboard-content">
                 <header className="dashboard-heading">
-                    <p className="section-eyebrow">AI-POWERED NYC PICKS</p>
-                    <h1>Find a spot for whatever you’re craving.</h1>
+                    <h1>Let AI find your next NYC bite.</h1>
                 </header>
                 <FoodSpotsGenerator />
                 <Link href="/dashboard/picks" className="dashboard-community-link">
