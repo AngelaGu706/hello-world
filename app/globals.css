@@ -614,6 +614,7 @@ button:disabled { cursor: not-allowed; }
   --pick-control: #f1ede5;
   --pick-control-ink: #56594d;
   --pick-selected: #566447;
+  --pick-skipped: #786451;
   padding: 0;
   border: 1px solid var(--pick-line);
   border-radius: 22px;
@@ -654,6 +655,7 @@ button:disabled { cursor: not-allowed; }
 .editorial-pick-card .rating-button { gap: 6px; padding: 7px 9px; min-height: 36px; background: var(--pick-control); border-color: transparent; border-radius: 8px; color: var(--pick-control-ink); font-size: 12px; font-weight: 500; }
 .editorial-pick-card .rating-button:hover:not(:disabled) { background: #e7e2d8; border-color: transparent; color: var(--pick-ink); }
 .editorial-pick-card .rating-button.is-selected { background: var(--pick-selected); border-color: transparent; color: var(--pick-paper); }
+.editorial-pick-card .rating-button.rating-down.is-selected { background: var(--pick-skipped); }
 .editorial-pick-card .rating-count { border: 0; padding-left: 0; min-width: 0; color: inherit; }
 .editorial-pick-card .rating-count::before { content: "·"; margin-right: 5px; }
 .editorial-pick-card .rating-summary, .editorial-pick-card .rating-status { font-size: 11px; color: var(--pick-muted); margin-top: 9px; }
