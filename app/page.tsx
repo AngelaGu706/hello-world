@@ -22,7 +22,7 @@ export default async function Home({ searchParams }: {
                 </div>
                 <section className="login-card" aria-labelledby="login-title">
                     <p className="community-wordmark"><Utensils size={22} aria-hidden="true" />NYC FOOD SPOTS</p>
-                    <h1 id="login-title">Let AI find your next NYC bite.</h1>
+                    <h1 id="login-title">Turn your cravings into your next spot.</h1>
                     <ul className="login-features">
                         <li><Sparkles size={18} aria-hidden="true" /><span>Find a place</span></li>
                         <li><Compass size={18} aria-hidden="true" /><span>Explore local picks</span></li>
