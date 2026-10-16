@@ -6,7 +6,7 @@ import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, 
 import LocationControl from "./location-control";
 import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
-import BookmarkButton from "./bookmark-button";
+import PickCardCover from "./pick-card-cover";
 import ReservationLink from "./reservation-link";
 
 import type { Cuisine } from "@/utils/food-cuisines";
@@ -110,16 +110,19 @@ export default function FoodSpotsGenerator() {
             <LocationControl />
             <div aria-live="polite" aria-busy={loading}>
                 {pick && (
-                    <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result community-pick community-feed-card">
-                        <div className="generator-result-top">
-                            <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Shared with the community</p>
-                            <Link href="/dashboard/picks">Community Picks<ArrowUpRight size={15} aria-hidden="true" /></Link>
-                        </div>
-                        <div className="community-title-row"><h2 id="generated-pick-title">{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
-                        <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" />
-                        <div className="community-card-footer">
-                            <ReservationLink pick={pick} />
-                            {!loading && <VoteButtons generationId={pick.id} />}
+                    <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result community-pick community-feed-card editorial-pick-card">
+                        <PickCardCover pick={pick} />
+                        <div className="pick-card-body">
+                            <div className="generator-result-top">
+                                <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Shared with the community</p>
+                                <Link href="/dashboard/picks">Community Picks<ArrowUpRight size={15} aria-hidden="true" /></Link>
+                            </div>
+                            <div className="community-title-row"><h2 id="generated-pick-title">{pick.title}</h2></div>
+                            <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" showPrompt={false} />
+                            <div className="community-card-footer">
+                                {loading ? <ReservationLink pick={pick} compact /> : <VoteButtons generationId={pick.id} trailingAction={<ReservationLink pick={pick} compact />} />}
+                            </div>
+                            <details className="pick-original-prompt"><summary>More about this pick</summary><p>{pick.prompt}</p></details>
                         </div>
                     </article>
                 )}

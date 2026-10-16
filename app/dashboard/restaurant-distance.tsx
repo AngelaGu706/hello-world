@@ -7,7 +7,7 @@ import type { VerifiedRestaurant } from "@/utils/restaurant-location";
 import { useLocation } from "./location-provider";
 
 // Mounted only while a distance origin is selected, so turning it off discards place results too.
-function EnabledDistance({ generationId }: { generationId: string }) {
+function EnabledDistance({ generationId, compact }: { generationId: string; compact: boolean }) {
     const { origin } = useLocation();
     const [restaurant, setRestaurant] = useState<VerifiedRestaurant | null>(null);
     const [error, setError] = useState("");
@@ -40,11 +40,11 @@ function EnabledDistance({ generationId }: { generationId: string }) {
     }, [generationId, attempt]);
 
     if (!origin) return null;
-    return <div className="restaurant-distance">
+    return <div className={`restaurant-distance${compact ? " is-compact" : ""}`}>
         {loading ? <p role="status">Checking distance…</p> : restaurant ? <details className="distance-details">
             <summary>
-                <span className="distance-value"><MapPin size={14} aria-hidden="true" />{formatDistance(haversineMiles(origin.coordinates, restaurant))}</span>
-                <span className="distance-detail-toggle">Details</span>
+                <span className="distance-value">{!compact && <MapPin size={14} aria-hidden="true" />}{formatDistance(haversineMiles(origin.coordinates, restaurant))}</span>
+                <span className={compact ? "sr-only" : "distance-detail-toggle"}>Distance details</span>
             </summary>
             <div className="distance-detail-body">
                 <p>From the approximate {origin.name} area center.</p>
@@ -56,7 +56,7 @@ function EnabledDistance({ generationId }: { generationId: string }) {
     </div>;
 }
 
-export default function RestaurantDistance({ generationId }: { generationId: string }) {
+export default function RestaurantDistance({ generationId, compact = false }: { generationId: string; compact?: boolean }) {
     const { origin } = useLocation();
-    return origin ? <EnabledDistance key={generationId} generationId={generationId} /> : null;
+    return origin ? <EnabledDistance key={generationId} generationId={generationId} compact={compact} /> : null;
 }

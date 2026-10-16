@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import LocationControl from "../location-control";
 import PickContent from "../pick-content";
-import BookmarkButton from "../bookmark-button";
+import PickCardCover from "../pick-card-cover";
 import type { Cuisine } from "@/utils/food-cuisines";
 import CuisineSelector from "../cuisine-selector";
 import { decodePickContent, getPickCuisine } from "@/utils/food-pick";
@@ -147,13 +147,19 @@ export default function CommunityPicks() {
                     {!loading && !error && !picks.length && <div className="community-state"><h2>No picks yet.</h2><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
                     {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); setPage(1); }}>Clear filters</button></div>}
                     {!loading && !error && pagePicks.map((pick) => (
-                        <article key={pick.id} className="community-pick community-feed-card">
-                            <div className="community-pick-top"><span className="community-pick-label"><Utensils size={14} aria-hidden="true" />FOOD PICK</span><p className="community-time"><PickTime value={pick.created_at} /></p></div>
-                            <div className="community-title-row"><h2>{pick.title}</h2><BookmarkButton generationId={pick.id} /></div>
-                            <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" />
-                            <div className="community-card-footer">
-                                <ReservationLink pick={pick} />
-                                <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} />
+                        <article key={pick.id} className="community-pick community-feed-card editorial-pick-card">
+                            <PickCardCover pick={pick} />
+                            <div className="pick-card-body">
+                                <div className="community-title-row"><h2>{pick.title}</h2></div>
+                                <PickContent generationId={pick.id} content={pick.content} prompt={pick.prompt} variant="community" showPrompt={false} />
+                                <div className="community-card-footer">
+                                    <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} trailingAction={<ReservationLink pick={pick} compact />} />
+                                </div>
+                                <details className="pick-original-prompt">
+                                    <summary>More about this pick</summary>
+                                    <p>{pick.prompt}</p>
+                                    <p className="community-time">Shared <PickTime value={pick.created_at} /></p>
+                                </details>
                             </div>
                         </article>
                     ))}

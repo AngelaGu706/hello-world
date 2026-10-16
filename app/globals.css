@@ -604,3 +604,76 @@ button:disabled { cursor: not-allowed; }
 .distance-detail-body a { text-decoration: underline; text-underline-offset: 3px; }
 .distance-unavailable { color: #657268; }
 .distance-details > summary:focus-visible { outline: 3px solid #438761; outline-offset: 4px; border-radius: 3px; }
+
+/* Restaurant recommendation cards: warm neutrals, with color reserved for emphasis. */
+.editorial-pick-card {
+  --pick-paper: #fffdf8;
+  --pick-ink: #383b32;
+  --pick-muted: #736e64;
+  --pick-line: #e7e1d8;
+  --pick-control: #f1ede5;
+  --pick-control-ink: #56594d;
+  --pick-selected: #566447;
+  padding: 0;
+  border: 1px solid var(--pick-line);
+  border-radius: 22px;
+  background: var(--pick-paper);
+  color: var(--pick-ink);
+  box-shadow: 0 10px 36px #48523a0d;
+  overflow-wrap: anywhere;
+}
+.pick-card-cover { position: relative; height: 190px; flex-shrink: 0; border-radius: 21px 21px 0 0; background: #f5f2e9; isolation: isolate; }
+.pick-card-cover-image { object-fit: cover; object-position: 77% 58%; border-radius: inherit; z-index: -1; }
+.pick-card-cover::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: #8c6a3312; pointer-events: none; z-index: -1; }
+.pick-card-cuisine { position: absolute; left: 18px; top: 16px; border-radius: 99px; padding: 4px 10px; background: #eee6da; color: #76624f; font-size: 12px; font-weight: 600; }
+.pick-card-image-note { position: absolute; right: 14px; bottom: 12px; border-radius: 5px; padding: 2px 7px; background: #f9f4e9; color: #56594d; font-size: 11px; }
+.pick-card-cover .bookmark-control { position: absolute; right: 14px; top: 14px; margin: 0; max-width: calc(100% - 28px); }
+.pick-card-cover .bucket-save { width: 44px; height: 44px; min-height: 44px; padding: 0; justify-content: center; border-radius: 50%; border-color: transparent; background: var(--pick-paper); color: var(--pick-ink); box-shadow: 0 2px 8px #48523a0d; }
+.pick-card-cover .bookmark-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pick-card-cover .bucket-save:hover:not(:disabled) { background: var(--pick-control); border-color: transparent; color: var(--pick-ink); }
+.pick-card-cover .bucket-save.is-saved { background: var(--pick-selected); border-color: transparent; color: var(--pick-paper); }
+.pick-card-cover .community-error { max-width: 250px; padding: 8px; border-radius: 6px; background: var(--pick-paper); }
+.pick-card-body { padding: 22px; display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.editorial-pick-card .community-title-row { margin-bottom: 11px; }
+.editorial-pick-card .community-title-row h2 { margin: 0; font-size: 28px; font-weight: 650; line-height: 1.15; letter-spacing: -.7px; color: var(--pick-ink); }
+.editorial-pick-card .pick-content { flex: 0 1 auto; margin: 0 0 20px; }
+.editorial-pick-card .pick-metadata { margin: 0 0 22px; align-items: baseline; gap: 8px 12px; color: var(--pick-muted); font-size: 12px; }
+.editorial-pick-card .pick-metadata span { color: inherit; font-weight: 400; }
+.editorial-pick-card .restaurant-distance { margin: 0; color: var(--pick-muted); font-size: inherit; }
+.editorial-pick-card .distance-value { color: var(--pick-muted); font-weight: 400; }
+.editorial-pick-card .distance-details > summary { min-height: 24px; gap: 0; }
+.editorial-pick-card .distance-details > summary:hover .distance-value { text-decoration: underline; text-underline-offset: 3px; }
+.editorial-pick-card .distance-detail-body { padding: 8px 0 0; font-size: 12px; }
+.editorial-pick-card .community-dish { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 9px; margin: 0 0 6px; padding: 0; border-radius: 0; background: transparent; color: var(--pick-ink); }
+.editorial-pick-card .community-dish-label { margin: 0; color: #965b3e; font-size: 11px; line-height: 1.5; font-weight: 600; letter-spacing: .8px; }
+.editorial-pick-card .community-dish strong { display: inline; color: var(--pick-ink); font-size: 19px; line-height: 1.35; font-weight: 600; }
+.editorial-pick-card .community-recommendation { font-size: 13px; line-height: 1.6; color: var(--pick-muted); }
+.editorial-pick-card .community-recommendation strong { color: var(--pick-ink); font-weight: 500; }
+.editorial-pick-card .pick-expand { color: var(--pick-muted); font-weight: 500; }
+.editorial-pick-card .community-card-footer { margin-top: auto; }
+.editorial-pick-card .pick-ratings { padding: 15px 0 0; margin: 0; border-top: 1px solid var(--pick-line); display: block; }
+.editorial-pick-card .rating-row { flex-basis: auto; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.editorial-pick-card .rating-buttons { gap: 5px; }
+.editorial-pick-card .rating-button { gap: 6px; padding: 7px 9px; min-height: 36px; background: var(--pick-control); border-color: transparent; border-radius: 8px; color: var(--pick-control-ink); font-size: 12px; font-weight: 500; }
+.editorial-pick-card .rating-button:hover:not(:disabled) { background: #e7e2d8; border-color: transparent; color: var(--pick-ink); }
+.editorial-pick-card .rating-button.is-selected { background: var(--pick-selected); border-color: transparent; color: var(--pick-paper); }
+.editorial-pick-card .rating-count { border: 0; padding-left: 0; min-width: 0; color: inherit; }
+.editorial-pick-card .rating-count::before { content: "·"; margin-right: 5px; }
+.editorial-pick-card .rating-summary, .editorial-pick-card .rating-status { font-size: 11px; color: var(--pick-muted); margin-top: 9px; }
+.editorial-pick-card .community-reservation-link { flex-shrink: 0; gap: 4px; margin: 0; padding: 0; min-height: 36px; font-size: 12px; font-weight: 400; color: var(--pick-ink); }
+.editorial-pick-card .community-reservation-link > span { gap: 0; }
+.editorial-pick-card .community-reservation-link > span > svg { display: none; }
+.editorial-pick-card .pick-original-prompt { margin-top: 13px; color: var(--pick-muted); font-size: 12px; }
+.editorial-pick-card .pick-original-prompt p, .editorial-pick-card .community-time { color: var(--pick-muted); }
+.editorial-pick-card .pick-original-prompt summary { min-height: 24px; }
+.editorial-pick-card .generator-result-top { margin-bottom: 16px; font-size: 11px; }
+.editorial-pick-card .generator-saved, .editorial-pick-card .generator-result-top a { color: var(--pick-muted); }
+@media (hover: hover) { .editorial-pick-card:hover { border-color: #d8d2c6; box-shadow: 0 10px 36px #48523a12; } }
+@media (max-width: 420px) {
+  .editorial-pick-card .pick-card-body { padding: 18px; }
+  .editorial-pick-card .community-title-row h2 { font-size: 25px; }
+  .editorial-pick-card .rating-row { gap: 10px; }
+}
+@media (pointer: coarse) {
+  .editorial-pick-card .rating-button, .editorial-pick-card .community-reservation-link, .editorial-pick-card .pick-original-prompt summary, .editorial-pick-card .distance-details > summary { min-height: 44px; }
+}
