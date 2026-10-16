@@ -3,7 +3,7 @@ import { ArrowRight, Bookmark, LogOut, UserRound, Utensils } from "lucide-react"
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import FoodSpotsGenerator from "./food-spots-generator";
-import PageCover from "./page-cover";
+import Image from "next/image";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -21,7 +21,6 @@ export default async function DashboardPage() {
                     <Link href="/dashboard/bucket-list" className="dashboard-bucket-link" title="Your List" aria-label="Your List">
                         <Bookmark size={18} aria-hidden="true" /><span>Your List</span>
                     </Link>
-                    <span className="dashboard-email" title={user.email}>{user.email}</span>
                     <Link href="/profile" className="dashboard-profile" title="Edit Profile" aria-label="Edit Profile">
                         <UserRound size={18} aria-hidden="true" /><span>Profile</span>
                     </Link>
@@ -33,7 +32,9 @@ export default async function DashboardPage() {
                 </div>
             </nav>
 
-            <PageCover image="/dashboard-pizza-hd.webp" eyebrow="GOOD FOOD. ALL OVER NYC." title="Find a new favorite spot." heading="h2" quality={90} />
+            <div className="discover-banner" aria-hidden="true">
+                <Image src="/dashboard-pizza-hd.webp" alt="" fill sizes="100vw" quality={90} preload />
+            </div>
 
             <div className="dashboard-content">
                 <header className="dashboard-heading">
@@ -41,7 +42,7 @@ export default async function DashboardPage() {
                 </header>
                 <FoodSpotsGenerator />
                 <Link href="/dashboard/picks" className="dashboard-community-link">
-                    <div><h2>Community picks</h2><p>Find more food spots.</p></div>
+                    <h2>Community picks</h2>
                     <ArrowRight size={20} aria-hidden="true" />
                 </Link>
             </div>

@@ -46,7 +46,7 @@ export default function PickContent({ content, prompt, generationId, variant = "
                     {displayCuisine && <span className="cuisine-badge">{displayCuisine}</span>}
                     {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
                 </div>}
-                {dish && <p className="bucket-dish"><Utensils size={16} aria-hidden="true" /><span><span className="bucket-dish-label">Try</span><strong>{dish}</strong></span></p>}
+                {dish && <p className="bucket-dish"><Utensils size={16} aria-hidden="true" /><span><span className="bucket-dish-label">TRY THIS</span><strong>{dish}</strong></span></p>}
             </> : (area || food || cuisine) && <div className="pick-metadata">
                 {area && <span><MapPin size={14} aria-hidden="true" />{area}</span>}
                 {cuisine && <span className="cuisine-badge">{cuisine}</span>}
@@ -61,7 +61,7 @@ export default function PickContent({ content, prompt, generationId, variant = "
                 {expanded ? "Show less" : "Read more"}<ChevronDown size={14} aria-hidden="true" className={expanded ? "is-expanded" : ""} />
             </button>}
             {showPrompt && <details className="pick-original-prompt">
-                <summary>Behind this pick</summary>
+                <summary>Details</summary>
                 <p>{prompt}</p>
             </details>}
         </div>

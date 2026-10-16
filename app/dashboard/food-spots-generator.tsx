@@ -97,24 +97,24 @@ export default function FoodSpotsGenerator() {
                             </button>
                         ))}
                     </div>
-                    <span id="prompt-count" className="generator-character-count" aria-label={`${prompt.length} of 200 characters`}>{prompt.length}/200</span>
+                    <span id="prompt-count" className={prompt.length ? "generator-character-count" : "sr-only"} aria-label={`${prompt.length} of 200 characters`}>{prompt.length}/200</span>
                 </div>
                 <button type="submit" disabled={loading || effectivePrompt.length < 3} className="generator-submit">
                     {loading ? <LoaderCircle size={18} className="is-spinning" aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
                     {loading ? "Finding a spot…" : "Find a spot"}
                 </button>
-                {loading && <p className="generator-loading" role="status">Finding something good for you...</p>}
+                {loading && <p className="sr-only" role="status">Finding something good for you...</p>}
                 {error && <p role="alert" className="community-error">{error}</p>}
             </form>
 
-            <LocationControl />
+            {pick && <LocationControl />}
             <div aria-live="polite" aria-busy={loading}>
                 {pick && (
                     <article key={pick.id} ref={resultRef} tabIndex={-1} aria-labelledby="generated-pick-title" className="generator-result community-pick community-feed-card editorial-pick-card">
                         <PickCardHeader pick={pick} />
                         <div className="pick-card-body">
                             <div className="generator-result-top">
-                                <p className="generator-saved"><CheckCircle2 size={16} aria-hidden="true" />Shared with the community</p>
+                                <p className="generator-saved sr-only"><CheckCircle2 size={16} aria-hidden="true" />Shared to Community Picks</p>
                                 <Link href="/dashboard/picks">Community Picks<ArrowUpRight size={15} aria-hidden="true" /></Link>
                             </div>
                             <div className="community-title-row"><h2 id="generated-pick-title">{pick.title}</h2></div>
@@ -122,7 +122,7 @@ export default function FoodSpotsGenerator() {
                             <div className="community-card-footer">
                                 {loading ? <ReservationLink pick={pick} compact /> : <VoteButtons generationId={pick.id} trailingAction={<ReservationLink pick={pick} compact />} />}
                             </div>
-                            <details className="pick-original-prompt"><summary>More about this pick</summary><p>{pick.prompt}</p></details>
+                            <details className="pick-original-prompt"><summary>Details</summary><p>{pick.prompt}</p></details>
                         </div>
                     </article>
                 )}

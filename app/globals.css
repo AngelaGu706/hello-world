@@ -688,3 +688,118 @@ button:disabled { cursor: not-allowed; }
   .dashboard-page .dashboard-heading { margin: 4px auto 24px; }
   .dashboard-page .dashboard-heading h1 { letter-spacing: -.8px; }
 }
+
+/* Shared reading rhythm: one headline, clear controls, quieter supporting text. */
+.food-page, .login-page {
+  --ui-ink: #303a30;
+  --ui-muted: #6f7468;
+  --ui-line: #e2e4da;
+  --ui-paper: #fffdf8;
+  --ui-green: #506348;
+  font-size: 14px;
+  color: var(--ui-ink);
+}
+.food-page .community-nav, .food-page .dashboard-nav { min-height: 72px; padding-top: 14px; padding-bottom: 14px; }
+.food-page .community-wordmark { font-size: 15px; font-weight: 600; letter-spacing: -.25px; }
+.food-page .dashboard-account { gap: 20px; }
+.food-page .dashboard-bucket-link, .food-page .dashboard-profile, .food-page .community-back { font-size: 13px; font-weight: 500; color: #596653; }
+.food-page .community-create { background: #506348; font-weight: 500; }
+.discover-banner { position: relative; height: 148px; overflow: hidden; background: #344a3b; flex-shrink: 0; }
+.discover-banner img { object-fit: cover; object-position: center 58%; }
+.discover-banner::after { content: ""; position: absolute; inset: 0; background: #233a2424; pointer-events: none; }
+.dashboard-page .dashboard-content { max-width: 840px; padding-top: 40px; padding-bottom: 48px; }
+.dashboard-page .dashboard-heading { margin: 0 auto 30px; }
+.dashboard-page .dashboard-heading h1 { font-size: clamp(30px, 3.3vw, 42px); line-height: 1.2; letter-spacing: -1.15px; }
+.pick-generator > form { padding: 24px; border-color: var(--ui-line); border-radius: 20px; box-shadow: 0 4px 24px #303a3004; }
+.food-page .cuisine-label, .generator-prompt-label { font-size: 13px; font-weight: 500; color: #596653; margin-bottom: 8px; }
+.generator-selectors { gap: 16px; }
+.cuisine-selector { margin-bottom: 18px; }
+.food-page .cuisine-dropdown select { min-height: 48px; padding-top: 10px; padding-bottom: 10px; border-color: var(--ui-line); background: #fffefb; color: var(--ui-ink); font-size: 14px; border-radius: 11px; }
+.food-page .cuisine-dropdown select:hover, .food-page .cuisine-dropdown.is-selected select { border-color: #b4c0ac; background: #f4f6ef; }
+.generator-input { min-height: 90px; padding: 13px 14px; border-color: var(--ui-line); border-radius: 11px; background: #fffefb; color: var(--ui-ink); font-size: 16px; line-height: 1.6; }
+.generator-input::placeholder { color: #777c70; }
+.generator-prompts { gap: 8px; }
+.generator-prompts button { min-height: 36px; padding: 7px 10px; border-color: #e6e6df; border-radius: 8px; color: #697261; font-size: 12px; background: #fffdf8; font-weight: 400; }
+.generator-prompts svg { color: #8d7058; }
+.food-page .generator-submit { margin-top: 18px; min-height: 48px; background: var(--ui-green); font-size: 14px; font-weight: 500; border-radius: 11px; }
+.food-page .generator-submit:disabled { background: #a4b09c; color: #fff; }
+.dashboard-community-link { margin-top: 20px; padding: 18px 22px; background: #f0f2e9; border-color: #e0e5d8; border-radius: 14px; }
+.dashboard-community-link h2 { font-size: 16px; font-weight: 500; letter-spacing: -.2px; }
+.dashboard-community-link svg { color: #627455; }
+.food-page .food-cover { min-height: 176px; }
+.food-page .food-cover-content { padding-top: 32px; padding-bottom: 32px; }
+.food-page .food-cover h1 { font-size: clamp(30px, 3.5vw, 40px); line-height: 1.2; font-weight: 500; letter-spacing: -.8px; }
+.food-page .community-content { width: 100%; }
+.location-control { margin: 24px 0 20px; font-size: 12px; color: var(--ui-muted); }
+.location-actions { gap: 10px; margin: 0; }
+.distance-origin-label { margin: 0; font-size: 12px; font-weight: 500; color: #65705d; }
+.distance-origin-select { min-height: 40px; max-width: 230px; border-color: var(--ui-line); background: var(--ui-paper); color: #596653; border-radius: 9px; }
+.location-off { min-height: 40px; padding: 0 4px; font-size: 12px; color: #65705d; }
+.distance-hint { margin-top: 6px; font-size: 12px; }
+.food-page .community-toolbar { padding-bottom: 18px; }
+.food-page .community-tabs { background: #eceee5; border-radius: 11px; }
+.food-page .community-tabs button { font-size: 13px; font-weight: 500; }
+.food-page .community-search { border-color: var(--ui-line); background: #fffefb; }
+.food-page .community-search input { color: var(--ui-ink); }
+.food-page .community-list-label { min-height: 44px; padding: 14px 0; justify-content: flex-end; letter-spacing: 0; }
+.food-page .community-list-label > span:last-child { font-size: 12px; color: var(--ui-muted); }
+.food-page .community-feed { gap: 20px; align-items: stretch; }
+.editorial-pick-card { box-shadow: 0 4px 24px #48523a06; border-radius: 18px; }
+.pick-card-header { padding: 16px 24px 0; }
+.pick-card-body { padding: 10px 24px 22px; }
+.editorial-pick-card .community-title-row h2 { font-size: 26px; line-height: 1.2; font-weight: 500; letter-spacing: -.55px; }
+.editorial-pick-card .pick-metadata { margin-bottom: 18px; font-size: 12px; gap: 6px 12px; }
+.editorial-pick-card .community-dish { margin-bottom: 7px; }
+.editorial-pick-card .community-dish strong { font-size: 18px; font-weight: 500; line-height: 1.4; }
+.editorial-pick-card .community-dish-label { font-weight: 500; letter-spacing: .65px; }
+.editorial-pick-card .community-recommendation { font-size: 14px; line-height: 1.65; }
+.editorial-pick-card .pick-content { margin-bottom: 20px; }
+.editorial-pick-card .rating-button { min-height: 40px; padding: 8px 10px; font-size: 12px; }
+.editorial-pick-card .community-reservation-link { min-height: 40px; font-size: 12px; }
+.editorial-pick-card .pick-original-prompt { margin-top: 10px; }
+.editorial-pick-card .pick-original-prompt summary { min-height: 32px; font-size: 12px; }
+.editorial-pick-card .rating-summary { font-size: 11px; margin-top: 8px; }
+.editorial-pick-card .generator-result-top { justify-content: flex-end; margin-bottom: 12px; }
+.editorial-pick-card .pick-metadata .cuisine-badge { background: #eee6da; color: #76624f; font-size: 11px; font-weight: 500; }
+.bucket-tab-count { margin-left: 7px; font-size: 12px; font-variant-numeric: tabular-nums; opacity: .75; }
+.bucket-card .community-pick-top { margin-bottom: 14px; }
+.bucket-card .bucket-status { background: #eee6da; color: #76624f; font-size: 10px; font-weight: 500; letter-spacing: .5px; }
+.bucket-card .bucket-status.is-visited { background: #e9eddf; color: #506348; }
+.bucket-card .bucket-dish { display: flex; flex-wrap: wrap; gap: 5px 9px; margin: 0 0 7px; color: var(--pick-ink); }
+.bucket-card .bucket-dish > svg { display: none; }
+.bucket-card .bucket-dish > span { gap: 5px 9px; }
+.bucket-card .bucket-dish-label { color: #965b3e; font-size: 11px; font-weight: 500; letter-spacing: .65px; }
+.bucket-card .bucket-dish strong { font-size: 18px; font-weight: 500; line-height: 1.4; }
+.bucket-card .bucket-visit { margin-top: 8px; color: #506348; background: #e9eddf; font-size: 12px; font-weight: 500; }
+.login-card .community-wordmark { margin-bottom: 36px; }
+.login-card h1 { font-size: clamp(30px, 3.3vw, 40px); line-height: 1.2; font-weight: 400; letter-spacing: -1px; }
+.login-card .google-signin { margin-top: 32px; font-size: 14px; font-weight: 500; }
+.login-story { min-height: 560px; }
+@media (hover: hover) { .editorial-pick-card:hover { box-shadow: 0 6px 26px #48523a0b; } }
+@media (max-width: 700px) {
+  .food-page .community-nav, .food-page .dashboard-nav { padding: 12px 20px; gap: 10px; }
+  .food-page .food-cover { min-height: 144px; }
+  .discover-banner { height: 104px; }
+  .dashboard-page .dashboard-content { padding-top: 28px; }
+  .dashboard-page .dashboard-heading { margin-bottom: 24px; }
+  .food-page .community-feed { gap: 16px; }
+  .login-story { min-height: 160px; }
+}
+@media (max-width: 520px) {
+  .generator-selectors { gap: 0; }
+  .pick-generator > form { padding: 18px; }
+  .generator-options { flex-direction: column; gap: 6px; }
+  .generator-prompts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .generator-prompts button { justify-content: center; font-size: 12px; padding: 8px; }
+  .generator-character-count { align-self: flex-end; padding: 0; }
+  .food-page .community-nav-actions { gap: 12px; }
+  .food-page .dashboard-account { gap: 8px; }
+  .editorial-pick-card .pick-card-header { padding: 16px 18px 0; }
+  .editorial-pick-card .pick-card-body { padding: 10px 18px 18px; }
+  .bucket-card .pick-card-body { padding-top: 16px; }
+  .login-card .community-wordmark { margin-bottom: 28px; }
+}
+@media (pointer: coarse) {
+  .generator-prompts button, .food-page .cuisine-dropdown select, .distance-origin-select, .location-off, .editorial-pick-card .rating-button, .editorial-pick-card .community-reservation-link, .editorial-pick-card .pick-original-prompt summary { min-height: 44px; }
+  .food-page .cuisine-dropdown select { font-size: 16px; }
+}

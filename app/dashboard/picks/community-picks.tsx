@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
+import { ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Plus, RefreshCw, Search, ThumbsUp, Utensils } from "lucide-react";
 import LocationControl from "../location-control";
 import PickContent from "../pick-content";
 import PickCardHeader from "../pick-card-header";
@@ -106,7 +106,6 @@ export default function CommunityPicks() {
     }
 
     const totalsAvailable = communityPicks.every((pick) => pick.upCount !== null && pick.downCount !== null);
-    const totalRatings = communityPicks.reduce((total, pick) => total + (pick.upCount ?? 0) + (pick.downCount ?? 0), 0);
 
     return (
         <main className="community-page community-explore food-page">
@@ -114,18 +113,13 @@ export default function CommunityPicks() {
                 <Link href="/dashboard" className="community-wordmark"><Utensils size={22} aria-hidden="true" /><span>NYC FOOD SPOTS</span></Link>
                 <div className="community-nav-actions">
                     <Link href="/dashboard/bucket-list" className="community-back"><Bookmark size={16} aria-hidden="true" />Your List</Link>
-                    <Link href="/dashboard" className="community-back community-dashboard-link"><ArrowLeft size={16} aria-hidden="true" />Discover</Link>
                     <Link href="/dashboard" className="community-create"><Plus size={16} aria-hidden="true" />Find a spot</Link>
                 </div>
             </nav>
 
-            <PageCover image="/community-street-food.webp" eyebrow="FROM THE COMMUNITY" title="Community Picks" subtitle="More spots to try." />
+            <PageCover image="/community-street-food.webp" title="Community Picks" />
 
             <div className="community-content">
-                <div className="community-overview">
-                    <div><span className="community-live-dot" aria-hidden="true" /><span>Fresh from NYC</span></div>
-                    {!loading && !error && <p>{communityPicks.length} picks {totalsAvailable && <><span aria-hidden="true">/</span> {totalRatings} community ratings</>}</p>}
-                </div>
                 <LocationControl />
                 <div className="community-toolbar">
                     <div className="community-tabs" role="group" aria-label="Sort picks">
@@ -139,7 +133,7 @@ export default function CommunityPicks() {
                         <button type="button" className="community-refresh" onClick={reload} disabled={loading} title="Refresh picks" aria-label="Refresh picks"><RefreshCw size={18} aria-hidden="true" className={loading ? "is-spinning" : ""} /></button>
                     </div>
                 </div>
-                <div className="community-list-label" ref={resultsHeading} tabIndex={-1}><span>{sort === "latest" ? "LATEST PICKS" : "MOST LIKED"}</span><span role="status">{!loading && !error ? resultRange : ""}</span></div>
+                <div className="community-list-label" ref={resultsHeading} tabIndex={-1}><span className="sr-only">{sort === "latest" ? "Latest picks" : "Most liked picks"}</span><span role="status">{!loading && !error ? resultRange : ""}</span></div>
 
                 <div id="community-picks-feed" className="community-feed" aria-live="polite" aria-busy={loading}>
                     {loading && <p role="status" className="community-state">Loading community picks...</p>}
@@ -156,7 +150,7 @@ export default function CommunityPicks() {
                                     <VoteButtons generationId={pick.id} initialVote={pick.myVote} upCount={pick.upCount} downCount={pick.downCount} onRated={(rating) => updateRating(pick.id, rating)} trailingAction={<ReservationLink pick={pick} compact />} />
                                 </div>
                                 <details className="pick-original-prompt">
-                                    <summary>More about this pick</summary>
+                                    <summary>Details</summary>
                                     <p>{pick.prompt}</p>
                                     <p className="community-time">Shared <PickTime value={pick.created_at} /></p>
                                 </details>

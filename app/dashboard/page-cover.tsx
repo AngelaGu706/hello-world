@@ -2,7 +2,7 @@ import Image from "next/image";
 
 type Props = {
     image: string;
-    eyebrow: string;
+    eyebrow?: string;
     title: string;
     subtitle?: string;
     heading?: "h1" | "h2";
@@ -13,7 +13,7 @@ export default function PageCover({ image, eyebrow, title, subtitle, heading: He
     return <header className="food-cover">
         <Image src={image} alt="" fill sizes="100vw" quality={quality} preload className="food-cover-image" />
         <div className="food-cover-content">
-            <p className="food-cover-eyebrow">{eyebrow}</p>
+            {eyebrow && <p className="food-cover-eyebrow">{eyebrow}</p>}
             <Heading>{title}</Heading>
             {subtitle && <p className="food-cover-subtitle">{subtitle}</p>}
         </div>

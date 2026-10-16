@@ -135,11 +135,11 @@ function RatingControls({
                 </div>
                 {trailingAction}
             </div>
-            <span className="rating-summary" role="status">
+            <span className={loadState === "ready" && totalsAvailable && total === 0 ? "sr-only" : "rating-summary"} role="status">
                 {loadState === "loading" ? "Loading ratings..." : !totalsAvailable ? "Ratings couldn't be loaded"
                     : total ? `${Math.round((rating.upCount ?? 0) / total * 100)}% would try · ${total} ${total === 1 ? "rating" : "ratings"}` : "Not rated yet"}
             </span>
-            {(saving || message || rating.myVote) && <p role="status" className="rating-status">
+            {(saving || message || rating.myVote) && <p role="status" className={saving ? "rating-status" : "sr-only"}>
                 {saving ? "Saving..." : message || `You rated this: ${rating.myVote === "up" ? "Would try" : "Skip"}`}
             </p>}
             {error && <p role="alert" className="community-error">{error}</p>}
