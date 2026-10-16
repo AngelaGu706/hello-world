@@ -25,45 +25,45 @@ export async function GET(request: Request) {
     }
 }
 
-export async function POST(request: Request) {
+async function saveVote(request: Request, remove: boolean) {
+    const reply = (body: object, status = 200) => NextResponse.json(body, {
+        status, headers: { "Cache-Control": "private, no-store" },
+    });
     try {
         const supabase = await createClient();
         const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError || !user) {
-            return NextResponse.json({ error: "Please sign in first" }, { status: 401 });
-        }
+        if (authError || !user) return reply({ error: "Please sign in first" }, 401);
         const body = await request.json().catch(() => null);
         const generationId = body?.generationId;
         const vote = body?.vote;
         if (typeof generationId !== "string" || !generationIdPattern.test(generationId)
-            || (vote !== "up" && vote !== "down")) {
-            return NextResponse.json({ error: "Invalid vote" }, { status: 400 });
+            || (!remove && vote !== "up" && vote !== "down")) {
+            return reply({ error: "Invalid vote" }, 400);
         }
 
-        const { data, error } = await supabase.from("votes")
-            .insert({ user_id: user.id, generation_id: generationId, vote })
-            .select("id, vote").single();
-
-        if (error && error.code !== "23505") {
-            if (error.code === "23503") {
-                return NextResponse.json({ error: "Recommendations no longer exist." }, { status: 404 });
-            }
+        // Explicit set/remove operations make retries safe. The unique constraint
+        // keeps one vote per user and pick, including simultaneous requests.
+        const { error } = remove
+            ? await supabase.from("votes").delete().eq("user_id", user.id).eq("generation_id", generationId)
+            : await supabase.from("votes").upsert({ user_id: user.id, generation_id: generationId, vote }, {
+                onConflict: "user_id,generation_id",
+            }).select("id, vote").single();
+        if (error) {
+            if (error.code === "23503") return reply({ error: "Recommendations no longer exist." }, 404);
             console.error("Saving vote failed:", error);
-            return NextResponse.json({ error: "Couldn't save rating. Please try again." }, { status: 500 });
+            return reply({ error: "Couldn't save rating. Please try again." }, 500);
         }
 
         const { ratings, ratingsError } = await loadGenerationRatings(supabase, [generationId], user.id);
         const rating = ratings.get(generationId)!;
-        // Aggregate reads can fail after a successful write. Preserve that saved
-        // vote and let the UI retry the read without submitting another vote.
-        if (!error) rating.myVote = data?.vote ?? vote;
-
-        if (error?.code === "23505") {
-            return NextResponse.json({ error: "You have already rated this pick.", rating, ratingsError }, { status: 409 });
-        }
-        return NextResponse.json({ ...data, rating, ratingsError }, { status: 201 });
+        // A successful mutation remains saved even if the totals refresh fails.
+        rating.myVote = remove ? null : vote;
+        return reply({ rating, ratingsError });
     } catch (error) {
         console.error("Vote request failed:", error);
-        return NextResponse.json({ error: "Couldn't save rating. Please try again." }, { status: 500 });
+        return reply({ error: "Couldn't save rating. Please try again." }, 500);
     }
 }
+
+export async function POST(request: Request) { return saveVote(request, false); }
+export async function DELETE(request: Request) { return saveVote(request, true); }

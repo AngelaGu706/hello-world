@@ -24,7 +24,6 @@ function RatingControls({
     generationId, initialVote = null, upCount = null, downCount = null, onRated, trailingAction,
 }: VoteButtonsProps) {
     const [saving, setSaving] = useState(false);
-    const [saved, setSaved] = useState(Boolean(initialVote));
     const [rating, setRating] = useState<PickRating>({ myVote: initialVote, upCount, downCount });
     const [loadState, setLoadState] = useState<"loading" | "ready" | "error">(
         upCount === null || downCount === null ? "loading" : "ready",
@@ -48,8 +47,7 @@ function RatingControls({
                 const data = await response.json();
                 if (controller.signal.aborted) return;
                 if (isPickRating(data.rating)) {
-                    setRating(previous => ({ ...data.rating, myVote: data.rating.myVote ?? previous.myVote }));
-                    if (data.rating.myVote) setSaved(true);
+                    setRating(data.rating);
                     onRatedRef.current?.(data.rating);
                 }
                 if (!response.ok || !isPickRating(data.rating)
@@ -75,29 +73,29 @@ function RatingControls({
     }
 
     async function submitVote(vote: "up" | "down") {
-        if (savingRef.current || saved || loadState === "loading") return;
+        if (savingRef.current || loadState !== "ready") return;
+        const remove = rating.myVote === vote;
         savingRef.current = true;
         setSaving(true);
         setError("");
         setMessage("");
         try {
             const response = await fetch("/api/votes", {
-                method: "POST",
+                method: remove ? "DELETE" : "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ generationId, vote }),
+                body: JSON.stringify({ generationId, ...(remove ? {} : { vote }) }),
             });
             const data = await response.json();
-            if (!response.ok && response.status !== 409) {
+            if (!response.ok) {
                 throw new Error(data.error || "Couldn't save rating. Please try again.");
             }
 
-            setSaved(true);
             const nextRating: PickRating = isPickRating(data.rating) ? data.rating : {
-                myVote: response.status === 409 ? null : vote, upCount: null, downCount: null,
+                myVote: remove ? null : vote, upCount: null, downCount: null,
             };
             setRating(nextRating);
             onRated?.(nextRating);
-            setMessage(response.status === 409 ? "You have already rated this pick." : "Community rating saved.");
+            setMessage(remove ? "Rating removed." : "Community rating saved.");
             const totalsMissing = nextRating.upCount === null || nextRating.downCount === null;
             setLoadState(totalsMissing ? "error" : "ready");
             if (totalsMissing) setError("Couldn't load ratings. Please try again.");
@@ -118,7 +116,8 @@ function RatingControls({
                 <div role="group" aria-label="Rate this pick" className="rating-buttons">
                     <button type="button"
                         className={`rating-button rating-up ${rating.myVote === "up" ? "is-selected" : ""}`}
-                        disabled={saving || saved || loadState === "loading"} aria-pressed={rating.myVote === "up"}
+                        disabled={saving || loadState !== "ready"} aria-pressed={rating.myVote === "up"}
+                        title={rating.myVote === "up" ? "Click again to undo your rating" : "Rate: Would try"}
                         onClick={() => submitVote("up")}>
                         <ThumbsUp size={16} aria-hidden="true" />
                         <span>Would try</span><span className="rating-count">{rating.upCount ?? "--"}</span>
@@ -126,7 +125,8 @@ function RatingControls({
                     </button>
                     <button type="button"
                         className={`rating-button rating-down ${rating.myVote === "down" ? "is-selected" : ""}`}
-                        disabled={saving || saved || loadState === "loading"} aria-pressed={rating.myVote === "down"}
+                        disabled={saving || loadState !== "ready"} aria-pressed={rating.myVote === "down"}
+                        title={rating.myVote === "down" ? "Click again to undo your rating" : "Rate: Skip"}
                         onClick={() => submitVote("down")}>
                         <ThumbsDown size={16} aria-hidden="true" />
                         <span>Skip</span><span className="rating-count">{rating.downCount ?? "--"}</span>
