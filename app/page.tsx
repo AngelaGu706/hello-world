@@ -19,8 +19,8 @@ export default async function Home({ searchParams }: {
                 </div>
                 <section className="login-card" aria-labelledby="login-title">
                     <p className="community-wordmark"><Utensils size={22} aria-hidden="true" />NYC FOOD SPOTS</p>
-                    <h1 id="login-title">Turn your cravings{" "}<span className="headline-ending">into your next spot.</span></h1>
-                    <p className="headline-subtitle">Let AI pick for you.</p>
+                    <h1 id="login-title">Turn your cravings{" "}<span className="headline-ending">into your next spot</span></h1>
+                    <p className="headline-subtitle">Let AI pick for you</p>
                     <LoginButton signInFailed={!!authError} />
                 </section>
             </div>
