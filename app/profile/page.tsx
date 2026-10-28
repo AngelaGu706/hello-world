@@ -110,7 +110,7 @@ export default function ProfilePage() {
             setAvatarUrl(publicUrl);
             setAvatarFailed(false);
             setMessageType("success");
-            setMessage("Photo saved.");
+            setMessage("Photo saved");
         } catch (error) {
             console.error(error);
             setMessageType("error");
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                                     {uploading ? "Uploading…" : "Change photo"}
                                 </label>
                                 <input id="profile-photo" className="sr-only" type="file" accept="image/*" onChange={uploadAvatar} aria-describedby="photo-help" />
-                                <p id="photo-help">Up to 5 MB. Saved automatically.</p>
+                                <p id="photo-help">Up to 5 MB · Saved automatically</p>
                             </div>
                         </div>
                         <div className="profile-name-grid">
