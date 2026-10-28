@@ -11,6 +11,16 @@ function fixture({ history = [{ title: 'Buvette' }], historyFailure, candidates 
     const calls = [], writes = [], queries = [];
     const client = {
         auth: { getUser: async () => ({ data: { user: { id: 'current-user' } }, error: null }) },
+        async rpc(name, args) {
+            if (name === 'food_start_request') return { data: 'request-1', error: null };
+            if (name === 'food_start_step') return { data: 'step-' + (calls.length + 1), error: null };
+            if (name === 'food_complete_request') {
+                const saved = { user_id: 'current-user', prompt: args.p_prompt, title: args.p_title, content: args.p_content };
+                writes.push(saved);
+                return { data: { id: 'saved-generation', ...saved }, error: null };
+            }
+            return { data: null, error: null };
+        },
         from(table) {
             assert.equal(table, 'generations');
             const query = {

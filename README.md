@@ -54,3 +54,12 @@ Public restaurant query results can be cached by Next.js for 24 hours to reduce 
 ### Verification
 
 Run `npm test`, `npm run lint`, and `npm run build`. Tests include known Haversine values, numerical edges, polygon holes/edges/islands, all eight source-derived centers, genuine public restaurant fixtures, branch/record ambiguity, bounded injection-safe public queries, endpoint authentication and coordinate rejection, no-key operation, and existing app regressions. Real public lookups were verified for Buvette (West Village), Koronet Pizza (Morningside Heights), and Jack's Wife Freda (West Village). Browser tests exercise manual origins, switching origins without retransmitting coordinates, collapsed/expanded details, temporary-error retry, and clearing/resetting the selected origin.
+
+
+## Food generation observability
+
+Every new `/api/food-spots` request records the submitted text, cuisine and neighborhood in the existing food Supabase project. Each actual Gemini SDK call stores the exact prompt, requested model, response settings, raw text, validation outcome, returned token counts when available, and elapsed time. A variety retry is a second step. SDK-internal transport retries are not separate steps. The selected step and saved recommendation are committed atomically. Recording failures stop generation rather than silently creating untracked results.
+
+Apply `supabase/migrations/20261028_food_observability.sql` once in the existing food project before deploying this version. It adds private request/step tables and owner-scoped write RPCs. Only existing database superadmins may read trace tables; no service-role key or new admin role is required. Existing generation, rating and saved-list behavior remains.
+
+The admin app at `https://humor-admin-beta.vercel.app/admin/requests` displays these live food traces. A recommendation links back to its trace in the admin content list. Historic and manually created picks have no trace; their model calls are not reconstructed. Original outputs remain in the trace if an administrator later edits or deletes the displayed recommendation.

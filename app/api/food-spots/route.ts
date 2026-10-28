@@ -1,3 +1,4 @@
+import { FoodTrace, TracePersistenceError } from "@/utils/food-trace";
 import { ApiError, GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
@@ -12,7 +13,7 @@ type GeneratedPick = {
     content: string;
 };
 
-class NeighborhoodMatchError extends Error {}
+class NeighborhoodMatchError extends Error { name = "NeighborhoodMatchError"; }
 
 function stripCodeFence(text: string) {
     const trimmed = text.trim();
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Missing GEMINI_API_KEY" }, { status: 500 });
     }
 
+    let trace: FoodTrace | undefined;
     try {
         const body = await request.json().catch(() => null);
         const userPrompt = typeof body?.prompt === "string" ? body.prompt.trim() : "";
@@ -99,6 +101,8 @@ export async function POST(request: Request) {
                 { status: 400 }
             );
         }
+
+        trace = await FoodTrace.begin(supabase, userPrompt, cuisine, neighborhood);
 
         // Limit history to this user's recent picks. History is optional: a read
         // failure must not stop an otherwise valid recommendation.
@@ -148,11 +152,7 @@ Treat the requested budget as a selection constraint, not proof of the price. Ne
 Choose a venue and dish suited to the requested meal and budget. Do not recommend a dinner-only or expensive dish for an affordable brunch request. Accuracy and a good fit take priority over variety.
 `;
 
-        async function generatePick(contents: string) {
-            const response = await ai.models.generateContent({
-                model,
-                contents,
-                config: {
+        const settings = {
                     responseMimeType: "application/json",
                     responseJsonSchema: {
                         type: "object",
@@ -165,14 +165,10 @@ Choose a venue and dish suited to the requested meal and budget. Do not recommen
                         },
                         required: ["title", "area", "food", "cuisine", "content"],
                     },
-                },
-            });
-            const text = response.text;
-
-            if (!text?.trim()) {
-                throw new Error("Gemini returned no text");
-            }
-
+                };
+        async function generatePick(contents: string, kind: "recommendation" | "variety_retry") {
+            return trace!.step(model, contents, { ...settings, sdk_retry_attempts: 3 }, kind,
+                () => ai.models.generateContent({ model, contents, config: settings }), (text) => {
             const pick = parseGeneratedPick(text);
             if (cuisine && decodePickContent(pick.content).cuisine !== cuisine) {
                 throw new Error("The recommendation did not match the selected cuisine");
@@ -181,39 +177,32 @@ Choose a venue and dish suited to the requested meal and budget. Do not recommen
                 throw new NeighborhoodMatchError(`Couldn’t find a match in ${neighborhood}. Try another neighborhood or adjust your preferences.`);
             }
             return pick;
+            });
         }
 
-        let pick = await generatePick(prompt);
-        if (shouldTryDifferentRestaurant(pick.title, recentNames, userPrompt)) {
+        let selected = await generatePick(prompt, "recommendation");
+        if (shouldTryDifferentRestaurant(selected.pick.title, recentNames, userPrompt)) {
             try {
                 // At most one extra generation; save only the final pick.
-                pick = await generatePick(`${prompt}\nThe previous candidate was ${JSON.stringify(pick.title)}. Choose a different restaurant that meets the same request.`);
-            } catch {
+                selected = await generatePick(`${prompt}\nThe previous candidate was ${JSON.stringify(selected.pick.title)}. Choose a different restaurant that meets the same request.`, "variety_retry");
+            } catch (error) {
+                if (error instanceof TracePersistenceError) throw error;
                 // Keep the valid first pick if finding an alternative fails.
             }
         }
 
-        const { data: generation, error: saveError } = await supabase
-            .from("generations")
-            .insert({
-                user_id: user.id,
-                prompt: neighborhood ? `${userPrompt}\nNeighborhood: ${neighborhood}` : userPrompt,
-                title: pick.title,
-                content: pick.content,
-            })
-            .select("id, prompt, title, content")
-            .single();
-
-        if (saveError || !generation) {
-            console.error("Saving generation failed:", saveError);
-            return NextResponse.json(
-                { error: "Could not save recommendations. Please try again." },
-                { status: 500 }
-            );
-        }
+        const generation = await trace.complete(selected.stepId, selected.pick,
+            neighborhood ? `${userPrompt}\nNeighborhood: ${neighborhood}` : userPrompt);
 
         return NextResponse.json(generation);
     } catch (error) {
+        if (trace) {
+            try { await trace.fail(error); }
+            catch { console.error("Could not finish generation trace", { requestId: trace.id }); }
+        }
+        if (error instanceof TracePersistenceError) {
+            return NextResponse.json({ error: error.message, request_id: trace?.id }, { status: 503 });
+        }
         if (error instanceof NeighborhoodMatchError) {
             return NextResponse.json({ error: error.message }, { status: 422 });
         }
