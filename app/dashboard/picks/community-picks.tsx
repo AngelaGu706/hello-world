@@ -138,8 +138,8 @@ export default function CommunityPicks() {
                 <div id="community-picks-feed" className="community-feed" aria-live="polite" aria-busy={loading}>
                     {loading && <p role="status" className="community-state">Loading community picks...</p>}
                     {error && <div className="community-state"><p role="alert" className="community-error">{error}</p><button type="button" className="community-create" onClick={reload}>Try again</button></div>}
-                    {!loading && !error && !picks.length && <div className="community-state"><h2>No picks yet.</h2><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
-                    {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks.</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); setPage(1); }}>Clear filters</button></div>}
+                    {!loading && !error && !picks.length && <div className="community-state"><h2>No picks yet</h2><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
+                    {!loading && !error && picks.length > 0 && !visiblePicks.length && <div className="community-state"><h2>No matching picks</h2><button type="button" className="community-clear" onClick={() => { setSearch(""); setCuisine(""); setPage(1); }}>Clear filters</button></div>}
                     {!loading && !error && pagePicks.map((pick) => (
                         <article key={pick.id} className="community-pick community-feed-card editorial-pick-card">
                             <PickCardHeader pick={pick} />
