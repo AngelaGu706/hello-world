@@ -17,7 +17,7 @@ export default function BookmarkButton({ generationId }: { generationId: string 
         setMessage("");
         try {
             await change(generationId, saved ? "DELETE" : "POST");
-            setMessage(saved ? "Removed from Your List." : "Saved to Your List.");
+            setMessage(saved ? "Removed from Your List" : "Saved to Your List");
         }
         catch (error) { setError(error instanceof Error ? error.message : "Please try again."); }
     }
