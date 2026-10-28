@@ -95,7 +95,7 @@ function RatingControls({
             };
             setRating(nextRating);
             onRated?.(nextRating);
-            setMessage(remove ? "Rating removed." : "Community rating saved.");
+            setMessage(remove ? "Rating removed" : "Community rating saved");
             const totalsMissing = nextRating.upCount === null || nextRating.downCount === null;
             setLoadState(totalsMissing ? "error" : "ready");
             if (totalsMissing) setError("Couldn't load ratings. Please try again.");
