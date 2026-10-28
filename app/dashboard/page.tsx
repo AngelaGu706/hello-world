@@ -38,8 +38,8 @@ export default async function DashboardPage() {
 
             <div className="dashboard-content">
                 <header className="dashboard-heading">
-                    <h1>Turn your cravings{" "}<span className="headline-ending">into your next spot.</span></h1>
-                    <p className="headline-subtitle">Let AI pick for you.</p>
+                    <h1>Turn your cravings{" "}<span className="headline-ending">into your next spot</span></h1>
+                    <p className="headline-subtitle">Let AI pick for you</p>
                 </header>
                 <FoodSpotsGenerator />
                 <Link href="/dashboard/picks" className="dashboard-community-link">
