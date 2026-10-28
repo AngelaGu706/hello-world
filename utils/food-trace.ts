@@ -15,14 +15,18 @@ type Response = { text?: string; usageMetadata?: { promptTokenCount?: number; ca
 export class FoodTrace {
   constructor(private client: SupabaseClient, readonly id: string) {}
   private async rpc(name: string, args: Record<string, unknown>) {
-    const { data, error } = await this.client.rpc(name, args);
-    if (error) throw new TracePersistenceError();
-    return data;
+    try {
+      const { data, error } = await this.client.rpc(name, args);
+      if (error) throw new TracePersistenceError();
+      return data;
+    } catch { throw new TracePersistenceError(); }
   }
   static async begin(client: SupabaseClient, input: string, cuisine: string | null, neighborhood: string | null) {
-    const { data, error } = await client.rpc('food_start_request', { p_input: input, p_cuisine: cuisine, p_neighborhood: neighborhood });
-    if (error || typeof data !== 'string') throw new TracePersistenceError();
-    return new FoodTrace(client, data);
+    try {
+      const { data, error } = await client.rpc('food_start_request', { p_input: input, p_cuisine: cuisine, p_neighborhood: neighborhood });
+      if (error || typeof data !== 'string') throw new TracePersistenceError();
+      return new FoodTrace(client, data);
+    } catch { throw new TracePersistenceError(); }
   }
   async step(model: string, prompt: string, settings: Record<string, unknown>, kind: 'recommendation' | 'variety_retry', call: () => Promise<Response>, validate: (text: string) => Pick) {
     const stepId = await this.rpc('food_start_step', { p_request_id: this.id, p_model: model, p_prompt: prompt, p_kind: kind, p_settings: settings });
