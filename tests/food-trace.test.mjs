@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import { load } from './load-source.mjs';
 class ApiError extends Error { constructor(status) { super('Provider error'); this.status = status; } }
 const output = (title = 'Buvette', area = 'West Village') => JSON.stringify({ title, area, food: 'Eggs', cuisine: 'French', content: 'A relaxed brunch to start your morning.' });
-function fixture({ responses = [output()], history = [], failRpc, user = { id: 'user-1' } } = {}) {
+function fixture({ responses = [output()], history = [], failRpc, throwRpc, user = { id: 'user-1' } } = {}) {
   const calls = []; let invoked = 0; let sequence = 0;
   const client = {
     auth: { getUser: async () => ({ data: { user }, error: null }) },
     from: () => ({ select: () => ({ eq: () => ({ order: () => ({ limit: async () => ({ data: history.map(title => ({ title })), error: null }) }) }) }) }),
     async rpc(name, args) {
       calls.push({ name, args });
+      if (name === throwRpc && args.p_step_id === 'step-2') throw new Error("Network failed");
       if (name === failRpc) return { data: null, error: { code: 'TEST' } };
       return { data: name === 'food_start_request' ? 'request-1' : name === 'food_start_step' ? `step-${++sequence}` : name === 'food_complete_request' ? { id: 'pick-1', request_id: args.p_request_id, prompt: args.p_prompt, title: args.p_title, content: args.p_content } : null, error: null };
     },
@@ -76,4 +77,9 @@ test('signed-out and invalid inputs never create traces or call the model', asyn
   for (const [f, body, status] of [[fixture({user:null}),{prompt:'brunch please'},401],[fixture(),{prompt:'x'},400],[fixture(),{prompt:'brunch please',cuisine:'unsupported'},400]]) {
     assert.equal((await f.invoke(body)).status,status); assert.deepEqual(f.calls,[]);
   }
+});
+
+test('a network exception while recording an alternative cannot bypass trace persistence', async () => {
+  const f = fixture({ history: ['Buvette'], responses: [output(),output('Tartine')], throwRpc: 'food_finish_step' });
+  assert.equal((await f.invoke()).status,503);assert.equal(f.calls.filter(x=>x.name==='model').length,2);assert.equal(f.calls.some(x=>x.name==='food_complete_request'),false);
 });
