@@ -85,9 +85,9 @@ export default function FoodBucketList() {
             <div className="community-feed" aria-live="polite" aria-busy={loading}>
                 {loading && <p className="community-state" role="status">Loading your list...</p>}
                 {error && <div className="community-state"><p className="community-error" role="alert">{error}</p><button type="button" className="community-create" onClick={reload}>Try again</button></div>}
-                {!loading && !error && !available.length && <div className="bucket-empty"><Bookmark size={30} aria-hidden="true" /><h2>Your list starts here</h2><p>Find a spot. Save it for later.</p><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
+                {!loading && !error && !available.length && <div className="bucket-empty"><Bookmark size={30} aria-hidden="true" /><h2>Your list starts here</h2><p>Find a spot and save it for later</p><Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link></div>}
                 {!loading && !error && available.length > 0 && !visible.length && <div className="community-state">
-                    <h2>{search ? "No matching spots." : filter === "been_there" ? "No spots tried yet." : "You’ve tried every saved spot."}</h2>
+                    <h2>{search ? "No matching spots" : filter === "been_there" ? "No spots tried yet" : "You’ve tried every saved spot"}</h2>
                     {search ? <button type="button" className="community-clear" onClick={() => setSearch("")}>Clear search</button>
                         : filter === "been_there" ? <button type="button" className="community-clear" onClick={() => setFilter("want_to_go")}>View saved spots</button>
                         : <Link href="/dashboard" className="community-create">Find a spot<ArrowUpRight size={16} aria-hidden="true" /></Link>}
