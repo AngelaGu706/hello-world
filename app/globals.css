@@ -597,13 +597,21 @@ button:disabled { cursor: not-allowed; }
 .distance-origin-label { display: block; margin-bottom: 6px; color: #385440; font-weight: 500; }
 .distance-origin-select { min-width: 0; max-width: 100%; padding: 8px 30px 8px 10px; border: 1px solid #dfdcd3; border-radius: 8px; background: #fff; color: #385440; font: inherit; }
 
-.distance-details > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; cursor: pointer; list-style: none; }
-.distance-details > summary::-webkit-details-marker { display: none; }
+.restaurant-distance.is-compact { display: inline-flex; align-items: center; }
+.restaurant-distance > p { margin: 0; }
+.distance-trigger { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 10px; min-height: 24px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; line-height: inherit; text-align: left; cursor: pointer; }
 .distance-detail-toggle { color: #657268; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
-.distance-detail-body { margin-top: 6px; padding-left: 20px; }
+.distance-dialog { position: fixed; inset: 0; width: min(420px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 22px; overflow: auto; border: 1px solid #dfd9cd; border-radius: 20px; background: #fffdf8; color: #30372d; box-shadow: 0 20px 60px #28302426; font-size: 13px; line-height: 1.6; }
+.distance-dialog::backdrop { background: #26312855; }
+.distance-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.distance-dialog-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
+.distance-dialog-close { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #f0ece3; color: #30372d; cursor: pointer; }
+.distance-dialog-value { margin: 0 0 10px; font-weight: 600; }
+.distance-detail-body { color: #657268; }
+.distance-detail-body p { margin: 6px 0; }
 .distance-detail-body a { text-decoration: underline; text-underline-offset: 3px; }
 .distance-unavailable { color: #657268; }
-.distance-details > summary:focus-visible { outline: 3px solid #438761; outline-offset: 4px; border-radius: 3px; }
+.distance-trigger:focus-visible, .distance-dialog-close:focus-visible { outline: 3px solid #438761; outline-offset: 4px; border-radius: 5px; }
 
 /* Restaurant recommendation cards: warm neutrals, with color reserved for emphasis. */
 .editorial-pick-card {
@@ -635,13 +643,12 @@ button:disabled { cursor: not-allowed; }
 .editorial-pick-card .community-title-row { margin-bottom: 11px; }
 .editorial-pick-card .community-title-row h2 { margin: 0; font-size: 28px; font-weight: 650; line-height: 1.15; letter-spacing: -.7px; color: var(--pick-ink); }
 .editorial-pick-card .pick-content { flex: 0 1 auto; margin: 0 0 20px; }
-.editorial-pick-card .pick-metadata { margin: 0 0 22px; align-items: baseline; gap: 8px 12px; color: var(--pick-muted); font-size: 12px; }
+.editorial-pick-card .pick-metadata { margin: 0 0 22px; align-items: center; min-height: 24px; gap: 8px 12px; color: var(--pick-muted); font-size: 12px; line-height: 1.6; }
 .editorial-pick-card .pick-metadata span { color: inherit; font-weight: 400; }
 .editorial-pick-card .restaurant-distance { margin: 0; color: var(--pick-muted); font-size: inherit; }
 .editorial-pick-card .distance-value { color: var(--pick-muted); font-weight: 400; }
-.editorial-pick-card .distance-details > summary { min-height: 24px; gap: 0; }
-.editorial-pick-card .distance-details > summary:hover .distance-value { text-decoration: underline; text-underline-offset: 3px; }
-.editorial-pick-card .distance-detail-body { padding: 8px 0 0; font-size: 12px; }
+.editorial-pick-card .distance-trigger { gap: 0; }
+.editorial-pick-card .distance-trigger:hover .distance-value { text-decoration: underline; text-underline-offset: 3px; }
 .editorial-pick-card .community-dish { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 9px; margin: 0 0 6px; padding: 0; border-radius: 0; background: transparent; color: var(--pick-ink); }
 .editorial-pick-card .community-dish-label { margin: 0; color: #965b3e; font-size: 11px; line-height: 1.5; font-weight: 600; letter-spacing: .8px; }
 .editorial-pick-card .community-dish strong { display: inline; color: var(--pick-ink); font-size: 19px; line-height: 1.35; font-weight: 600; }
@@ -675,7 +682,7 @@ button:disabled { cursor: not-allowed; }
   .editorial-pick-card .rating-row { gap: 10px; }
 }
 @media (pointer: coarse) {
-  .editorial-pick-card .rating-button, .editorial-pick-card .community-reservation-link, .editorial-pick-card .pick-original-prompt summary, .editorial-pick-card .distance-details > summary { min-height: 44px; }
+  .editorial-pick-card .rating-button, .editorial-pick-card .community-reservation-link, .editorial-pick-card .pick-original-prompt summary, .editorial-pick-card .distance-trigger { min-height: 44px; }
 }
 
 /* A direct, spacious introduction above the craving form. */
