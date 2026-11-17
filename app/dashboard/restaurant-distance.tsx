@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MapPin } from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
+import { MapPin, X } from "lucide-react";
 import { formatDistance, haversineMiles, isCoordinates } from "@/utils/distance";
 import type { VerifiedRestaurant } from "@/utils/restaurant-location";
 import { useLocation } from "./location-provider";
@@ -13,6 +13,8 @@ function EnabledDistance({ generationId, compact }: { generationId: string; comp
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const [attempt, setAttempt] = useState(0);
+    const detailsRef = useRef<HTMLDialogElement>(null);
+    const detailsTitleId = useId();
     useEffect(() => {
         const controller = new AbortController();
         async function load() {
@@ -41,18 +43,32 @@ function EnabledDistance({ generationId, compact }: { generationId: string; comp
 
     if (!origin) return null;
     return <div className={`restaurant-distance${compact ? " is-compact" : ""}`}>
-        {loading ? <p role="status">Checking distance…</p> : restaurant ? <details className="distance-details">
-            <summary>
+        {loading ? <p role="status">Checking distance…</p> : restaurant ? <>
+            <button type="button" className="distance-trigger" aria-haspopup="dialog"
+                aria-controls={`${detailsTitleId}-dialog`} onClick={() => detailsRef.current?.showModal()}>
                 <span className="distance-value">{!compact && <MapPin size={14} aria-hidden="true" />}{formatDistance(haversineMiles(origin.coordinates, restaurant))}</span>
                 <span className={compact ? "sr-only" : "distance-detail-toggle"}>Distance details</span>
-            </summary>
-            <div className="distance-detail-body">
+            </button>
+            <dialog ref={detailsRef} id={`${detailsTitleId}-dialog`} className="distance-dialog" aria-labelledby={detailsTitleId}
+                onClick={event => {
+                    if (event.target !== event.currentTarget) return;
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) detailsRef.current?.close();
+                }}>
+                <div className="distance-dialog-header">
+                    <h3 id={detailsTitleId}>Distance details</h3>
+                    <button type="button" className="distance-dialog-close" aria-label="Close distance details" onClick={() => detailsRef.current?.close()}><X size={18} aria-hidden="true" /></button>
+                </div>
+                <p className="distance-dialog-value">{formatDistance(haversineMiles(origin.coordinates, restaurant))}</p>
+                <div className="distance-detail-body">
                 <p>From the approximate {origin.name} area center.</p>
+                <p>Straight-line distance, not walking distance.</p>
                 <p className="distance-address">{restaurant.address}</p>
                 <p className="distance-source"><a href={restaurant.sourceUrl} target="_blank" rel="noopener noreferrer">NYC Open Data</a>{restaurant.sourceDate && ` · Updated ${restaurant.sourceDate}`}</p>
                 <p><a href="/terms">About distances</a></p>
-            </div>
-        </details> : <p className="distance-unavailable" role="status">Distance unavailable{error && <> · <button type="button" className="location-off" title={error} onClick={() => { setError(""); setLoading(true); setAttempt(value => value + 1); }}>Retry</button></>}</p>}
+                </div>
+            </dialog>
+        </> : <p className="distance-unavailable" role="status">Distance unavailable{error && <> · <button type="button" className="location-off" title={error} onClick={() => { setError(""); setLoading(true); setAttempt(value => value + 1); }}>Retry</button></>}</p>}
     </div>;
 }
 
