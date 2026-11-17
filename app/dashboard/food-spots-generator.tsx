@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, GraduationCap, LoaderCircle, MapPin, Moon, Sparkles, Utensils } from "lucide-react";
+import { ArrowUpRight, CalendarDays, CheckCircle2, GraduationCap, LoaderCircle, Moon, Sparkles, Utensils } from "lucide-react";
 import LocationControl from "./location-control";
 import PickContent from "./pick-content";
 import VoteButtons from "./vote-buttons";
@@ -21,11 +21,11 @@ type FoodPick = {
     content: string;
 };
 
-const quickPrompts: { label: string; prompt: string; neighborhood?: Neighborhood | ""; icon: typeof Moon }[] = [
-    { label: "Late-night eats", prompt: "Budget-friendly late-night food near Columbia", neighborhood: "Morningside Heights", icon: Moon },
-    { label: "Brunch under $30", prompt: "A cozy brunch spot in the West Village under $30", neighborhood: "West Village", icon: Utensils },
-    { label: "After-class bites", prompt: "Somewhere to grab dumplings after class", icon: GraduationCap },
-    { label: "Explore Queens", prompt: "Somewhere new to eat in Queens this weekend", neighborhood: "", icon: MapPin },
+const quickPrompts: { label: string; prompt: string; icon: typeof Moon }[] = [
+    { label: "Late-night eats", prompt: "Budget-friendly food for a late-night bite", icon: Moon },
+    { label: "Brunch under $30", prompt: "A cozy spot for brunch under $30 per person", icon: Utensils },
+    { label: "After-class bites", prompt: "Somewhere to grab a quick bite after class", icon: GraduationCap },
+    { label: "Weekend eats", prompt: "Somewhere new to eat this weekend", icon: CalendarDays },
 ];
 
 export default function FoodSpotsGenerator() {
@@ -88,11 +88,11 @@ export default function FoodSpotsGenerator() {
                     disabled={loading} className="generator-input" />
                 <div className="generator-options">
                     <div className="generator-prompts" role="group" aria-label="Ideas to get you started">
-                        {quickPrompts.map(({ label, prompt: quickPrompt, neighborhood: quickNeighborhood, icon: Icon }) => (
+                        {quickPrompts.map(({ label, prompt: quickPrompt, icon: Icon }) => (
                             <button key={quickPrompt} type="button" disabled={loading}
                                 aria-pressed={prompt === quickPrompt}
                                 className={prompt === quickPrompt ? "is-selected" : ""}
-                                onClick={() => { setPrompt(quickPrompt); if (quickNeighborhood !== undefined) setNeighborhood(quickNeighborhood); setError(""); }}>
+                                onClick={() => { setPrompt(quickPrompt); setError(""); }}>
                                 <Icon size={15} aria-hidden="true" />{label}
                             </button>
                         ))}
